@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Options - Unity 2.0 Challenge Implementation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: #000000;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .nav-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: rgba(255, 215, 0, 0.8);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+
+        .option-container {
+            display: none;
+        }
+
+        .option-container.active {
+            display: block;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 140px);
+            border: none;
+            background: #000;
+        }
+
+        .description {
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .description h2 {
+            font-size: 18px;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .description p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .pros h3 {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cons h3 {
+            color: #FF6B6B;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .pros ul, .cons ul {
+            font-size: 13px;
+            line-height: 1.8;
+            margin-left: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .tab-structure {
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-title">🏆 Navigation & Challenge Integration Options</div>
+        <div class="nav-subtitle">Compare different approaches for integrating challenges into Unity 2.0</div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showOption(1)">Option 1: Community Tab</div>
+            <div class="nav-tab" onclick="showOption(2)">Option 2: Dedicated Challenges</div>
+            <div class="nav-tab" onclick="showOption(3)">Option 3: "You" + Challenges</div>
+            <div class="nav-tab" onclick="showOption(5)">Option 5: Modal/Overlay 🏆</div>
+            <div class="nav-tab" onclick="showOption(6)">Option 6: Circle + Challenges ⚠️</div>
+            <div class="nav-tab" onclick="showOption(7)">Option 7: Progress + Challenges ⚠️</div>
+        </div>
+    </div>
+
+    <!-- Option 1 -->
+    <div class="option-container active" id="option-1">
+        <div class="description">
+            <h2>Option 1: Rename "Circle" → "Community" Tab</h2>
+            <p>
+                Consolidate Circles and Challenges into a single "Community" tab. This unifies all group/community features under one roof.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | <strong>Community</strong> | Progress | Profile<br><br>
+                Community Tab Structure:<br>
+                ├─ My Circles (dropdown selector)<br>
+                │  ├─ Overview (stats, leaderboard)<br>
+                │  ├─ Challenges (circle-specific)<br>
+                │  └─ Members<br>
+                └─ Global Challenges<br>
+                   ├─ Browse/Search<br>
+                   └─ Tap challenge → Leaderboard + Feed + About
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs (no bloat)</li>
+                        <li>Conceptually clean (circles + challenges = communities)</li>
+                        <li>Each challenge has dedicated feed</li>
+                        <li>Natural hierarchy</li>
+                        <li>Circle challenges vs Global challenges unified</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Community tab doing heavy lifting</li>
+                        <li>Might feel cramped</li>
+                        <li>Need clear separation between circles and challenges</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-1-community-tab.html"></iframe>
+    </div>
+
+    <!-- Option 2 -->
+    <div class="option-container" id="option-2">
+        <div class="description">
+            <h2>Option 2: Dedicated "Challenges" Tab (Remove Profile Tab)</h2>
+            <p>
+                Replace Profile tab with dedicated Challenges tab. Profile accessed via avatar/settings icon instead.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | Circle | <strong>Challenges</strong> | Progress<br><br>
+                Challenges Tab Structure:<br>
+                ├─ Active (your joined challenges with widget + details)<br>
+                ├─ Discover (browse global + circle challenges)<br>
+                └─ Completed (your challenge history)<br><br>
+                Each challenge → Leaderboard + Feed + About tabs
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Dedicated space for all challenges</li>
+                        <li>Clean separation: Circles vs Challenges</li>
+                        <li>Room for discovery, active, completed views</li>
+                        <li>Each challenge has dedicated feed</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Loses dedicated Profile tab</li>
+                        <li>Profile accessed via icon (less discoverable)</li>
+                        <li>Still 5 tabs (but different distribution)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-2-dedicated-challenges-tab.html"></iframe>
+    </div>
+
+    <!-- Option 3 -->
+    <div class="option-container" id="option-3">
+        <div class="description">
+            <h2>Option 3: Consolidate Progress + Profile into "You" Tab</h2>
+            <p>
+                Merge Progress and Profile into a single "You" tab (your identity + stats), freeing space for dedicated Challenges tab.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | Circle | Challenges | <strong>You</strong><br><br>
+                "You" Tab Structure:<br>
+                ├─ Profile section (avatar, bio, basic stats)<br>
+                ├─ Stats (weekly progress, goals)<br>
+                ├─ Challenges (your active/completed challenges)<br>
+                └─ Badges (achievements)<br><br>
+                Challenges Tab: Active | Discover<br>
+                Each challenge → Leaderboard + Feed + About
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Dedicated Challenges tab with full features</li>
+                        <li>"You" is cohesive (identity + performance)</li>
+                        <li>Keeps 5 tabs</li>
+                        <li>Challenge feeds separate from Social</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>"You" tab might feel cramped</li>
+                        <li>Progress/Profile merged (lose focus)</li>
+                        <li>Challenge info duplicated (in "You" + "Challenges")</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-3-you-tab-with-challenges.html"></iframe>
+    </div>
+
+    <!-- Option 5 -->
+    <div class="option-container" id="option-5">
+        <div class="description">
+            <h2>Option 5: Challenges via Modal/Overlay (Floating Button)</h2>
+            <p>
+                Keep existing 5 tabs unchanged. Challenges accessed via floating button (like Instagram create, TikTok). Opens full-screen challenge browser overlay.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | Circle | Progress | Profile<br>
+                + Floating 🏆 button (bottom right)<br><br>
+                Tap button → Full-screen Challenges overlay:<br>
+                ├─ Active (your joined challenges)<br>
+                ├─ Discover (browse global + circle)<br>
+                └─ Completed (history)<br><br>
+                Each challenge → Leaderboard + Feed + About
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps existing 5 tab structure</li>
+                        <li>Challenges feel "special" (dedicated experience)</li>
+                        <li>Full-screen space for all features</li>
+                        <li>No navigation bloat</li>
+                        <li>Modern UX pattern (like IG Stories, TikTok)</li>
+                        <li>Can access from any page</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Less discoverable than tab</li>
+                        <li>Floating button takes screen space</li>
+                        <li>Unconventional for main feature</li>
+                        <li>Requires user to learn gesture</li>
+                        <li>Hidden until user finds it</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-5-modal-overlay.html"></iframe>
+    </div>
+
+    <!-- Option 6 -->
+    <div class="option-container" id="option-6">
+        <div class="description">
+            <h2>Option 6: Circle Tab + ALL Challenges Combined ⚠️</h2>
+            <p>
+                Keep Circle tab but add mode switcher: "My Circles" vs "All Challenges". This puts EVERYTHING in one tab - circle stats, circle challenges, AND global challenge discovery.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | <strong>Circle</strong> | Progress | Profile<br><br>
+                Circle Tab has 2 modes (top switcher):<br>
+                <br>
+                <strong>Mode 1: My Circles</strong><br>
+                ├─ Circle selector (dropdown)<br>
+                ├─ Tabs: Overview / Challenges / Members<br>
+                │  ├─ Overview: Circle stats + consistency leaderboard<br>
+                │  ├─ Challenges: Circle-specific challenges only<br>
+                │  └─ Members: All circle members<br>
+                <br>
+                <strong>Mode 2: All Challenges</strong><br>
+                ├─ Tabs: Discover / My Active / Completed<br>
+                │  ├─ Discover: Browse ALL challenges (global + all circles)<br>
+                │  ├─ My Active: All your active challenges<br>
+                │  └─ Completed: Challenge history
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs (no new tab needed)</li>
+                        <li>Everything community-related in one place</li>
+                        <li>Clear mode separation with switcher</li>
+                        <li>Circle stats get their space</li>
+                        <li>Global challenges get full screen</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>⚠️ VERY busy page - doing too much</li>
+                        <li>⚠️ User must switch modes frequently</li>
+                        <li>⚠️ Circle stats vs Global challenges compete</li>
+                        <li>Confusing mental model (circles AND challenges)</li>
+                        <li>Lots of navigation layers (mode → tabs → content)</li>
+                        <li>Discovery buried behind mode switch</li>
+                        <li>Circle page loses clear identity</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-6-circle-plus-challenges.html"></iframe>
+    </div>
+
+    <!-- Option 7 -->
+    <div class="option-container" id="option-7">
+        <div class="description">
+            <h2>Option 7: Progress + Challenges Merged ⚠️</h2>
+            <p>
+                Merge Progress and Challenges into one "Performance" tab. This combines personal introspective stats with competitive social challenges.
+            </p>
+
+            <div class="tab-structure">
+                Bottom Nav: Social | Daily | Circle | <strong>Performance</strong> | Profile<br><br>
+                Performance Tab has 5 tabs:<br>
+                ├─ My Stats (personal progress, streaks, consistency)<br>
+                ├─ Goals (your active goals & commitments)<br>
+                ├─ Active (your active challenges + rankings)<br>
+                ├─ Discover (browse global + circle challenges)<br>
+                └─ Badges (earned badges from challenges)
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs</li>
+                        <li>All "performance" data in one place</li>
+                        <li>Badges naturally live here</li>
+                        <li>Challenge stats complement personal stats</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>⚠️ VERY different purposes mixed together</li>
+                        <li>⚠️ Personal (introspective) vs Competitive (social)</li>
+                        <li>⚠️ 5 tabs within one page - overwhelming</li>
+                        <li>Discovery buried in 4th tab</li>
+                        <li>Confusing mental model (am I looking at me or comparing?)</li>
+                        <li>Lost focus - what is this page for?</li>
+                        <li>Challenge discovery feels hidden</li>
+                        <li>No clear name that captures both purposes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-7-progress-plus-challenges.html"></iframe>
+    </div>
+
+    <script>
+        function showOption(option) {
+            // Hide all containers
+            document.querySelectorAll('.option-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            // Deactivate all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected container
+            document.getElementById('option-' + option).classList.add('active');
+
+            // Activate selected tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

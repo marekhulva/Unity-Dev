@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Profile — Unity</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+  :root {
+    --gold: #FFD700;
+    --gold-warm: #E7B43A;
+    --gold-deep: #D4AF37;
+    --black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255,255,255,0.55);
+    --text-tertiary: rgba(255,255,255,0.30);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #000;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .phone {
+    width: 393px;
+    min-height: 852px;
+    background: #000;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .phone::-webkit-scrollbar { width: 0; }
+
+  /* ===== TOP BAR (back + close, modal style) ===== */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 54px 20px 12px;
+  }
+  .back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.1); }
+
+  .top-bar-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .top-action {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .top-action:hover { background: rgba(255,255,255,0.1); }
+
+  /* ===== IDENTITY ===== */
+  .identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 0;
+  }
+
+  .avatar-ring {
+    width: 110px;
+    height: 110px;
+    border-radius: 55px;
+    background: conic-gradient(
+      var(--gold-warm) 0deg,
+      var(--gold) 120deg,
+      var(--gold-deep) 240deg,
+      var(--gold-warm) 360deg
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    box-shadow: 0 0 40px rgba(231,180,58,0.15);
+  }
+
+  .avatar-inner {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--gold-warm);
+  }
+
+  .user-name {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+
+  .user-handle {
+    font-size: 15px;
+    color: var(--text-tertiary);
+    margin-bottom: 14px;
+  }
+
+  /* Shared context — the connection line */
+  .shared-context {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    padding: 6px 14px;
+    background: rgba(231,180,58,0.06);
+    border: 1px solid rgba(231,180,58,0.12);
+    border-radius: 20px;
+  }
+  .shared-context-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--gold-warm);
+  }
+  .shared-context-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .shared-context-text strong {
+    color: var(--gold-warm);
+    font-weight: 600;
+  }
+
+  /* ===== FOLLOW BUTTON ===== */
+  .follow-row {
+    display: flex;
+    gap: 10px;
+    padding: 0 24px;
+    margin-bottom: 8px;
+  }
+
+  .follow-btn {
+    flex: 1;
+    height: 50px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    background: linear-gradient(135deg, var(--gold-warm), var(--gold));
+    border: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(231,180,58,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .follow-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(231,180,58,0.4);
+  }
+  /* Subtle shimmer */
+  .follow-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 200%; }
+  }
+
+  .invite-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .invite-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(231,180,58,0.2);
+  }
+
+  /* ===== THE SCORE ===== */
+  .score-section {
+    padding: 28px 24px 8px;
+  }
+
+  .score-card {
+    background: rgba(231,180,58,0.04);
+    border: 1px solid rgba(231,180,58,0.10);
+    border-radius: 24px;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(231,180,58,0.06) 0%, transparent 70%);
+    left: -20px;
+    top: -30px;
+    pointer-events: none;
+  }
+
+  .score-ring {
+    width: 88px;
+    height: 88px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .score-ring svg {
+    transform: rotate(-90deg);
+    width: 88px;
+    height: 88px;
+  }
+  .score-value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-number {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .score-unit {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold-warm);
+    opacity: 0.6;
+  }
+
+  .score-info { flex: 1; }
+  .score-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold-warm);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+  }
+  .score-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .score-description strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  /* ===== STREAKS ===== */
+  .streaks-section {
+    padding: 24px 24px 4px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold-warm);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+
+  .streaks-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .streak-card {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    padding: 18px 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .streak-card.hot {
+    background: rgba(231,180,58,0.06);
+    border-color: rgba(231,180,58,0.18);
+  }
+  .streak-card.hot::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .streak-emoji {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .streak-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 3px;
+    letter-spacing: -1px;
+  }
+  .streak-card.hot .streak-number { color: var(--gold); }
+  .streak-unit {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+  .streak-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  /* ===== CHALLENGES ===== */
+  .challenges-section {
+    padding: 24px 24px 4px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .challenge-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .challenge-item:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(231,180,58,0.15);
+  }
+
+  .challenge-emoji-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(231,180,58,0.12), rgba(231,180,58,0.04));
+    border: 1px solid rgba(231,180,58,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .challenge-info { flex: 1; min-width: 0; }
+  .challenge-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .challenge-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .challenge-meta span {
+    color: var(--gold-warm);
+    font-weight: 600;
+  }
+
+  /* Join pill on challenge cards */
+  .join-pill {
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: rgba(231,180,58,0.12);
+    border: 1px solid rgba(231,180,58,0.25);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .join-pill:hover {
+    background: rgba(231,180,58,0.2);
+    border-color: rgba(231,180,58,0.4);
+  }
+
+  .already-in {
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+  }
+
+  /* ===== RECENT WINS ===== */
+  .wins-section {
+    padding: 24px 24px 4px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .wins-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin: 0 -24px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .wins-scroll::-webkit-scrollbar { display: none; }
+
+  .win-card {
+    min-width: 190px;
+    max-width: 190px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px;
+    padding: 18px;
+    flex-shrink: 0;
+  }
+
+  .win-date {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .win-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .win-detail {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+  .win-badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold-warm);
+    background: rgba(231,180,58,0.1);
+    padding: 4px 10px;
+    border-radius: 8px;
+  }
+
+  /* ===== SHARED CIRCLES ===== */
+  .shared-section {
+    padding: 24px 24px 4px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .shared-circle {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .shared-circle-emoji {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(231,180,58,0.12), rgba(231,180,58,0.04));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .shared-circle-info { flex: 1; }
+  .shared-circle-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .shared-circle-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .shared-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold-warm);
+    background: rgba(231,180,58,0.1);
+    padding: 4px 10px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== BOTTOM SPACER ===== */
+  .bottom-spacer { height: 40px; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <!-- Top Bar (modal-style: back arrow + more) -->
+  <div class="top-bar">
+    <div class="back-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    </div>
+    <div class="top-bar-actions">
+      <div class="top-action">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== IDENTITY ===== -->
+  <div class="identity">
+    <div class="avatar-ring">
+      <div class="avatar-inner">SA</div>
+    </div>
+    <div class="user-name">Sarah</div>
+    <div class="user-handle">@sarahk</div>
+
+    <!-- Shared context pill -->
+    <div class="shared-context">
+      <div class="shared-context-dot"></div>
+      <div class="shared-context-text">In <strong>2 of your circles</strong></div>
+    </div>
+  </div>
+
+  <!-- ===== FOLLOW ROW ===== -->
+  <div class="follow-row">
+    <div class="follow-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+      Follow
+    </div>
+    <div class="invite-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+    </div>
+  </div>
+
+  <!-- ===== THE SCORE ===== -->
+  <div class="score-section">
+    <div class="score-card">
+      <div class="score-ring">
+        <svg viewBox="0 0 88 88">
+          <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="6"/>
+          <circle cx="44" cy="44" r="36" fill="none" stroke="url(#sGrad)" stroke-width="6" stroke-linecap="round"
+            stroke-dasharray="226" stroke-dashoffset="14"/>
+          <defs>
+            <linearGradient id="sGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFD700"/>
+              <stop offset="100%" stop-color="#E7B43A"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-value">
+          <div class="score-number">94</div>
+          <div class="score-unit">%</div>
+        </div>
+      </div>
+      <div class="score-info">
+        <div class="score-label">Consistency</div>
+        <div class="score-description">
+          Sarah showed up <strong>94% of the time</strong> this month. Ranked <strong>#1</strong> in Morning Warriors.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STREAKS ===== -->
+  <div class="streaks-section">
+    <div class="section-title">Active Streaks</div>
+    <div class="streaks-row">
+      <div class="streak-card hot">
+        <span class="streak-emoji">🔥</span>
+        <div class="streak-number">18</div>
+        <div class="streak-unit">days</div>
+        <div class="streak-label">Morning Run</div>
+      </div>
+      <div class="streak-card">
+        <span class="streak-emoji">📖</span>
+        <div class="streak-number">14</div>
+        <div class="streak-unit">days</div>
+        <div class="streak-label">Reading</div>
+      </div>
+      <div class="streak-card">
+        <span class="streak-emoji">🧘</span>
+        <div class="streak-number">25</div>
+        <div class="streak-unit">days</div>
+        <div class="streak-label">No Sugar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CHALLENGES (with JOIN buttons) ===== -->
+  <div class="challenges-section">
+    <div class="section-title">Challenges</div>
+
+    <div class="challenge-item">
+      <div class="challenge-emoji-box">🏃</div>
+      <div class="challenge-info">
+        <div class="challenge-name">30-Day Run Streak</div>
+        <div class="challenge-meta"><span>Day 18</span> of 30 &middot; 8 people</div>
+      </div>
+      <div class="join-pill">Join</div>
+    </div>
+
+    <div class="challenge-item">
+      <div class="challenge-emoji-box">📖</div>
+      <div class="challenge-info">
+        <div class="challenge-name">Read 20 Minutes Daily</div>
+        <div class="challenge-meta"><span>Day 14</span> of 21 &middot; 5 people</div>
+      </div>
+      <div class="join-pill">Join</div>
+    </div>
+
+    <div class="challenge-item">
+      <div class="challenge-emoji-box">🧘</div>
+      <div class="challenge-info">
+        <div class="challenge-name">No Sugar January</div>
+        <div class="challenge-meta"><span>Day 25</span> of 30 &middot; 11 people</div>
+      </div>
+      <div class="already-in">Joined</div>
+    </div>
+  </div>
+
+  <!-- ===== RECENT WINS ===== -->
+  <div class="wins-section">
+    <div class="section-title">Recent Wins</div>
+    <div class="wins-scroll">
+      <div class="win-card">
+        <div class="win-date">Today</div>
+        <div class="win-title">Morning Run — 5.2 km</div>
+        <div class="win-detail">Fastest pace this week</div>
+        <div class="win-badge">🔥 18-day streak</div>
+      </div>
+      <div class="win-card">
+        <div class="win-date">Yesterday</div>
+        <div class="win-title">Finished Atomic Habits</div>
+        <div class="win-detail">Book #4 this month</div>
+        <div class="win-badge">📖 Complete</div>
+      </div>
+      <div class="win-card">
+        <div class="win-date">Feb 7</div>
+        <div class="win-title">No Sugar — Day 25</div>
+        <div class="win-detail">Only 5 days left</div>
+        <div class="win-badge">💪 Almost there</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SHARED CIRCLES ===== -->
+  <div class="shared-section">
+    <div class="section-title">Circles You Share</div>
+
+    <div class="shared-circle">
+      <div class="shared-circle-emoji">💪</div>
+      <div class="shared-circle-info">
+        <div class="shared-circle-name">Morning Warriors</div>
+        <div class="shared-circle-meta">12 members &middot; 3 challenges</div>
+      </div>
+      <div class="shared-badge">Rank #1</div>
+    </div>
+
+    <div class="shared-circle">
+      <div class="shared-circle-emoji">📚</div>
+      <div class="shared-circle-info">
+        <div class="shared-circle-name">Book Club</div>
+        <div class="shared-circle-meta">8 members &middot; 1 challenge</div>
+      </div>
+      <div class="shared-badge">Rank #3</div>
+    </div>
+  </div>
+
+  <div class="bottom-spacer"></div>
+
+</div>
+
+</body>
+</html>

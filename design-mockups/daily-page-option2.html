@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Daily Page - Timeline Design</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* iPhone mockup container */
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .time {
+            color: #fff;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .o2-header {
+            padding: 20px 20px 20px 20px;
+        }
+
+        .o2-greeting {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .o2-date-info {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 16px;
+        }
+
+        .o2-stats-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .o2-stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .o2-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .o2-stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .o2-timeline {
+            padding: 24px 20px 24px 20px;
+            position: relative;
+        }
+
+        .o2-timeline::before {
+            content: '';
+            position: absolute;
+            left: 39px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A, rgba(231,180,58,0.2));
+        }
+
+        .o2-item {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 28px;
+        }
+
+        .o2-dot {
+            position: absolute;
+            left: 32px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #0B0F12;
+        }
+
+        .o2-item.completed .o2-dot {
+            background: #E7B43A;
+            box-shadow: 0 0 12px rgba(231,180,58,0.6);
+        }
+
+        .o2-time {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+        }
+
+        .o2-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .o2-item.completed .o2-card {
+            background: linear-gradient(135deg, rgba(231,180,58,0.1), rgba(255,215,0,0.04));
+            border-color: rgba(231,180,58,0.2);
+        }
+
+        .o2-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .o2-activity-icon {
+            font-size: 20px;
+        }
+
+        .o2-activity-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            flex: 1;
+        }
+
+        .o2-item.completed .o2-activity-name {
+            color: #E7B43A;
+        }
+
+        .o2-check-icon {
+            font-size: 16px;
+            color: #E7B43A;
+        }
+
+        .o2-card-details {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+        }
+
+        .o2-metrics-grid {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .o2-metric-chip {
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-mockup">
+        <div class="notch"></div>
+        <div class="status-bar">
+            <div class="time">9:41</div>
+            <div class="status-icons">📶 📶 🔋</div>
+        </div>
+        <div class="screen-content">
+            <div class="o2-header">
+                <div class="o2-greeting">Good Morning</div>
+                <div class="o2-date-info">Tuesday, November 24</div>
+                <div class="o2-stats-row">
+                    <div class="o2-stat-card">
+                        <span class="o2-stat-value">3/6</span>
+                        <div class="o2-stat-label">Complete</div>
+                    </div>
+                    <div class="o2-stat-card">
+                        <span class="o2-stat-value">12</span>
+                        <div class="o2-stat-label">Day Streak</div>
+                    </div>
+                    <div class="o2-stat-card">
+                        <span class="o2-stat-value">75%</span>
+                        <div class="o2-stat-label">This Week</div>
+                    </div>
+                </div>
+            </div>
+            <div class="o2-timeline">
+                <div class="o2-item completed">
+                    <div class="o2-time">5:47</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">☀️</span>
+                            <span class="o2-activity-name">Woke Up Before 6am</span>
+                            <span class="o2-check-icon">✓</span>
+                        </div>
+                        <div class="o2-card-details">Morning Routine</div>
+                    </div>
+                </div>
+
+                <div class="o2-item completed">
+                    <div class="o2-time">6:15</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">📖</span>
+                            <span class="o2-activity-name">Read 10 Pages</span>
+                            <span class="o2-check-icon">✓</span>
+                        </div>
+                        <div class="o2-card-details">Personal Growth</div>
+                    </div>
+                </div>
+
+                <div class="o2-item completed">
+                    <div class="o2-time">7:30</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">🏃</span>
+                            <span class="o2-activity-name">Morning Run</span>
+                            <span class="o2-check-icon">✓</span>
+                        </div>
+                        <div class="o2-card-details">75 HARD • Marathon Training</div>
+                        <div class="o2-metrics-grid">
+                            <div class="o2-metric-chip">45 min</div>
+                            <div class="o2-metric-chip">6.2 mi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o2-item">
+                    <div class="o2-time">12:00</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">🧘</span>
+                            <span class="o2-activity-name">Meditation</span>
+                        </div>
+                        <div class="o2-card-details">Mindfulness</div>
+                    </div>
+                </div>
+
+                <div class="o2-item">
+                    <div class="o2-time">18:00</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">💪</span>
+                            <span class="o2-activity-name">Evening Workout</span>
+                        </div>
+                        <div class="o2-card-details">75 HARD • Strength Training</div>
+                    </div>
+                </div>
+
+                <div class="o2-item">
+                    <div class="o2-time">21:00</div>
+                    <div class="o2-dot"></div>
+                    <div class="o2-card">
+                        <div class="o2-card-header">
+                            <span class="o2-activity-icon">💧</span>
+                            <span class="o2-activity-name">Drink Gallon of Water</span>
+                        </div>
+                        <div class="o2-card-details">75 HARD</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

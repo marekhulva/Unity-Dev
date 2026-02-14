@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 8C: You Tab - Privacy Filter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section {
+            padding: 30px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .username {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FFD700;
+        }
+
+        .bio {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .filter-section {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #FFD700;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 15px;
+            margin-top: 20px;
+        }
+
+        .section-header:first-child {
+            margin-top: 0;
+        }
+
+        .goal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+
+        .goal-card.private-goal {
+            border-left: 3px solid rgba(255, 107, 107, 0.5);
+        }
+
+        .goal-card.public-goal {
+            border-left: 3px solid rgba(76, 175, 80, 0.5);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .goal-name-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .goal-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .privacy-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .privacy-badge.public {
+            background: rgba(76, 175, 80, 0.2);
+            color: rgba(76, 175, 80, 1);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+
+        .privacy-badge.private {
+            background: rgba(255, 107, 107, 0.2);
+            color: rgba(255, 107, 107, 1);
+            border: 1px solid rgba(255, 107, 107, 0.4);
+        }
+
+        .goal-icon {
+            font-size: 20px;
+        }
+
+        .goal-progress {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .consistency-widget {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .consistency-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+
+        .consistency-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000000;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: #FFD700;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>You</h1>
+    </div>
+
+    <div class="hero-section">
+        <div class="avatar">JD</div>
+        <div class="username">John Doe</div>
+        <div class="bio">Building consistency one day at a time. Focused on health, productivity, and growth.</div>
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value">87%</div>
+                <div class="stat-label">Consistency</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">42</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Active Goals</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Badges</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-label">Show goals:</div>
+        <select class="filter-select" id="privacyFilter" onchange="filterGoals()">
+            <option value="all">All Goals (Public + Private)</option>
+            <option value="public">Public Goals Only</option>
+            <option value="private">Private Goals Only</option>
+        </select>
+    </div>
+
+    <div class="content">
+        <div class="consistency-widget">
+            <div class="consistency-value">87%</div>
+            <div class="consistency-label">7-Day Consistency</div>
+        </div>
+
+        <div class="section-header">Active Goals</div>
+
+        <div class="goal-card public-goal" data-privacy="public">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">Daily Exercise</div>
+                        <div class="privacy-badge public">🌍 Public</div>
+                    </div>
+                </div>
+                <div class="goal-icon">💪</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%"></div>
+                </div>
+                <div class="progress-text">85% complete this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card public-goal" data-privacy="public">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">Read Daily</div>
+                        <div class="privacy-badge public">🌍 Public</div>
+                    </div>
+                </div>
+                <div class="goal-icon">📚</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 71%"></div>
+                </div>
+                <div class="progress-text">71% complete this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card private-goal" data-privacy="private">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">Therapy Sessions</div>
+                        <div class="privacy-badge private">🔒 Private</div>
+                    </div>
+                </div>
+                <div class="goal-icon">🧠</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="progress-text">1/1 sessions this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card public-goal" data-privacy="public">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">Meditation</div>
+                        <div class="privacy-badge public">🌍 Public</div>
+                    </div>
+                </div>
+                <div class="goal-icon">🧘</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="progress-text">100% complete this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card private-goal" data-privacy="private">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">No Social Media Before Noon</div>
+                        <div class="privacy-badge private">🔒 Private</div>
+                    </div>
+                </div>
+                <div class="goal-icon">📱</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 57%"></div>
+                </div>
+                <div class="progress-text">4/7 days this week</div>
+            </div>
+        </div>
+
+        <div class="section-header">Active Challenges</div>
+
+        <div class="goal-card public-goal" data-privacy="public">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">100 Hours Meditation</div>
+                        <div class="privacy-badge public">🌍 Public</div>
+                    </div>
+                </div>
+                <div class="goal-icon">🏆</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 67%"></div>
+                </div>
+                <div class="progress-text">67 hours completed</div>
+            </div>
+        </div>
+
+        <div class="goal-card private-goal" data-privacy="private">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name-row">
+                        <div class="goal-name">30 Day Sobriety Challenge</div>
+                        <div class="privacy-badge private">🔒 Private</div>
+                    </div>
+                </div>
+                <div class="goal-icon">🚫</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 63%"></div>
+                </div>
+                <div class="progress-text">Day 19/30</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div class="nav-icon">👥</div>
+            <div>Social</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">☀️</div>
+            <div>Daily</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">⭕</div>
+            <div>Circle</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🏆</div>
+            <div>Challenges</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">👤</div>
+            <div>You</div>
+        </div>
+    </div>
+
+    <script>
+        function filterGoals() {
+            const filter = document.getElementById('privacyFilter').value;
+            const goalCards = document.querySelectorAll('.goal-card');
+
+            goalCards.forEach(card => {
+                const privacy = card.getAttribute('data-privacy');
+
+                if (filter === 'all') {
+                    card.classList.remove('hidden');
+                } else if (filter === privacy) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

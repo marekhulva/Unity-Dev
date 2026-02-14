@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 1: Community Tab - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            height: 844px;
+            position: relative;
+            border: 8px solid #1a1a1a;
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+
+        .header {
+            padding: 60px 20px 20px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .circle-selector {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFD700;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 15px 20px 0;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0a0a0a;
+            position: sticky;
+            top: 57px;
+            z-index: 9;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .stats-card {
+            margin: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .challenge-card {
+            margin: 15px 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            font-size: 32px;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-badge {
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .challenge-stat {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .challenge-stat strong {
+            color: #FFD700;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: #0a0a0a;
+            margin: 20px auto;
+            max-width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            cursor: pointer;
+        }
+
+        .feed-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+        }
+
+        .feed-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .feed-tab.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .post-card {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 12px;
+        }
+
+        .leaderboard {
+            padding: 0 20px 20px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rank {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            width: 30px;
+        }
+
+        .rank.gold { color: #FFD700; }
+        .rank.silver { color: #C0C0C0; }
+        .rank.bronze { color: #CD7F32; }
+
+        .member-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .member-score {
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .search-bar {
+            margin: 15px 20px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            width: calc(100% - 40px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="header">
+                <div class="header-title">Community</div>
+                <div class="header-subtitle">Your circles & challenges</div>
+            </div>
+
+            <div class="section-header">
+                <div class="section-title">My Circles</div>
+                <div class="circle-selector" onclick="toggleCircleDropdown()">SF CIRCLE ▾</div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showCircleTab('overview')">Overview</div>
+                <div class="tab" onclick="showCircleTab('challenges')">Challenges</div>
+                <div class="tab" onclick="showCircleTab('members')">Members</div>
+            </div>
+
+            <div class="content" id="content">
+                <!-- Overview Tab -->
+                <div id="tab-overview">
+                    <div class="stats-card">
+                        <div class="section-title">Circle Stats</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">12</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">87%</div>
+                                <div class="stat-label">Avg Consistency</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">7-Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding: 20px;">
+                        <div class="section-title" style="margin-bottom: 15px;">Leaderboard</div>
+                        <div class="leaderboard-item">
+                            <div class="rank gold">1</div>
+                            <div class="avatar">JS</div>
+                            <div class="member-name">John Smith</div>
+                            <div class="member-score">98%</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank silver">2</div>
+                            <div class="avatar">SK</div>
+                            <div class="member-name">Sarah Kim</div>
+                            <div class="member-score">95%</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank bronze">3</div>
+                            <div class="avatar">MJ</div>
+                            <div class="member-name">Mike Johnson</div>
+                            <div class="member-score">92%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenges Tab -->
+                <div id="tab-challenges" style="display: none;">
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">📚</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">SF Reading Sprint</div>
+                                <div class="challenge-meta">Circle Challenge • 23 days left</div>
+                            </div>
+                            <div class="challenge-badge">Active</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat"><strong>8/12</strong> participating</div>
+                            <div class="challenge-stat">Rank: <strong>#2</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="openChallengeDetail('SF Reading Sprint', 'circle')">View Leaderboard</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">💪</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">Morning Workout Challenge</div>
+                                <div class="challenge-meta">Circle Challenge • 15 days left</div>
+                            </div>
+                            <div class="challenge-badge">Active</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat"><strong>10/12</strong> participating</div>
+                            <div class="challenge-stat">Rank: <strong>#5</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="openChallengeDetail('Morning Workout', 'circle')">View Leaderboard</button>
+                    </div>
+                </div>
+
+                <!-- Members Tab -->
+                <div id="tab-members" style="display: none;">
+                    <div style="padding: 20px;">
+                        <div class="leaderboard-item">
+                            <div class="avatar">JS</div>
+                            <div class="member-name">John Smith</div>
+                            <div class="member-score">98%</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="avatar">SK</div>
+                            <div class="member-name">Sarah Kim</div>
+                            <div class="member-score">95%</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="avatar">MJ</div>
+                            <div class="member-name">Mike Johnson</div>
+                            <div class="member-score">92%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Divider for Global Challenges Section -->
+            <div class="section-header" style="margin-top: 20px;">
+                <div class="section-title">Global Challenges</div>
+                <button class="circle-selector" onclick="showBrowseGlobal()">Browse All</button>
+            </div>
+
+            <div id="global-challenges-section">
+                <input type="text" class="search-bar" placeholder="Search challenges...">
+
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">🥶</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">30 Day Cold Shower Challenge</div>
+                            <div class="challenge-meta">Global • 2,847 participants</div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="challenge-stat">Duration: <strong>30 days</strong></div>
+                        <div class="challenge-stat">Difficulty: <strong>Hard</strong></div>
+                    </div>
+                    <button class="btn" onclick="openChallengeDetail('Cold Shower', 'global')">View Challenge</button>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">🧘</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">100 Hours of Meditation</div>
+                            <div class="challenge-meta">Global • 1,523 participants</div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="challenge-stat">Duration: <strong>90 days</strong></div>
+                        <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                    </div>
+                    <button class="btn" onclick="openChallengeDetail('Meditation', 'global')">View Challenge</button>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">📖</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">Read 12 Books This Year</div>
+                            <div class="challenge-meta">Global • 5,234 participants</div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="challenge-stat">Duration: <strong>365 days</strong></div>
+                        <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                    </div>
+                    <button class="btn" onclick="openChallengeDetail('Reading', 'global')">View Challenge</button>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">Social</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">✓</div>
+                    <div class="nav-label">Daily</div>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon">👥</div>
+                    <div class="nav-label">Community</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">📊</div>
+                    <div class="nav-label">Progress</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-label">Profile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Detail Modal -->
+    <div class="modal" id="challengeModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Challenge Name</div>
+            </div>
+
+            <div class="feed-tabs">
+                <div class="feed-tab active" onclick="showFeedTab('leaderboard')">Leaderboard</div>
+                <div class="feed-tab" onclick="showFeedTab('feed')">Feed</div>
+                <div class="feed-tab" onclick="showFeedTab('about')">About</div>
+            </div>
+
+            <div id="modal-content-area">
+                <!-- Leaderboard -->
+                <div id="modal-leaderboard">
+                    <div class="leaderboard">
+                        <div class="leaderboard-item">
+                            <div class="rank gold">1</div>
+                            <div class="avatar">AM</div>
+                            <div class="member-name">Alex Martinez</div>
+                            <div class="member-score">30/30</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank silver">2</div>
+                            <div class="avatar">JS</div>
+                            <div class="member-name">John Smith</div>
+                            <div class="member-score">28/30</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank bronze">3</div>
+                            <div class="avatar">SK</div>
+                            <div class="member-name">Sarah Kim</div>
+                            <div class="member-score">27/30</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank">4</div>
+                            <div class="avatar">MJ</div>
+                            <div class="member-name">Mike Johnson</div>
+                            <div class="member-score">25/30</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed -->
+                <div id="modal-feed" style="display: none;">
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">AM</div>
+                            <div class="post-info">
+                                <div class="post-author">Alex Martinez</div>
+                                <div class="post-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 30! 🥶 Can't believe I actually completed this challenge. The cold showers are now part of my routine and I feel amazing!
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">SK</div>
+                            <div class="post-info">
+                                <div class="post-author">Sarah Kim</div>
+                                <div class="post-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 27 complete! The hardest part is still getting in, but once you're under the water it's actually refreshing. Who else is almost done? 💪
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">MJ</div>
+                            <div class="post-info">
+                                <div class="post-author">Mike Johnson</div>
+                                <div class="post-time">1 day ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Missed day 26 😞 but back on track today! Not giving up on this.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div id="modal-about" style="display: none;">
+                    <div style="padding: 20px;">
+                        <h3 style="color: #FFD700; margin-bottom: 15px;">About This Challenge</h3>
+                        <p style="color: rgba(255,255,255,0.8); line-height: 1.8; margin-bottom: 20px;">
+                            Take a cold shower every day for 30 days. Studies show cold showers improve circulation, boost immune system, and increase mental resilience.
+                        </p>
+
+                        <h3 style="color: #FFD700; margin-bottom: 15px;">Rules</h3>
+                        <ul style="color: rgba(255,255,255,0.8); line-height: 2; margin-left: 20px;">
+                            <li>Minimum 2 minutes of cold water</li>
+                            <li>Log completion each day</li>
+                            <li>Share your progress (optional)</li>
+                        </ul>
+
+                        <div class="stats-card" style="margin-top: 20px;">
+                            <div class="section-title">Challenge Stats</div>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">2,847</div>
+                                    <div class="stat-label">Participants</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">1,523</div>
+                                    <div class="stat-label">Completed</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">53%</div>
+                                    <div class="stat-label">Success Rate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn" style="margin-top: 20px;">Join Challenge</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showCircleTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('tab-overview').style.display = 'none';
+            document.getElementById('tab-challenges').style.display = 'none';
+            document.getElementById('tab-members').style.display = 'none';
+
+            document.getElementById('tab-' + tab).style.display = 'block';
+        }
+
+        function toggleCircleDropdown() {
+            alert('Circle dropdown would open here showing all your circles');
+        }
+
+        function showBrowseGlobal() {
+            alert('Browse all global challenges view');
+        }
+
+        function openChallengeDetail(name, type) {
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('challengeModal').classList.add('active');
+            showFeedTab('leaderboard');
+        }
+
+        function closeModal() {
+            document.getElementById('challengeModal').classList.remove('active');
+        }
+
+        function showFeedTab(tab) {
+            document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('modal-leaderboard').style.display = 'none';
+            document.getElementById('modal-feed').style.display = 'none';
+            document.getElementById('modal-about').style.display = 'none';
+
+            document.getElementById('modal-' + tab).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

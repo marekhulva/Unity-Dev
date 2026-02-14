@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Social Page - Final Design (Option A)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.6;
+        }
+
+        .phones-wrapper {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        /* iPhone mockup container */
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-label {
+            text-align: center;
+            font-size: 14px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .time {
+            color: #fff;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Header with Tabs */
+        .header {
+            padding: 16px 20px 0 20px;
+            background: rgba(0,0,0,0.98);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            position: relative;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .tab.active {
+            color: #E7B43A;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #E7B43A, #FFD700);
+            border-radius: 3px 3px 0 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-indicator.left {
+            width: 50%;
+        }
+
+        .tab-indicator.right {
+            width: 50%;
+            left: 50%;
+        }
+
+        /* Filter Pills Section */
+        .filters-section {
+            background: rgba(0,0,0,0.98);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 83px;
+            z-index: 19;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .filter-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            font-weight: 600;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .pill.active {
+            background: linear-gradient(135deg, rgba(231,180,58,0.25), rgba(255,215,0,0.15));
+            border-color: rgba(231,180,58,0.4);
+            color: #E7B43A;
+            box-shadow: 0 0 12px rgba(231,180,58,0.2);
+        }
+
+        .pill-badge {
+            background: rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .pill.active .pill-badge {
+            background: rgba(231,180,58,0.5);
+        }
+
+        /* Feed */
+        .feed {
+            padding: 16px;
+        }
+
+        /* Post Cards */
+        .post {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(231,180,58,0.4), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .post:hover::before {
+            opacity: 1;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 4px 12px rgba(240,147,251,0.3);
+        }
+
+        .avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 12px rgba(79,172,254,0.3);
+        }
+
+        .avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 4px 12px rgba(67,233,123,0.3);
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .username {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .meta-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .circle-badge {
+            background: linear-gradient(135deg, rgba(231,180,58,0.25), rgba(255,215,0,0.15));
+            border: 1px solid rgba(231,180,58,0.35);
+            color: #E7B43A;
+            padding: 3px 9px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .circle-badge.unity {
+            background: linear-gradient(135deg, rgba(231,180,58,0.25), rgba(255,215,0,0.15));
+            border-color: rgba(231,180,58,0.35);
+            color: #E7B43A;
+        }
+
+        .circle-badge.hard75 {
+            background: linear-gradient(135deg, rgba(192,192,192,0.25), rgba(128,128,128,0.15));
+            border-color: rgba(192,192,192,0.35);
+            color: #C0C0C0;
+        }
+
+        .circle-badge.marathon {
+            background: linear-gradient(135deg, rgba(67,233,123,0.25), rgba(56,249,215,0.15));
+            border-color: rgba(67,233,123,0.35);
+            color: #43e97b;
+        }
+
+        .challenge-badge {
+            background: linear-gradient(135deg, rgba(192,192,192,0.3), rgba(128,128,128,0.2));
+            border: 1px solid rgba(192,192,192,0.4);
+            color: #C0C0C0;
+            padding: 6px 11px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 7px;
+            letter-spacing: 0.5px;
+        }
+
+        .post-body {
+            padding: 20px 18px;
+        }
+
+        .activity-icon {
+            font-size: 36px;
+            margin-bottom: 14px;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(231,180,58,0.2));
+        }
+
+        .activity-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .activity-context {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.4;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 16px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .post-footer {
+            display: flex;
+            gap: 24px;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .reaction {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .reaction:hover {
+            color: rgba(255,255,255,0.7);
+            transform: scale(1.05);
+        }
+
+        .reaction.active {
+            color: #E7B43A;
+        }
+
+        .reaction-icon {
+            font-size: 16px;
+        }
+
+        /* Following Tab Styling */
+        .following-post {
+            border-left: 3px solid rgba(79,172,254,0.35);
+        }
+
+        .following-post .post-body {
+            background: linear-gradient(135deg, rgba(79,172,254,0.04), rgba(0,242,254,0.02));
+        }
+
+        .following-badge {
+            background: linear-gradient(135deg, rgba(79,172,254,0.25), rgba(0,242,254,0.15));
+            border: 1px solid rgba(79,172,254,0.35);
+            color: #4facfe;
+            padding: 3px 9px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .following-post .activity-name {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .following-post .metric-value {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .following-post .reaction.active {
+            color: #4facfe;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <div class="page-title">Social Page - Final Design</div>
+            <div class="page-subtitle">
+                Option A: Two-Tab with Filters<br>
+                Based on Hooked, Cold Start Problem, and Social App Best Practices
+            </div>
+        </div>
+
+        <div class="phones-wrapper">
+            <!-- My Circles Tab -->
+            <div>
+                <div class="phone-label">"My Circles" Tab (Default)</div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <div class="status-bar">
+                        <div class="time">9:41</div>
+                        <div class="status-icons">📶 📶 🔋</div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="header-title">Social</div>
+                            <div class="tabs">
+                                <div class="tab active">My Circles</div>
+                                <div class="tab">Following</div>
+                                <div class="tab-indicator left"></div>
+                            </div>
+                        </div>
+                        <div class="filters-section">
+                            <div class="filter-pills">
+                                <div class="pill active">
+                                    All Circles
+                                    <span class="pill-badge">8</span>
+                                </div>
+                                <div class="pill">
+                                    Unity Circle
+                                    <span class="pill-badge">3</span>
+                                </div>
+                                <div class="pill">
+                                    75 HARD
+                                    <span class="pill-badge">4</span>
+                                </div>
+                                <div class="pill">
+                                    Marathon
+                                    <span class="pill-badge">1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feed">
+                            <div class="post">
+                                <div class="post-header">
+                                    <div class="avatar">👤</div>
+                                    <div class="user-info">
+                                        <div class="username">Alex Chen</div>
+                                        <div class="post-meta">
+                                            <span>2h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="circle-badge unity">Unity Circle</span>
+                                        </div>
+                                    </div>
+                                    <div class="challenge-badge">75 HARD</div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">🏃</span>
+                                    <div class="activity-name">Morning Run</div>
+                                    <div class="activity-context">🎯 Marathon Training</div>
+                                    <div class="metrics">
+                                        <div class="metric">
+                                            <span class="metric-value">45</span>
+                                            <span class="metric-label">Minutes</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-value">6.2</span>
+                                            <span class="metric-label">Miles</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-value">12</span>
+                                            <span class="metric-label">Streak</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction active">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>24</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>18</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💬</span>
+                                        <span>3</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post">
+                                <div class="post-header">
+                                    <div class="avatar alt1">👩</div>
+                                    <div class="user-info">
+                                        <div class="username">Sarah Miller</div>
+                                        <div class="post-meta">
+                                            <span>4h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="circle-badge hard75">75 HARD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">☀️</span>
+                                    <div class="activity-name">Woke Up Before 6am</div>
+                                    <div class="activity-context">Morning Routine • Day 28 streak 🔥</div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>31</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>12</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post">
+                                <div class="post-header">
+                                    <div class="avatar alt2">🧑</div>
+                                    <div class="user-info">
+                                        <div class="username">Mike Johnson</div>
+                                        <div class="post-meta">
+                                            <span>5h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="circle-badge unity">Unity Circle</span>
+                                        </div>
+                                    </div>
+                                    <div class="challenge-badge">75 HARD</div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">💪</span>
+                                    <div class="activity-name">Strength Training</div>
+                                    <div class="activity-context">🎯 Get Stronger • Upper body focus today</div>
+                                    <div class="metrics">
+                                        <div class="metric">
+                                            <span class="metric-value">60</span>
+                                            <span class="metric-label">Minutes</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-value">8</span>
+                                            <span class="metric-label">Streak</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>19</span>
+                                    </div>
+                                    <div class="reaction active">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>24</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💬</span>
+                                        <span>1</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post">
+                                <div class="post-header">
+                                    <div class="avatar alt3">👨</div>
+                                    <div class="user-info">
+                                        <div class="username">James Lee</div>
+                                        <div class="post-meta">
+                                            <span>6h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="circle-badge marathon">Marathon</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">📖</span>
+                                    <div class="activity-name">Read 20 Pages</div>
+                                    <div class="activity-context">Personal Growth • "Atomic Habits"</div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>15</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Following Tab -->
+            <div>
+                <div class="phone-label">"Following" Tab (Inspiration)</div>
+                <div class="phone-mockup">
+                    <div class="notch"></div>
+                    <div class="status-bar">
+                        <div class="time">9:41</div>
+                        <div class="status-icons">📶 📶 🔋</div>
+                    </div>
+                    <div class="screen-content">
+                        <div class="header">
+                            <div class="header-title">Social</div>
+                            <div class="tabs">
+                                <div class="tab">My Circles</div>
+                                <div class="tab active">Following</div>
+                                <div class="tab-indicator right"></div>
+                            </div>
+                        </div>
+                        <div class="feed" style="padding-top: 16px;">
+                            <div class="post following-post">
+                                <div class="post-header">
+                                    <div class="avatar alt1">👩</div>
+                                    <div class="user-info">
+                                        <div class="username">Emma Davis</div>
+                                        <div class="post-meta">
+                                            <span>1h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="following-badge">Following</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">🧘</span>
+                                    <div class="activity-name">Morning Meditation</div>
+                                    <div class="activity-context">Mindfulness Journey • Finding peace in the chaos</div>
+                                    <div class="metrics">
+                                        <div class="metric">
+                                            <span class="metric-value">30</span>
+                                            <span class="metric-label">Minutes</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-value">100</span>
+                                            <span class="metric-label">Streak</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>156</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>89</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💬</span>
+                                        <span>12</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post following-post">
+                                <div class="post-header">
+                                    <div class="avatar alt3">👨</div>
+                                    <div class="user-info">
+                                        <div class="username">David Kim</div>
+                                        <div class="post-meta">
+                                            <span>3h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="following-badge">Following</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">🎨</span>
+                                    <div class="activity-name">Creative Writing</div>
+                                    <div class="activity-context">Daily Practice • Working on my novel</div>
+                                    <div class="metrics">
+                                        <div class="metric">
+                                            <span class="metric-value">1.2K</span>
+                                            <span class="metric-label">Words</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-value">45</span>
+                                            <span class="metric-label">Streak</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction active">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>203</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>124</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💬</span>
+                                        <span>8</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="post following-post">
+                                <div class="post-header">
+                                    <div class="avatar alt2">🧑</div>
+                                    <div class="user-info">
+                                        <div class="username">Ryan Martinez</div>
+                                        <div class="post-meta">
+                                            <span>5h ago</span>
+                                            <div class="meta-dot"></div>
+                                            <span class="following-badge">Following</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <span class="activity-icon">🎸</span>
+                                    <div class="activity-name">Guitar Practice</div>
+                                    <div class="activity-context">Learning new skills • Mastering fingerstyle</div>
+                                </div>
+                                <div class="post-footer">
+                                    <div class="reaction">
+                                        <span class="reaction-icon">🔥</span>
+                                        <span>67</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💪</span>
+                                        <span>34</span>
+                                    </div>
+                                    <div class="reaction">
+                                        <span class="reaction-icon">💬</span>
+                                        <span>2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

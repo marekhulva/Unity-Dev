@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Simplification - Option 1: Single Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: #000;
+            padding: 20px 0 16px;
+            z-index: 10;
+            border-bottom: 1px solid rgba(231,180,58,0.2);
+        }
+        .circle-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .circle-emoji {
+            font-size: 32px;
+        }
+        .circle-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .circle-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(231,180,58,0.3);
+            background: rgba(231,180,58,0.1);
+            color: #E7B43A;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        .view-all {
+            font-size: 13px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Leaderboard Podium */
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 20px 0;
+        }
+
+        .podium-place {
+            text-align: center;
+            flex: 1;
+        }
+
+        .podium-place.first {
+            order: 2;
+        }
+        .podium-place.second {
+            order: 1;
+        }
+        .podium-place.third {
+            order: 3;
+        }
+
+        .podium-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #E7B43A 0%, rgba(231,180,58,0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 8px;
+        }
+
+        .podium-place.first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+        }
+
+        .podium-medal {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .podium-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .podium-points {
+            font-size: 11px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Challenges */
+        .challenge-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .challenge-emoji {
+            font-size: 32px;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+
+        .challenge-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .activity-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .activity-content {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Members Grid */
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .member-card {
+            text-align: center;
+        }
+
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 6px;
+        }
+
+        .member-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .member-role {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .coming-soon {
+            position: relative;
+        }
+
+        .coming-soon::after {
+            content: '🚧 Coming Soon';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #E7B43A;
+            border: 1px solid rgba(231,180,58,0.3);
+            white-space: nowrap;
+        }
+
+        .label {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #E7B43A;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="label">OPTION 1: Single Scroll</div>
+
+    <div class="header">
+        <div class="circle-name">
+            <div class="circle-emoji">⚡</div>
+            <div class="circle-title">Warriors</div>
+        </div>
+        <div class="circle-actions">
+            <button class="btn">Invite</button>
+            <button class="btn">Settings</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Circle Stats -->
+        <div class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Challenges</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">342</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 3 Leaderboard -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">🏆 Top Contributors</div>
+                <div class="view-all">View All →</div>
+            </div>
+            <div class="podium">
+                <div class="podium-place second">
+                    <div class="podium-medal">🥈</div>
+                    <div class="podium-avatar">M</div>
+                    <div class="podium-name">Maria</div>
+                    <div class="podium-points">2,450 pts</div>
+                </div>
+                <div class="podium-place first">
+                    <div class="podium-medal">🥇</div>
+                    <div class="podium-avatar">J</div>
+                    <div class="podium-name">John</div>
+                    <div class="podium-points">3,120 pts</div>
+                </div>
+                <div class="podium-place third">
+                    <div class="podium-medal">🥉</div>
+                    <div class="podium-avatar">S</div>
+                    <div class="podium-name">Sarah</div>
+                    <div class="podium-points">2,180 pts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Challenges -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">🎯 Active Challenges</div>
+                <div class="view-all">See All →</div>
+            </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-emoji">🧊</div>
+                    <div>
+                        <div class="challenge-title">7-Day Cold Shower</div>
+                        <div class="challenge-meta">32 participants • 5 days left</div>
+                    </div>
+                </div>
+                <div class="challenge-badge">🔥 Active</div>
+            </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-emoji">📖</div>
+                    <div>
+                        <div class="challenge-title">Read 30 Minutes Daily</div>
+                        <div class="challenge-meta">28 participants • 12 days left</div>
+                    </div>
+                </div>
+                <div class="challenge-badge">🔥 Active</div>
+            </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-emoji">🏃</div>
+                    <div>
+                        <div class="challenge-title">Morning Run Streak</div>
+                        <div class="challenge-meta">19 participants • 21 days left</div>
+                    </div>
+                </div>
+                <div class="challenge-badge">🔥 Active</div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">📱 Recent Activity</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-header">
+                    <div class="activity-avatar">J</div>
+                    <div class="activity-name">John completed Cold Shower 🧊</div>
+                </div>
+                <div class="activity-content">Day 5/7 complete! Feeling unstoppable 💪</div>
+                <div class="activity-stats">
+                    <span>❤️ 12</span>
+                    <span>💬 3</span>
+                    <span>2 hours ago</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-header">
+                    <div class="activity-avatar">M</div>
+                    <div class="activity-name">Maria completed Morning Run 🏃</div>
+                </div>
+                <div class="activity-content">5K done before sunrise ☀️</div>
+                <div class="activity-stats">
+                    <span>❤️ 8</span>
+                    <span>💬 1</span>
+                    <span>5 hours ago</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-header">
+                    <div class="activity-avatar">S</div>
+                    <div class="activity-name">Sarah completed Reading 📖</div>
+                </div>
+                <div class="activity-content">Finished chapter 3 of Atomic Habits</div>
+                <div class="activity-stats">
+                    <span>❤️ 15</span>
+                    <span>💬  5</span>
+                    <span>8 hours ago</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Members -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">👥 All Members (47)</div>
+            </div>
+            <div class="members-grid">
+                <div class="member-card">
+                    <div class="member-avatar">J</div>
+                    <div class="member-name">John</div>
+                    <div class="member-role">Admin</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">M</div>
+                    <div class="member-name">Maria</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">S</div>
+                    <div class="member-name">Sarah</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">D</div>
+                    <div class="member-name">David</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">E</div>
+                    <div class="member-name">Emma</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">L</div>
+                    <div class="member-name">Lisa</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">T</div>
+                    <div class="member-name">Tom</div>
+                    <div class="member-role">Member</div>
+                </div>
+                <div class="member-card">
+                    <div class="member-avatar">A</div>
+                    <div class="member-name">Alex</div>
+                    <div class="member-role">Member</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="height: 80px;"></div>
+</body>
+</html>

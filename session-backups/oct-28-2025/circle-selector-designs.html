@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Selector Design Options - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 30%, #000000 100%);
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #D4AF37, #C9A050, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 50px;
+            color: rgba(255, 215, 0, 0.6);
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .design-card {
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .design-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(201, 160, 80, 0.4),
+                rgba(184, 134, 11, 0.4),
+                rgba(160, 121, 10, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .design-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            color: #FFD700;
+        }
+
+        .design-description {
+            font-size: 13px;
+            color: rgba(255, 215, 0, 0.5);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .demo-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Option 1: Horizontal Scroll Pills */
+        .pills-container {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 8px 0;
+            width: 100%;
+            scrollbar-width: none;
+        }
+
+        .pills-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            color: rgba(255, 215, 0, 0.6);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .pill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(184, 134, 11, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .pill.active {
+            color: #FFD700;
+        }
+
+        .pill.active::before {
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.9),
+                rgba(201, 160, 80, 0.9),
+                rgba(184, 134, 11, 0.9));
+        }
+
+        .pill.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                #D4AF37,
+                #C9A050,
+                #B8860B);
+        }
+
+        /* Option 2: Dropdown Card */
+        .dropdown-card {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .dropdown-trigger {
+            padding: 14px 20px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-trigger::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 0.75px;
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .dropdown-text {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #FFD700;
+        }
+
+        .dropdown-arrow {
+            color: rgba(255, 215, 0, 0.6);
+            font-size: 12px;
+        }
+
+        .dropdown-menu {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 12px;
+            background: rgba(10, 10, 10, 0.95);
+            position: relative;
+        }
+
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            padding: 0.75px;
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(184, 134, 11, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .dropdown-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: rgba(255, 215, 0, 0.7);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+        }
+
+        .dropdown-item.active {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+        }
+
+        /* Option 3: Carousel with Swipe Indicator */
+        .carousel-container {
+            width: 100%;
+            text-align: center;
+        }
+
+        .carousel-circle {
+            padding: 16px 24px;
+            margin: 0 auto 16px;
+            max-width: 250px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+        }
+
+        .carousel-circle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(201, 160, 80, 0.6),
+                rgba(184, 134, 11, 0.6),
+                rgba(201, 160, 80, 0.6),
+                rgba(212, 175, 55, 0.6));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .carousel-name {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #FFD700;
+        }
+
+        .carousel-emoji {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            width: 20px;
+            border-radius: 3px;
+            background: linear-gradient(90deg,
+                #D4AF37,
+                #C9A050,
+                #B8860B);
+        }
+
+        /* Option 4: Compact Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            padding: 16px;
+            border-radius: 12px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .grid-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            padding: 0.75px;
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(184, 134, 11, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .grid-item.active::before {
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.8),
+                rgba(184, 134, 11, 0.8));
+        }
+
+        .grid-emoji {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .grid-name {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: rgba(255, 215, 0, 0.7);
+        }
+
+        .grid-item.active .grid-name {
+            color: #FFD700;
+        }
+
+        /* Option 5: Floating Tags */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border-radius: 14px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: rgba(255, 215, 0, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 14px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(184, 134, 11, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .tag.active {
+            color: #FFD700;
+            transform: scale(1.05);
+        }
+
+        .tag.active::before {
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.9),
+                rgba(184, 134, 11, 0.9));
+        }
+
+        .tag-emoji {
+            margin-right: 4px;
+        }
+
+        /* Option 6: Slide-In Card List */
+        .slide-card {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .slide-header {
+            padding: 14px 20px;
+            border-radius: 16px 16px 0 0;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slide-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .slide-header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .slide-list {
+            background: rgba(5, 5, 5, 0.8);
+            border-radius: 0 0 16px 16px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide-list::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .slide-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: rgba(255, 215, 0, 0.7);
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 0.75px solid rgba(212, 175, 55, 0.2);
+            border-right: 0.75px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .slide-item:hover {
+            background: rgba(255, 215, 0, 0.05);
+            color: #FFD700;
+        }
+
+        .slide-item.active {
+            background: rgba(255, 215, 0, 0.1);
+            color: #FFD700;
+        }
+
+        .slide-emoji {
+            font-size: 18px;
+        }
+
+        /* Option 7: Segmented Control */
+        .segmented-control {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            position: relative;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .segment {
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .segment.active {
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.2),
+                rgba(184, 134, 11, 0.2));
+        }
+
+        /* Option 8: Chip + Counter */
+        .chip-container {
+            text-align: center;
+        }
+
+        .chip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 20px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .chip-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .chip-emoji {
+            font-size: 20px;
+        }
+
+        .chip-text {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #FFD700;
+        }
+
+        .chip-count {
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.5);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .chip-hint {
+            margin-top: 12px;
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.4);
+            letter-spacing: 1px;
+        }
+
+        /* Option 9: Bottom Peek */
+        .bottom-peek {
+            width: 100%;
+            max-width: 350px;
+            margin: 0 auto;
+            border-radius: 16px 16px 0 0;
+            background: rgba(10, 10, 10, 0.9);
+            position: relative;
+        }
+
+        .bottom-peek::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .peek-handle {
+            padding: 8px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .handle-line {
+            width: 40px;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        .peek-current {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Option 10: Arrow Stepper */
+        .stepper-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .stepper-arrow {
+            font-size: 28px;
+            color: rgba(255, 215, 0, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .stepper-arrow:hover {
+            color: #FFD700;
+            transform: scale(1.2);
+        }
+
+        .stepper-center {
+            flex: 1;
+            text-align: center;
+            padding: 16px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+        }
+
+        .stepper-center::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .stepper-emoji {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .stepper-name {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: #FFD700;
+            margin-bottom: 4px;
+        }
+
+        .stepper-indicator {
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.4);
+        }
+
+        /* Option 11: Ticker Slot */
+        .ticker-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .ticker-window {
+            flex: 1;
+            height: 120px;
+            overflow: hidden;
+            position: relative;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .ticker-window::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            padding: 0.75px;
+            background: linear-gradient(135deg,
+                rgba(212, 175, 55, 0.4),
+                rgba(184, 134, 11, 0.4));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .ticker-item {
+            padding: 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+        }
+
+        .ticker-item.active {
+            color: #FFD700;
+            transform: scale(1.1);
+        }
+
+        .ticker-item.fade {
+            color: rgba(255, 215, 0, 0.3);
+            transform: scale(0.85);
+        }
+
+        .ticker-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .ticker-up,
+        .ticker-down {
+            padding: 8px 12px;
+            cursor: pointer;
+            color: rgba(255, 215, 0, 0.6);
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .ticker-up:hover,
+        .ticker-down:hover {
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* Option 12: Inline Tab Bar */
+        .inline-tabs-demo {
+            width: 100%;
+        }
+
+        .main-tabs {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding-bottom: 12px;
+            border-bottom: 0.75px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .main-tab {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: rgba(255, 215, 0, 0.5);
+            cursor: pointer;
+            padding: 8px 0;
+        }
+
+        .main-tab.active {
+            color: #FFD700;
+            position: relative;
+        }
+
+        .main-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                #D4AF37,
+                #C9A050,
+                #B8860B);
+        }
+
+        .sub-tabs {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .sub-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sub-tab {
+            padding: 8px 16px;
+            border-radius: 14px;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: rgba(255, 215, 0, 0.5);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .sub-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 14px;
+            padding: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.3),
+                rgba(184, 134, 11, 0.3));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        .sub-tab.active {
+            color: #FFD700;
+        }
+
+        .sub-tab.active::before {
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.7),
+                rgba(184, 134, 11, 0.7));
+        }
+
+        /* Pros/Cons Section */
+        .pros-cons {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .pros-cons h4 {
+            font-size: 12px;
+            color: rgba(255, 215, 0, 0.5);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .pros-cons ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .pros-cons li {
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.4);
+            margin-bottom: 4px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .pros-cons li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: rgba(212, 175, 55, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CIRCLE SELECTOR</h1>
+        <p class="subtitle">12 Design Options for Unity 2.0</p>
+
+        <div class="design-grid">
+            <!-- Option 1: Horizontal Scroll Pills -->
+            <div class="design-card">
+                <div class="design-title">OPTION 1: SCROLL PILLS</div>
+                <div class="design-description">Horizontal scrollable pills with gold borders and active state indicator</div>
+                <div class="demo-container">
+                    <div class="pills-container">
+                        <div class="pill">🌍 ALL</div>
+                        <div class="pill active">🏀 BBALL</div>
+                        <div class="pill">💪 FITNESS</div>
+                        <div class="pill">🚀 STARTUP</div>
+                        <div class="pill">📚 BOOKS</div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Similar to current design - familiar UX</li>
+                        <li>Supports unlimited circles</li>
+                        <li>Minimal vertical space</li>
+                        <li>Quick switching</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 2: Dropdown Card -->
+            <div class="design-card">
+                <div class="design-title">OPTION 2: DROPDOWN CARD</div>
+                <div class="design-description">Collapsible dropdown card with luxury gold border matching the pinned card aesthetic</div>
+                <div class="demo-container">
+                    <div class="dropdown-card">
+                        <div class="dropdown-trigger">
+                            <span class="dropdown-text">🏀 BASKETBALL</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item">🌍 All Circles</div>
+                            <div class="dropdown-item active">🏀 Basketball</div>
+                            <div class="dropdown-item">💪 Fitness</div>
+                            <div class="dropdown-item">🚀 Startup Hub</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Matches pinned card design perfectly</li>
+                        <li>Compact when collapsed</li>
+                        <li>Clear visual hierarchy</li>
+                        <li>Easy to scan all options</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 3: Carousel -->
+            <div class="design-card">
+                <div class="design-title">OPTION 3: SWIPE CAROUSEL</div>
+                <div class="design-description">Swipeable carousel with emoji display and dot indicators for navigation</div>
+                <div class="demo-container">
+                    <div class="carousel-container">
+                        <div class="carousel-circle">
+                            <div class="carousel-emoji">🏀</div>
+                            <div class="carousel-name">BASKETBALL</div>
+                        </div>
+                        <div class="carousel-dots">
+                            <div class="dot"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Very minimalistic and clean</li>
+                        <li>Emphasizes one circle at a time</li>
+                        <li>Mobile-friendly swipe gesture</li>
+                        <li>Elegant and focused</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 4: Compact Grid -->
+            <div class="design-card">
+                <div class="design-title">OPTION 4: COMPACT GRID</div>
+                <div class="design-description">2x2 grid layout with emoji icons and abbreviated names for quick access</div>
+                <div class="demo-container">
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <div class="grid-emoji">🌍</div>
+                            <div class="grid-name">ALL</div>
+                        </div>
+                        <div class="grid-item active">
+                            <div class="grid-emoji">🏀</div>
+                            <div class="grid-name">BBALL</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-emoji">💪</div>
+                            <div class="grid-name">FITNESS</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-emoji">🚀</div>
+                            <div class="grid-name">STARTUP</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Shows multiple circles at once</li>
+                        <li>Visual and intuitive</li>
+                        <li>Good use of space</li>
+                        <li>No scrolling needed (for 4 circles)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 5: Floating Tags -->
+            <div class="design-card">
+                <div class="design-title">OPTION 5: FLOATING TAGS</div>
+                <div class="design-description">Wrapped tag chips with emoji and text, similar to hashtags or filters</div>
+                <div class="demo-container">
+                    <div class="tags-container">
+                        <div class="tag">
+                            <span class="tag-emoji">🌍</span>
+                            ALL
+                        </div>
+                        <div class="tag active">
+                            <span class="tag-emoji">🏀</span>
+                            BBALL
+                        </div>
+                        <div class="tag">
+                            <span class="tag-emoji">💪</span>
+                            FITNESS
+                        </div>
+                        <div class="tag">
+                            <span class="tag-emoji">🚀</span>
+                            STARTUP
+                        </div>
+                        <div class="tag">
+                            <span class="tag-emoji">📚</span>
+                            BOOKS
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Flexible and adaptive</li>
+                        <li>Edgy and modern</li>
+                        <li>Supports many circles</li>
+                        <li>Natural wrap behavior</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 6: Slide-In Card List -->
+            <div class="design-card">
+                <div class="design-title">OPTION 6: CARD LIST</div>
+                <div class="design-description">Expandable card list with luxury borders matching the pinned card style exactly</div>
+                <div class="demo-container">
+                    <div class="slide-card">
+                        <div class="slide-header">
+                            <span class="dropdown-text">🏀 BASKETBALL</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="slide-list">
+                            <div class="slide-item">
+                                <span class="slide-emoji">🌍</span>
+                                All Circles
+                            </div>
+                            <div class="slide-item active">
+                                <span class="slide-emoji">🏀</span>
+                                Basketball
+                            </div>
+                            <div class="slide-item">
+                                <span class="slide-emoji">💪</span>
+                                Fitness Warriors
+                            </div>
+                            <div class="slide-item">
+                                <span class="slide-emoji">🚀</span>
+                                Startup Hub
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Exact match to pinned card aesthetic</li>
+                        <li>Premium luxury feel</li>
+                        <li>Clear separation of circles</li>
+                        <li>Easy to read full names</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+            <!-- Option 7: Segmented Control -->
+            <div class="design-card">
+                <div class="design-title">OPTION 7: SEGMENTED CONTROL</div>
+                <div class="design-description">iOS-style segmented control with sliding gold background indicator</div>
+                <div class="demo-container">
+                    <div class="segmented-control">
+                        <div class="segment">🌍</div>
+                        <div class="segment active">🏀</div>
+                        <div class="segment">💪</div>
+                        <div class="segment">🚀</div>
+                        <div class="segment-background"></div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Very clean and minimal</li>
+                        <li>Smooth animated transitions</li>
+                        <li>Familiar iOS pattern</li>
+                        <li>Compact and elegant</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 8: Chip with Badge Counter -->
+            <div class="design-card">
+                <div class="design-title">OPTION 8: CHIP + COUNTER</div>
+                <div class="design-description">Single chip showing active circle with badge showing total count, tap to cycle</div>
+                <div class="demo-container">
+                    <div class="chip-container">
+                        <div class="chip-badge">
+                            <span class="chip-emoji">🏀</span>
+                            <span class="chip-text">BASKETBALL</span>
+                            <span class="chip-count">2/4</span>
+                        </div>
+                        <div class="chip-hint">Tap to switch circles</div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Extremely minimal - takes least space</li>
+                        <li>Quick tap-to-cycle interaction</li>
+                        <li>Shows position context (2/4)</li>
+                        <li>Edgy and unique</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 9: Bottom Sheet Mini -->
+            <div class="design-card">
+                <div class="design-title">OPTION 9: BOTTOM PEEK</div>
+                <div class="design-description">Minimal bottom sheet that slides up, showing current selection with subtle arrow</div>
+                <div class="demo-container">
+                    <div class="bottom-peek">
+                        <div class="peek-handle">
+                            <div class="handle-line"></div>
+                        </div>
+                        <div class="peek-current">
+                            <span style="font-size: 20px; margin-right: 8px;">🏀</span>
+                            <span style="font-size: 14px; font-weight: 600; letter-spacing: 1.5px; color: #FFD700;">BASKETBALL</span>
+                            <span style="margin-left: auto; color: rgba(255,215,0,0.5); font-size: 12px;">▲</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Instagram/Snapchat style</li>
+                        <li>Modern swipe-up gesture</li>
+                        <li>Minimal when collapsed</li>
+                        <li>Feels premium and app-like</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 10: Horizontal Stepper -->
+            <div class="design-card">
+                <div class="design-title">OPTION 10: ARROW STEPPER</div>
+                <div class="design-description">Center-focused design with left/right arrows to cycle through circles</div>
+                <div class="demo-container">
+                    <div class="stepper-container">
+                        <div class="stepper-arrow">‹</div>
+                        <div class="stepper-center">
+                            <div class="stepper-emoji">🏀</div>
+                            <div class="stepper-name">BASKETBALL</div>
+                            <div class="stepper-indicator">2 of 4</div>
+                        </div>
+                        <div class="stepper-arrow">›</div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Very focused and clear</li>
+                        <li>Easy to understand</li>
+                        <li>Good for sequential browsing</li>
+                        <li>Minimal and centered</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 11: Ticker/Slot Machine -->
+            <div class="design-card">
+                <div class="design-title">OPTION 11: TICKER SLOT</div>
+                <div class="design-description">Vertical slot machine-style ticker that scrolls through circles</div>
+                <div class="demo-container">
+                    <div class="ticker-container">
+                        <div class="ticker-window">
+                            <div class="ticker-item fade">💪 FITNESS</div>
+                            <div class="ticker-item active">🏀 BASKETBALL</div>
+                            <div class="ticker-item fade">🚀 STARTUP</div>
+                        </div>
+                        <div class="ticker-arrows">
+                            <div class="ticker-up">▲</div>
+                            <div class="ticker-down">▼</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Unique and memorable</li>
+                        <li>Edgy and different</li>
+                        <li>Shows context (prev/next)</li>
+                        <li>Satisfying scroll animation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option 12: Inline Tab Bar (Instagram-like) -->
+            <div class="design-card">
+                <div class="design-title">OPTION 12: INLINE TAB BAR</div>
+                <div class="design-description">Below the main tabs (Circle/Explore), add a secondary tier for circle selection</div>
+                <div class="demo-container">
+                    <div class="inline-tabs-demo">
+                        <div class="main-tabs">
+                            <div class="main-tab active">CIRCLE</div>
+                            <div class="main-tab">EXPLORE</div>
+                        </div>
+                        <div class="sub-tabs">
+                            <div class="sub-tab">🌍 All</div>
+                            <div class="sub-tab active">🏀 BBall</div>
+                            <div class="sub-tab">💪 Fit</div>
+                            <div class="sub-tab">🚀 Start</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Instagram profile style</li>
+                        <li>Natural hierarchy</li>
+                        <li>Always visible</li>
+                        <li>No extra interaction needed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 30px; border-radius: 16px; background: rgba(212, 175, 55, 0.05);">
+            <p style="color: rgba(255, 215, 0, 0.6); font-size: 13px; letter-spacing: 1px;">
+                🎨 All designs use the same luxury gold gradient borders as the "Share your victory..." card<br>
+                💎 Each option is minimalistic, edgy, and maintains the Unity 2.0 aesthetic<br>
+                📱 Designed for mobile-first experience<br>
+                ⚠️ Note: Option 2 and 6 are similar (both dropdowns) - consider the newer options for more variety
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity to better demonstrate the concepts
+        document.querySelectorAll('.pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.grid-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.grid-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Segmented control
+        document.querySelectorAll('.segment').forEach(segment => {
+            segment.addEventListener('click', function() {
+                document.querySelectorAll('.segment').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Chip counter
+        let chipIndex = 1;
+        const chipNames = ['ALL CIRCLES', 'BASKETBALL', 'FITNESS', 'STARTUP'];
+        const chipEmojis = ['🌍', '🏀', '💪', '🚀'];
+        document.querySelector('.chip-badge')?.addEventListener('click', function() {
+            chipIndex = (chipIndex + 1) % chipNames.length;
+            this.querySelector('.chip-emoji').textContent = chipEmojis[chipIndex];
+            this.querySelector('.chip-text').textContent = chipNames[chipIndex];
+            this.querySelector('.chip-count').textContent = `${chipIndex + 1}/${chipNames.length}`;
+        });
+
+        // Stepper arrows
+        let stepperIndex = 1;
+        document.querySelectorAll('.stepper-arrow').forEach((arrow, idx) => {
+            arrow.addEventListener('click', function() {
+                if (idx === 0) {
+                    stepperIndex = (stepperIndex - 1 + chipNames.length) % chipNames.length;
+                } else {
+                    stepperIndex = (stepperIndex + 1) % chipNames.length;
+                }
+                document.querySelector('.stepper-emoji').textContent = chipEmojis[stepperIndex];
+                document.querySelector('.stepper-name').textContent = chipNames[stepperIndex];
+                document.querySelector('.stepper-indicator').textContent = `${stepperIndex + 1} of ${chipNames.length}`;
+            });
+        });
+
+        // Inline tabs
+        document.querySelectorAll('.sub-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Carousel navigation
+        let currentDot = 1;
+        const dots = document.querySelectorAll('.dot');
+        const carouselNames = ['ALL CIRCLES', 'BASKETBALL', 'FITNESS', 'STARTUP'];
+        const carouselEmojis = ['🌍', '🏀', '💪', '🚀'];
+
+        setInterval(() => {
+            currentDot = (currentDot + 1) % dots.length;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentDot);
+            });
+            document.querySelector('.carousel-name').textContent = carouselNames[currentDot];
+            document.querySelector('.carousel-emoji').textContent = carouselEmojis[currentDot];
+        }, 3000);
+    </script>
+</body>
+</html>

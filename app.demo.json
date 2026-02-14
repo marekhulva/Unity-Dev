@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Profile Timeline Demo",
+    "slug": "profile-timeline-demo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    "entryPoint": "./AppDemo.tsx",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.demo.profiletimeline"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.demo.profiletimeline"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

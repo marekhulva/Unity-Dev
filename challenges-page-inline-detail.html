@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenges - Inline Detail View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+        }
+
+        .phones-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 390px;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 8px solid #1a1a1a;
+        }
+
+        .phone-label {
+            text-align: center;
+            padding: 10px;
+            background: #1a1a1a;
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFD700;
+            letter-spacing: 0.5px;
+        }
+
+        .screen {
+            height: 750px;
+            overflow-y: auto;
+            background: #000;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .header {
+            padding: 16px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: #FFD700;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+
+        .main-tabs {
+            display: flex;
+            padding: 15px 20px 0;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0a0a0a;
+            position: sticky;
+            top: 44px;
+            z-index: 10;
+        }
+
+        .main-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .main-tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .detail-tabs {
+            display: flex;
+            padding: 15px 20px 0;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 215, 0, 0.05);
+            position: sticky;
+            top: 98px;
+            z-index: 9;
+        }
+
+        .detail-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .detail-tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .content {
+            padding: 16px 20px 100px;
+        }
+
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .challenge-card.selected {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            font-size: 32px;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-progress {
+            margin: 12px 0;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            transition: width 0.3s;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-item strong {
+            color: #FFD700;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .detail-content {
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .detail-content.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-item.you {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .rank {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD700;
+            min-width: 40px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .user-stats {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+        }
+
+        .info-section {
+            margin-bottom: 20px;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #FFD700;
+        }
+
+        .activity-badge {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD700;
+            margin-bottom: 4px;
+        }
+
+        .activity-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 8px;
+            right: 8px;
+            height: 85px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px;
+            border-radius: 0 0 32px 32px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            opacity: 0.5;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .chip.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Challenges - Inline Detail View</h1>
+        <p class="subtitle">New layout: Tabs stay at top, challenge detail expands below</p>
+
+        <div class="phones-container">
+            <!-- NORMAL VIEW: LIST WITH TABS -->
+            <div class="phone">
+                <div class="phone-label">1. Normal View - Main tabs visible</div>
+                <div class="screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>🔋</span>
+                    </div>
+                    <div class="header">
+                        <div class="header-title">Challenges</div>
+                    </div>
+
+                    <!-- MAIN TABS - ALWAYS VISIBLE -->
+                    <div class="main-tabs">
+                        <div class="main-tab active">Discover</div>
+                        <div class="main-tab">Active</div>
+                        <div class="main-tab">Completed</div>
+                    </div>
+
+                    <div class="content">
+                        <div style="font-size: 18px; font-weight: 700; color: #FFD700; margin: 0 0 12px; display: flex; align-items: center; gap: 8px">
+                            <span>🌍</span> Global Challenges
+                        </div>
+
+                        <div class="challenge-card">
+                            <div class="challenge-header">
+                                <div class="challenge-icon">❄️</div>
+                                <div class="challenge-info">
+                                    <div class="challenge-title">30 Day Cold Shower</div>
+                                    <div class="challenge-meta">Global • 30 Days</div>
+                                </div>
+                            </div>
+                            <div class="challenge-stats" style="margin-top: 10px">
+                                <div class="stat-item"><strong>1,234</strong> participants</div>
+                                <div class="stat-item">Starts Dec 1</div>
+                            </div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">Success: <strong>80%</strong> completion</div>
+                                <div class="stat-item">Badge: <strong>🏆 Ice Warrior</strong></div>
+                            </div>
+                            <div style="display: flex; gap: 8px">
+                                <button class="btn btn-secondary" style="flex: 1">View Details</button>
+                                <button class="btn" style="flex: 1">Join</button>
+                            </div>
+                        </div>
+
+                        <div class="challenge-card">
+                            <div class="challenge-header">
+                                <div class="challenge-icon">🧘</div>
+                                <div class="challenge-info">
+                                    <div class="challenge-title">Daily Meditation</div>
+                                    <div class="challenge-meta">Global • 21 Days</div>
+                                </div>
+                            </div>
+                            <div class="challenge-stats" style="margin-top: 10px">
+                                <div class="stat-item"><strong>1,567</strong> participants</div>
+                                <div class="stat-item">Starts Dec 28</div>
+                            </div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">Success: <strong>75%</strong> completion</div>
+                                <div class="stat-item">Badge: <strong>🏆 Zen Master</strong></div>
+                            </div>
+                            <div style="display: flex; gap: 8px">
+                                <button class="btn btn-secondary" style="flex: 1">View Details</button>
+                                <button class="btn" style="flex: 1">Join</button>
+                            </div>
+                        </div>
+
+                        <div class="challenge-card">
+                            <div class="challenge-header">
+                                <div class="challenge-icon">📚</div>
+                                <div class="challenge-info">
+                                    <div class="challenge-title">Read 30 Min Daily</div>
+                                    <div class="challenge-meta">Global • 21 Days</div>
+                                </div>
+                            </div>
+                            <div class="challenge-stats" style="margin-top: 10px">
+                                <div class="stat-item"><strong>890</strong> participants</div>
+                                <div class="stat-item">Starts Jan 5</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-nav">
+                        <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Social</div></div>
+                        <div class="nav-item"><div class="nav-icon">✅</div><div class="nav-label">Daily</div></div>
+                        <div class="nav-item"><div class="nav-icon">👥</div><div class="nav-label">Circle</div></div>
+                        <div class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Challenges</div></div>
+                        <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPANDED VIEW: CHALLENGE DETAIL BELOW TABS -->
+            <div class="phone">
+                <div class="phone-label">2. Expanded View - Detail appears BELOW main tabs</div>
+                <div class="screen">
+                    <div class="status-bar">
+                        <span>9:41</span>
+                        <span>🔋</span>
+                    </div>
+                    <div class="header">
+                        <div class="header-back">← Back to list</div>
+                        <div class="header-title">Challenges</div>
+                    </div>
+
+                    <!-- MAIN TABS - STILL VISIBLE! -->
+                    <div class="main-tabs">
+                        <div class="main-tab active">Discover</div>
+                        <div class="main-tab">Active</div>
+                        <div class="main-tab">Completed</div>
+                    </div>
+
+                    <!-- DETAIL TABS - APPEAR BELOW MAIN TABS -->
+                    <div class="detail-tabs">
+                        <div class="detail-tab active">Overview</div>
+                        <div class="detail-tab">Feed</div>
+                        <div class="detail-tab">Forum</div>
+                    </div>
+
+                    <!-- DETAIL CONTENT -->
+                    <div class="content">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px">
+                            <div style="font-size: 48px">❄️</div>
+                            <div>
+                                <div style="font-size: 22px; font-weight: 700; color: #fff">30 Day Cold Shower</div>
+                                <div style="font-size: 13px; color: rgba(255,255,255,0.6)">Global Challenge • 30 Days</div>
+                            </div>
+                        </div>
+
+                        <div class="challenge-card">
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.8">
+                                <div>🗓️ Dec 1 - Dec 30, 2025</div>
+                                <div>👥 1,234 participants</div>
+                                <div>🎯 80% completion required</div>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-title">Your Progress</div>
+                            <div class="challenge-progress">
+                                <div>Day 12/30</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 40%"></div>
+                                </div>
+                            </div>
+                            <div class="challenge-stats" style="margin-top: 12px">
+                                <div class="stat-item">Rank <strong>#127</strong></div>
+                                <div class="stat-item"><strong>Top 5%</strong></div>
+                                <div class="stat-item">Streak <strong>12 🔥</strong></div>
+                            </div>
+                        </div>
+
+                        <button class="btn">✅ Check In Now</button>
+
+                        <div class="section-divider"></div>
+
+                        <div class="info-section">
+                            <div class="info-title">Leaderboard</div>
+                            <div class="filter-chips">
+                                <div class="chip active">Rank</div>
+                                <div class="chip">Streak</div>
+                                <div class="chip">Progress %</div>
+                            </div>
+
+                            <div style="font-size: 12px; font-weight: 600; color: #FFD700; margin: 12px 0 8px">🏆 TOP 3</div>
+
+                            <div class="leaderboard-item">
+                                <div class="rank">🥇</div>
+                                <div class="user-info">
+                                    <div class="username">@sarah_runs</div>
+                                    <div class="user-stats">30/30 • Streak: 30 🔥</div>
+                                </div>
+                            </div>
+
+                            <div class="leaderboard-item">
+                                <div class="rank">🥈</div>
+                                <div class="user-info">
+                                    <div class="username">@mike_fitness</div>
+                                    <div class="user-stats">30/30 • Streak: 30 🔥</div>
+                                </div>
+                            </div>
+
+                            <div class="leaderboard-item">
+                                <div class="rank">🥉</div>
+                                <div class="user-info">
+                                    <div class="username">@jenny_strong</div>
+                                    <div class="user-stats">29/30 • Streak: 25 🔥</div>
+                                </div>
+                            </div>
+
+                            <div style="height: 10px"></div>
+
+                            <div class="leaderboard-item you">
+                                <div class="rank">#127</div>
+                                <div class="user-info">
+                                    <div class="username">YOU ⭐</div>
+                                    <div class="user-stats">12/30 • Streak: 12 🔥 • Top 5%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="info-section">
+                            <div class="info-title">Challenge Details</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.8); line-height: 1.8">
+                                <div>📅 Duration: 30 days</div>
+                                <div>🗓️ Dec 1 - Dec 30, 2025</div>
+                                <div>🎯 Success: 24/30 days (80%)</div>
+                                <div>🏆 Badge: ❄️ Ice Warrior (Gold)</div>
+                                <div>🎮 Type: Streak Challenge</div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="info-section">
+                            <div class="info-title">Description</div>
+                            <div class="info-text">
+                                Take a cold shower every day for 30 days to build mental toughness and improve health.
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-title">Rules</div>
+                            <ul class="info-list">
+                                <li>Shower must be at least 2 minutes long</li>
+                                <li>Water must be cold (no warm start)</li>
+                                <li>Complete check-in daily</li>
+                                <li>Earn badge by completing 24/30 days</li>
+                            </ul>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-title">Activities Included</div>
+                            <div class="activity-badge">
+                                <div class="activity-title">❄️ Cold Shower</div>
+                                <div class="activity-desc">Daily • 2 min minimum<br>Auto-added to your Daily page</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bottom-nav">
+                        <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Social</div></div>
+                        <div class="nav-item"><div class="nav-icon">✅</div><div class="nav-label">Daily</div></div>
+                        <div class="nav-item"><div class="nav-icon">👥</div><div class="nav-label">Circle</div></div>
+                        <div class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Challenges</div></div>
+                        <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KEY DIFFERENCE EXPLANATION -->
+            <div class="phone">
+                <div class="phone-label">Key Layout Changes</div>
+                <div class="screen" style="display: flex; align-items: center; justify-content: center; padding: 40px; background: #0a0a0a">
+                    <div style="max-width: 350px">
+                        <div style="font-size: 20px; font-weight: 700; color: #FFD700; margin-bottom: 20px; text-align: center">
+                            New Layout Approach
+                        </div>
+
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px; margin-bottom: 20px">
+                            <div style="font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 12px">✨ What's Different</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.6">
+                                Instead of a modal, the challenge detail view expands INLINE below the main tabs (Discover/Active/Completed).
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px">
+                            <div style="font-size: 14px; font-weight: 600; color: #FFD700; margin-bottom: 10px">📱 Structure:</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.8">
+                                1️⃣ <strong style="color: #FFD700">Header</strong>: "Challenges"<br>
+                                2️⃣ <strong style="color: #FFD700">Main Tabs</strong>: Discover | Active | Completed<br>
+                                <span style="color: rgba(255,215,0,0.5)">├─ [When challenge selected]</span><br>
+                                3️⃣ <strong style="color: #FFD700">Detail Tabs</strong>: Overview | Feed | Forum<br>
+                                4️⃣ <strong style="color: #FFD700">Detail Content</strong>: Stats, leaderboard, info<br>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 20px">
+                            <div style="font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 12px">✅ Benefits</div>
+                            <ul style="font-size: 13px; color: rgba(255, 255, 255, 0.7); line-height: 1.8; padding-left: 20px">
+                                <li>Main tabs always visible</li>
+                                <li>Easy to switch between Discover/Active</li>
+                                <li>Detail view feels part of the page</li>
+                                <li>Back button returns to list view</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

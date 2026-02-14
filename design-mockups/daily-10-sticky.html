@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Sticky Notes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Comic Sans MS', 'Marker Felt', cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5e6d3;
+            background-image:
+                repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(0,0,0,0.03) 19px, rgba(0,0,0,0.03) 20px),
+                repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(0,0,0,0.03) 19px, rgba(0,0,0,0.03) 20px);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header-title {
+            font-size: 40px;
+            color: #5d4037;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px rgba(255,255,255,0.5);
+        }
+        .header-date {
+            font-size: 18px;
+            color: #8d6e63;
+            font-weight: 600;
+        }
+
+        /* Cork Board */
+        .cork-board {
+            background: #8d6e63;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 0 100px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .cork-board::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence baseFrequency="0.9"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        /* Sticky Notes */
+        .sticky-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .sticky-note {
+            background: #ffeb3b;
+            padding: 20px 15px;
+            border-radius: 2px;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+        }
+        .sticky-note:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .sticky-note::before {
+            content: '📌';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            font-size: 20px;
+            transform: rotate(25deg);
+        }
+
+        .sticky-note.yellow { background: #ffeb3b; transform: rotate(-2deg); }
+        .sticky-note.pink { background: #ff9e9e; transform: rotate(1deg); }
+        .sticky-note.blue { background: #80deea; transform: rotate(-1deg); }
+        .sticky-note.green { background: #a5d6a7; transform: rotate(2deg); }
+        .sticky-note.purple { background: #ce93d8; transform: rotate(-1deg); }
+        .sticky-note.orange { background: #ffcc80; transform: rotate(1deg); }
+
+        .sticky-note.completed {
+            opacity: 0.6;
+        }
+        .sticky-note.completed .note-text {
+            text-decoration: line-through;
+        }
+
+        .note-check {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0,0,0,0.3);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .sticky-note.completed .note-check {
+            background: rgba(0,0,0,0.7);
+            position: relative;
+        }
+        .sticky-note.completed .note-check::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .note-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #3e2723;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .note-meta {
+            font-size: 12px;
+            color: rgba(0,0,0,0.5);
+            margin-top: auto;
+        }
+
+        /* Stats Board */
+        .stats-board {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .stats-title {
+            font-size: 20px;
+            color: #5d4037;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: #fffef7;
+            border: 3px dashed #8d6e63;
+            border-radius: 10px;
+        }
+        .stat-emoji {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5d4037;
+            margin-bottom: 3px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #8d6e63;
+            text-transform: uppercase;
+        }
+
+        /* Motivation Card */
+        .motivation-card {
+            background: linear-gradient(135deg, #ff6b9d, #c06c84);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(192,108,132,0.4);
+            transform: rotate(-1deg);
+        }
+        .motivation-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .motivation-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Tape Effect */
+        .tape {
+            position: relative;
+        }
+        .tape::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: rgba(255,255,255,0.6);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">Today's Fun!</div>
+            <div class="header-date">Wednesday, Nov 20</div>
+        </div>
+
+        <!-- Cork Board with Sticky Notes -->
+        <div class="cork-board">
+            <div class="sticky-grid">
+                <div class="sticky-note yellow completed">
+                    <div class="note-check"></div>
+                    <div class="note-text">Morning meditation & coffee ☕</div>
+                    <div class="note-meta">15 min</div>
+                </div>
+
+                <div class="sticky-note pink completed">
+                    <div class="note-check"></div>
+                    <div class="note-text">Hit the gym! 💪</div>
+                    <div class="note-meta">45 min</div>
+                </div>
+
+                <div class="sticky-note blue">
+                    <div class="note-check"></div>
+                    <div class="note-text">Read that cool book 📚</div>
+                    <div class="note-meta">30 min</div>
+                </div>
+
+                <div class="sticky-note green">
+                    <div class="note-check"></div>
+                    <div class="note-text">Drink all the water! 💧</div>
+                    <div class="note-meta">8 glasses</div>
+                </div>
+
+                <div class="sticky-note purple">
+                    <div class="note-check"></div>
+                    <div class="note-text">Evening walk 🚶</div>
+                    <div class="note-meta">20 min</div>
+                </div>
+
+                <div class="sticky-note orange">
+                    <div class="note-check"></div>
+                    <div class="note-text">Gratitude time ✨</div>
+                    <div class="note-meta">10 min</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-board tape">
+            <div class="stats-title">🎉 Your Progress</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-emoji">🔥</div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Day Streak!</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-emoji">✅</div>
+                    <div class="stat-value">2/6</div>
+                    <div class="stat-label">Done Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-emoji">⭐</div>
+                    <div class="stat-value">82%</div>
+                    <div class="stat-label">This Week</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Motivation -->
+        <div class="motivation-card">
+            <div class="motivation-icon">🌈</div>
+            <div class="motivation-text">
+                You're doing amazing! Keep it up! 💫
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.sticky-note').forEach(note => {
+            note.addEventListener('click', function() {
+                this.classList.toggle('completed');
+
+                // Update stats
+                const total = document.querySelectorAll('.sticky-note').length;
+                const completed = document.querySelectorAll('.sticky-note.completed').length;
+                document.querySelectorAll('.stat-value')[1].textContent = `${completed}/${total}`;
+            });
+        });
+    </script>
+</body>
+</html>

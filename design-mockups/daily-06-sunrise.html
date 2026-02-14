@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Sunrise Ritual</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, #ff9a56, #ffcf48, #ffe8a1);
+            color: #4a3f35;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Sunrise Header */
+        .sunrise-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .sun-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: rise 2s ease-out;
+        }
+        @keyframes rise {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .greeting-large {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #6d4c41;
+        }
+        .morning-message {
+            font-size: 16px;
+            color: #8d6e63;
+            line-height: 1.6;
+        }
+
+        /* Time Display */
+        .time-display {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .current-time {
+            font-size: 48px;
+            font-weight: 300;
+            color: #4a3f35;
+            margin-bottom: 10px;
+            font-family: 'SF Mono', monospace;
+        }
+        .date-display {
+            font-size: 14px;
+            color: #8d6e63;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Morning Routine */
+        .routine-section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6d4c41;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .routine-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .routine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .routine-card.completed {
+            background: rgba(76,175,80,0.2);
+        }
+
+        .routine-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .routine-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #ffb84d, #ff9a56);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .routine-card.completed .routine-icon {
+            background: linear-gradient(135deg, #66bb6a, #4caf50);
+        }
+        .routine-info {
+            flex: 1;
+        }
+        .routine-name {
+            font-size: 17px;
+            font-weight: 600;
+            color: #4a3f35;
+            margin-bottom: 5px;
+        }
+        .routine-time {
+            font-size: 13px;
+            color: #8d6e63;
+        }
+        .routine-check {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            border: 2px solid #ff9a56;
+            flex-shrink: 0;
+        }
+        .routine-card.completed .routine-check {
+            background: #4caf50;
+            border-color: #4caf50;
+            position: relative;
+        }
+        .routine-card.completed .routine-check::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 700;
+        }
+
+        .routine-description {
+            font-size: 14px;
+            color: #6d4c41;
+            line-height: 1.5;
+        }
+
+        /* Intention */
+        .intention-card {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .intention-label {
+            font-size: 12px;
+            color: #8d6e63;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .intention-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #6d4c41;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* Affirmation */
+        .affirmation {
+            background: linear-gradient(135deg, rgba(255,184,77,0.3), rgba(255,154,86,0.3));
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .affirmation-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        .affirmation-text {
+            font-size: 18px;
+            font-weight: 500;
+            color: #6d4c41;
+            line-height: 1.6;
+        }
+
+        /* Progress */
+        .progress-section {
+            background: rgba(255,255,255,0.5);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .progress-title {
+            font-size: 14px;
+            color: #8d6e63;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .progress-ring-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .mini-ring {
+            text-align: center;
+        }
+        .mini-ring-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff9a56;
+            margin-bottom: 5px;
+        }
+        .mini-ring-label {
+            font-size: 11px;
+            color: #8d6e63;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sunrise Header -->
+        <div class="sunrise-header">
+            <div class="sun-icon">🌅</div>
+            <div class="greeting-large">Good Morning</div>
+            <div class="morning-message">A new day full of possibilities awaits</div>
+        </div>
+
+        <!-- Time -->
+        <div class="time-display">
+            <div class="current-time">06:30</div>
+            <div class="date-display">Wednesday, November 20</div>
+        </div>
+
+        <!-- Intention -->
+        <div class="intention-card">
+            <div class="intention-label">Today's Intention</div>
+            <div class="intention-text">"I embrace each moment with gratitude and presence"</div>
+        </div>
+
+        <!-- Morning Routine -->
+        <div class="routine-section">
+            <div class="section-title">✨ Morning Ritual</div>
+
+            <div class="routine-card completed">
+                <div class="routine-header">
+                    <div class="routine-icon">🧘</div>
+                    <div class="routine-info">
+                        <div class="routine-name">Morning Meditation</div>
+                        <div class="routine-time">10 minutes</div>
+                    </div>
+                    <div class="routine-check"></div>
+                </div>
+                <div class="routine-description">
+                    Center yourself with mindful breathing and set your intention for the day
+                </div>
+            </div>
+
+            <div class="routine-card">
+                <div class="routine-header">
+                    <div class="routine-icon">💧</div>
+                    <div class="routine-info">
+                        <div class="routine-name">Hydrate</div>
+                        <div class="routine-time">5 minutes</div>
+                    </div>
+                    <div class="routine-check"></div>
+                </div>
+                <div class="routine-description">
+                    Drink a full glass of water to wake up your body
+                </div>
+            </div>
+
+            <div class="routine-card">
+                <div class="routine-header">
+                    <div class="routine-icon">🤸</div>
+                    <div class="routine-info">
+                        <div class="routine-name">Gentle Stretching</div>
+                        <div class="routine-time">15 minutes</div>
+                    </div>
+                    <div class="routine-check"></div>
+                </div>
+                <div class="routine-description">
+                    Awaken your muscles with gentle yoga or stretching
+                </div>
+            </div>
+
+            <div class="routine-card">
+                <div class="routine-header">
+                    <div class="routine-icon">📝</div>
+                    <div class="routine-info">
+                        <div class="routine-name">Gratitude Journal</div>
+                        <div class="routine-time">10 minutes</div>
+                    </div>
+                    <div class="routine-check"></div>
+                </div>
+                <div class="routine-description">
+                    Write three things you're grateful for this morning
+                </div>
+            </div>
+
+            <div class="routine-card">
+                <div class="routine-header">
+                    <div class="routine-icon">🍵</div>
+                    <div class="routine-info">
+                        <div class="routine-name">Mindful Breakfast</div>
+                        <div class="routine-time">20 minutes</div>
+                    </div>
+                    <div class="routine-check"></div>
+                </div>
+                <div class="routine-description">
+                    Nourish your body with a healthy, intentional meal
+                </div>
+            </div>
+        </div>
+
+        <!-- Affirmation -->
+        <div class="affirmation">
+            <div class="affirmation-icon">🌟</div>
+            <div class="affirmation-text">
+                "I am capable, I am strong, and I am ready for today's journey"
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-title">Your Morning Progress</div>
+            <div class="progress-ring-container">
+                <div class="mini-ring">
+                    <div class="mini-ring-value">1/5</div>
+                    <div class="mini-ring-label">Complete</div>
+                </div>
+                <div class="mini-ring">
+                    <div class="mini-ring-value">20%</div>
+                    <div class="mini-ring-label">Progress</div>
+                </div>
+                <div class="mini-ring">
+                    <div class="mini-ring-value">60min</div>
+                    <div class="mini-ring-label">Remaining</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.querySelector('.current-time').textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Toggle routine cards
+        document.querySelectorAll('.routine-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('completed');
+            });
+        });
+    </script>
+</body>
+</html>

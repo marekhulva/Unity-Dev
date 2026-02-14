@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Social Page - 3 Best Options</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .option-container {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px;
+        }
+
+        .option-label {
+            font-size: 16px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* iPhone mockup container */
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .time {
+            color: #fff;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* OPTION 1: Clean Feed with Liquid Glass Cards */
+        .s1-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            position: sticky;
+            top: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10;
+        }
+
+        .s1-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .s1-feed {
+            padding: 20px 16px;
+        }
+
+        .s1-post {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .s1-post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .s1-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 21px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .s1-avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .s1-avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .s1-avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .s1-user-info {
+            flex: 1;
+        }
+
+        .s1-username {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .s1-timestamp {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .s1-challenge-badge {
+            background: linear-gradient(135deg, rgba(192,192,192,0.3), rgba(128,128,128,0.2));
+            border: 1px solid rgba(192,192,192,0.4);
+            color: #C0C0C0;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .s1-post-body {
+            padding: 20px 18px;
+        }
+
+        .s1-activity-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .s1-activity-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 8px;
+            letter-spacing: -0.4px;
+        }
+
+        .s1-activity-context {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 4px;
+        }
+
+        .s1-metrics {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .s1-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .s1-metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .s1-metric-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .s1-post-footer {
+            display: flex;
+            gap: 24px;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .s1-reaction {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .s1-reaction.active {
+            color: #E7B43A;
+        }
+
+        /* OPTION 2: Compact Activity Stream */
+        .s2-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .s2-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+            letter-spacing: -0.6px;
+        }
+
+        .s2-filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .s2-filter-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .s2-pill {
+            padding: 6px 14px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .s2-pill.active {
+            background: linear-gradient(135deg, rgba(231,180,58,0.2), rgba(255,215,0,0.1));
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        .s2-feed {
+            padding: 16px;
+        }
+
+        .s2-activity {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .s2-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .s2-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .s2-avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .s2-avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .s2-avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .s2-icon {
+            font-size: 20px;
+        }
+
+        .s2-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .s2-header-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .s2-username {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .s2-action {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        .s2-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            margin-left: auto;
+        }
+
+        .s2-details {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+
+        .s2-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .s2-tag {
+            background: rgba(231,180,58,0.12);
+            border: 1px solid rgba(231,180,58,0.25);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        .s2-reactions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .s2-reaction {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* OPTION 3: Timeline Community Feed */
+        .s3-header {
+            padding: 16px 20px 12px 20px;
+            background: rgba(0,0,0,0.95);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .s3-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .s3-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .s3-circle-name {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.04);
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .s3-stats {
+            display: flex;
+            gap: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .s3-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .s3-stat-icon {
+            font-size: 16px;
+        }
+
+        .s3-stat-value {
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        .s3-timeline {
+            padding: 20px 20px 20px 20px;
+            position: relative;
+        }
+
+        .s3-timeline::before {
+            content: '';
+            position: absolute;
+            left: 51px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A 0%, rgba(231,180,58,0.3) 50%, rgba(231,180,58,0.1) 100%);
+        }
+
+        .s3-post {
+            position: relative;
+            padding-left: 72px;
+            margin-bottom: 32px;
+        }
+
+        .s3-avatar-wrap {
+            position: absolute;
+            left: 28px;
+            top: 0;
+        }
+
+        .s3-avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 23px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border: 3px solid #000;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+        }
+
+        .s3-avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 4px 16px rgba(240,147,251,0.4);
+        }
+
+        .s3-avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 16px rgba(79,172,254,0.4);
+        }
+
+        .s3-avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 4px 16px rgba(67,233,123,0.4);
+        }
+
+        .s3-activity-icon {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .s3-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .s3-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .s3-user-section {
+            flex: 1;
+        }
+
+        .s3-username {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .s3-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .s3-challenge {
+            background: rgba(192,192,192,0.2);
+            border: 1px solid rgba(192,192,192,0.3);
+            color: #C0C0C0;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+        }
+
+        .s3-activity {
+            margin-bottom: 12px;
+        }
+
+        .s3-activity-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .s3-activity-desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .s3-metrics {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .s3-metric-box {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .s3-metric-val {
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .s3-metric-lbl {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .s3-footer {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .s3-reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .s3-reaction-btn.active {
+            color: #E7B43A;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Social Page - 3 Best Options</div>
+
+    <div class="options-wrapper">
+
+        <!-- OPTION 1: Clean Feed with Liquid Glass Cards -->
+        <div class="option-container">
+            <div class="option-label">Option 1: Clean Liquid Glass Feed</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="s1-header">
+                        <div class="s1-title">Social</div>
+                    </div>
+                    <div class="s1-feed">
+                        <div class="s1-post">
+                            <div class="s1-post-header">
+                                <div class="s1-avatar">👤</div>
+                                <div class="s1-user-info">
+                                    <div class="s1-username">Alex Chen</div>
+                                    <div class="s1-timestamp">2h ago</div>
+                                </div>
+                                <div class="s1-challenge-badge">75 HARD</div>
+                            </div>
+                            <div class="s1-post-body">
+                                <span class="s1-activity-icon">🏃</span>
+                                <div class="s1-activity-name">Morning Run</div>
+                                <div class="s1-activity-context">🎯 Marathon Training</div>
+                                <div class="s1-metrics">
+                                    <div class="s1-metric">
+                                        <span class="s1-metric-value">45</span>
+                                        <span class="s1-metric-label">Minutes</span>
+                                    </div>
+                                    <div class="s1-metric">
+                                        <span class="s1-metric-value">6.2</span>
+                                        <span class="s1-metric-label">Miles</span>
+                                    </div>
+                                    <div class="s1-metric">
+                                        <span class="s1-metric-value">12</span>
+                                        <span class="s1-metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s1-post-footer">
+                                <div class="s1-reaction active">🔥 24</div>
+                                <div class="s1-reaction">💪 18</div>
+                                <div class="s1-reaction">💬 3</div>
+                            </div>
+                        </div>
+
+                        <div class="s1-post">
+                            <div class="s1-post-header">
+                                <div class="s1-avatar alt1">👩</div>
+                                <div class="s1-user-info">
+                                    <div class="s1-username">Sarah Miller</div>
+                                    <div class="s1-timestamp">4h ago</div>
+                                </div>
+                            </div>
+                            <div class="s1-post-body">
+                                <span class="s1-activity-icon">☀️</span>
+                                <div class="s1-activity-name">Woke Up Before 6am</div>
+                                <div class="s1-activity-context">Morning Routine • Day 28</div>
+                            </div>
+                            <div class="s1-post-footer">
+                                <div class="s1-reaction">🔥 31</div>
+                                <div class="s1-reaction">💪 12</div>
+                            </div>
+                        </div>
+
+                        <div class="s1-post">
+                            <div class="s1-post-header">
+                                <div class="s1-avatar alt2">🧑</div>
+                                <div class="s1-user-info">
+                                    <div class="s1-username">Mike Johnson</div>
+                                    <div class="s1-timestamp">5h ago</div>
+                                </div>
+                                <div class="s1-challenge-badge">75 HARD</div>
+                            </div>
+                            <div class="s1-post-body">
+                                <span class="s1-activity-icon">💪</span>
+                                <div class="s1-activity-name">Strength Training</div>
+                                <div class="s1-activity-context">🎯 Get Stronger</div>
+                                <div class="s1-metrics">
+                                    <div class="s1-metric">
+                                        <span class="s1-metric-value">60</span>
+                                        <span class="s1-metric-label">Minutes</span>
+                                    </div>
+                                    <div class="s1-metric">
+                                        <span class="s1-metric-value">8</span>
+                                        <span class="s1-metric-label">Day Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s1-post-footer">
+                                <div class="s1-reaction">🔥 19</div>
+                                <div class="s1-reaction active">💪 24</div>
+                                <div class="s1-reaction">💬 1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 2: Compact Activity Stream -->
+        <div class="option-container">
+            <div class="option-label">Option 2: Compact Activity Stream</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="s2-header">
+                        <div class="s2-title">Social</div>
+                        <div class="s2-filter-pills">
+                            <div class="s2-pill active">All</div>
+                            <div class="s2-pill">75 HARD</div>
+                            <div class="s2-pill">Workouts</div>
+                            <div class="s2-pill">Mindfulness</div>
+                        </div>
+                    </div>
+                    <div class="s2-feed">
+                        <div class="s2-activity">
+                            <div class="s2-left">
+                                <div class="s2-avatar">👤</div>
+                                <div class="s2-icon">🏃</div>
+                            </div>
+                            <div class="s2-content">
+                                <div class="s2-header-row">
+                                    <span class="s2-username">Alex Chen</span>
+                                    <span class="s2-action">Morning Run</span>
+                                    <span class="s2-time">2h ago</span>
+                                </div>
+                                <div class="s2-details">🎯 Marathon Training</div>
+                                <div class="s2-tags">
+                                    <div class="s2-tag">45 min</div>
+                                    <div class="s2-tag">6.2 mi</div>
+                                    <div class="s2-tag">Day 12</div>
+                                </div>
+                                <div class="s2-reactions">
+                                    <span class="s2-reaction">🔥 24</span>
+                                    <span class="s2-reaction">💪 18</span>
+                                    <span class="s2-reaction">💬 3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s2-activity">
+                            <div class="s2-left">
+                                <div class="s2-avatar alt1">👩</div>
+                                <div class="s2-icon">☀️</div>
+                            </div>
+                            <div class="s2-content">
+                                <div class="s2-header-row">
+                                    <span class="s2-username">Sarah Miller</span>
+                                    <span class="s2-action">Woke Up Before 6am</span>
+                                    <span class="s2-time">4h ago</span>
+                                </div>
+                                <div class="s2-details">Morning Routine</div>
+                                <div class="s2-tags">
+                                    <div class="s2-tag">Day 28</div>
+                                </div>
+                                <div class="s2-reactions">
+                                    <span class="s2-reaction">🔥 31</span>
+                                    <span class="s2-reaction">💪 12</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s2-activity">
+                            <div class="s2-left">
+                                <div class="s2-avatar alt2">🧑</div>
+                                <div class="s2-icon">💪</div>
+                            </div>
+                            <div class="s2-content">
+                                <div class="s2-header-row">
+                                    <span class="s2-username">Mike Johnson</span>
+                                    <span class="s2-action">Strength Training</span>
+                                    <span class="s2-time">5h ago</span>
+                                </div>
+                                <div class="s2-details">🎯 Get Stronger • 75 HARD</div>
+                                <div class="s2-tags">
+                                    <div class="s2-tag">60 min</div>
+                                    <div class="s2-tag">Day 8</div>
+                                </div>
+                                <div class="s2-reactions">
+                                    <span class="s2-reaction">🔥 19</span>
+                                    <span class="s2-reaction">💪 24</span>
+                                    <span class="s2-reaction">💬 1</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s2-activity">
+                            <div class="s2-left">
+                                <div class="s2-avatar alt3">👨</div>
+                                <div class="s2-icon">📖</div>
+                            </div>
+                            <div class="s2-content">
+                                <div class="s2-header-row">
+                                    <span class="s2-username">James Lee</span>
+                                    <span class="s2-action">Read 20 Pages</span>
+                                    <span class="s2-time">6h ago</span>
+                                </div>
+                                <div class="s2-details">Personal Growth</div>
+                                <div class="s2-tags">
+                                    <div class="s2-tag">Day 45</div>
+                                </div>
+                                <div class="s2-reactions">
+                                    <span class="s2-reaction">🔥 15</span>
+                                    <span class="s2-reaction">💪 8</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s2-activity">
+                            <div class="s2-left">
+                                <div class="s2-avatar alt1">👩</div>
+                                <div class="s2-icon">🧘</div>
+                            </div>
+                            <div class="s2-content">
+                                <div class="s2-header-row">
+                                    <span class="s2-username">Sarah Miller</span>
+                                    <span class="s2-action">Meditation</span>
+                                    <span class="s2-time">8h ago</span>
+                                </div>
+                                <div class="s2-details">Mindfulness</div>
+                                <div class="s2-tags">
+                                    <div class="s2-tag">15 min</div>
+                                    <div class="s2-tag">Day 28</div>
+                                </div>
+                                <div class="s2-reactions">
+                                    <span class="s2-reaction">🔥 22</span>
+                                    <span class="s2-reaction">💪 9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 3: Timeline Community Feed -->
+        <div class="option-container">
+            <div class="option-label">Option 3: Timeline Community Feed</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="s3-header">
+                        <div class="s3-header-top">
+                            <div class="s3-title">Feed</div>
+                            <div class="s3-circle-name">Unity Circle</div>
+                        </div>
+                        <div class="s3-stats">
+                            <div class="s3-stat">
+                                <span class="s3-stat-icon">🔥</span>
+                                <span class="s3-stat-value">47</span> active
+                            </div>
+                            <div class="s3-stat">
+                                <span class="s3-stat-icon">✓</span>
+                                <span class="s3-stat-value">124</span> today
+                            </div>
+                        </div>
+                    </div>
+                    <div class="s3-timeline">
+                        <div class="s3-post">
+                            <div class="s3-avatar-wrap">
+                                <div class="s3-avatar">
+                                    👤
+                                    <div class="s3-activity-icon">🏃</div>
+                                </div>
+                            </div>
+                            <div class="s3-card">
+                                <div class="s3-card-header">
+                                    <div class="s3-user-section">
+                                        <div class="s3-username">Alex Chen</div>
+                                        <div class="s3-time">2 hours ago</div>
+                                    </div>
+                                    <div class="s3-challenge">75 HARD</div>
+                                </div>
+                                <div class="s3-activity">
+                                    <div class="s3-activity-name">Morning Run</div>
+                                    <div class="s3-activity-desc">🎯 Marathon Training</div>
+                                </div>
+                                <div class="s3-metrics">
+                                    <div class="s3-metric-box">
+                                        <span class="s3-metric-val">45</span>
+                                        <div class="s3-metric-lbl">Minutes</div>
+                                    </div>
+                                    <div class="s3-metric-box">
+                                        <span class="s3-metric-val">6.2</span>
+                                        <div class="s3-metric-lbl">Miles</div>
+                                    </div>
+                                    <div class="s3-metric-box">
+                                        <span class="s3-metric-val">12</span>
+                                        <div class="s3-metric-lbl">Streak</div>
+                                    </div>
+                                </div>
+                                <div class="s3-footer">
+                                    <div class="s3-reaction-btn active">🔥 24</div>
+                                    <div class="s3-reaction-btn">💪 18</div>
+                                    <div class="s3-reaction-btn">💬 3</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s3-post">
+                            <div class="s3-avatar-wrap">
+                                <div class="s3-avatar alt1">
+                                    👩
+                                    <div class="s3-activity-icon">☀️</div>
+                                </div>
+                            </div>
+                            <div class="s3-card">
+                                <div class="s3-card-header">
+                                    <div class="s3-user-section">
+                                        <div class="s3-username">Sarah Miller</div>
+                                        <div class="s3-time">4 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="s3-activity">
+                                    <div class="s3-activity-name">Woke Up Before 6am</div>
+                                    <div class="s3-activity-desc">Morning Routine • Day 28</div>
+                                </div>
+                                <div class="s3-footer">
+                                    <div class="s3-reaction-btn">🔥 31</div>
+                                    <div class="s3-reaction-btn">💪 12</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s3-post">
+                            <div class="s3-avatar-wrap">
+                                <div class="s3-avatar alt2">
+                                    🧑
+                                    <div class="s3-activity-icon">💪</div>
+                                </div>
+                            </div>
+                            <div class="s3-card">
+                                <div class="s3-card-header">
+                                    <div class="s3-user-section">
+                                        <div class="s3-username">Mike Johnson</div>
+                                        <div class="s3-time">5 hours ago</div>
+                                    </div>
+                                    <div class="s3-challenge">75 HARD</div>
+                                </div>
+                                <div class="s3-activity">
+                                    <div class="s3-activity-name">Strength Training</div>
+                                    <div class="s3-activity-desc">🎯 Get Stronger</div>
+                                </div>
+                                <div class="s3-metrics">
+                                    <div class="s3-metric-box">
+                                        <span class="s3-metric-val">60</span>
+                                        <div class="s3-metric-lbl">Minutes</div>
+                                    </div>
+                                    <div class="s3-metric-box">
+                                        <span class="s3-metric-val">8</span>
+                                        <div class="s3-metric-lbl">Streak</div>
+                                    </div>
+                                </div>
+                                <div class="s3-footer">
+                                    <div class="s3-reaction-btn">🔥 19</div>
+                                    <div class="s3-reaction-btn active">💪 24</div>
+                                    <div class="s3-reaction-btn">💬 1</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="s3-post">
+                            <div class="s3-avatar-wrap">
+                                <div class="s3-avatar alt3">
+                                    👨
+                                    <div class="s3-activity-icon">📖</div>
+                                </div>
+                            </div>
+                            <div class="s3-card">
+                                <div class="s3-card-header">
+                                    <div class="s3-user-section">
+                                        <div class="s3-username">James Lee</div>
+                                        <div class="s3-time">6 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="s3-activity">
+                                    <div class="s3-activity-name">Read 20 Pages</div>
+                                    <div class="s3-activity-desc">Personal Growth • Day 45</div>
+                                </div>
+                                <div class="s3-footer">
+                                    <div class="s3-reaction-btn">🔥 15</div>
+                                    <div class="s3-reaction-btn">💪 8</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

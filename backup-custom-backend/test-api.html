@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Tester</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+        .endpoint { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #45a049; }
+        input { padding: 8px; margin: 5px; width: 200px; }
+        .response { background: #f4f4f4; padding: 10px; margin-top: 10px; border-radius: 5px; white-space: pre-wrap; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Best App API Tester</h1>
+    
+    <div class="endpoint">
+        <h3>Health Check</h3>
+        <button onclick="testHealth()">Test Health</button>
+        <div id="health-response"></div>
+    </div>
+
+    <div class="endpoint">
+        <h3>Register</h3>
+        <input type="email" id="reg-email" placeholder="Email" value="test@example.com">
+        <input type="password" id="reg-password" placeholder="Password" value="password123">
+        <input type="text" id="reg-name" placeholder="Name" value="Test User">
+        <button onclick="testRegister()">Register</button>
+        <div id="register-response"></div>
+    </div>
+
+    <div class="endpoint">
+        <h3>Login</h3>
+        <input type="email" id="login-email" placeholder="Email" value="test@example.com">
+        <input type="password" id="login-password" placeholder="Password" value="password123">
+        <button onclick="testLogin()">Login</button>
+        <div id="login-response"></div>
+    </div>
+
+    <div class="endpoint">
+        <h3>Get Goals</h3>
+        <button onclick="testGoals()">Get Goals</button>
+        <div id="goals-response"></div>
+    </div>
+
+    <div class="endpoint">
+        <h3>Get Daily Actions</h3>
+        <button onclick="testActions()">Get Actions</button>
+        <div id="actions-response"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        let token = '';
+
+        async function testHealth() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                document.getElementById('health-response').innerHTML = 
+                    `<div class="response success">✅ ${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('health-response').innerHTML = 
+                    `<div class="response error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function testRegister() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('reg-email').value,
+                        password: document.getElementById('reg-password').value,
+                        name: document.getElementById('reg-name').value
+                    })
+                });
+                const data = await response.json();
+                if (data.data?.token) token = data.data.token;
+                document.getElementById('register-response').innerHTML = 
+                    `<div class="response ${data.success ? 'success' : 'error'}">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('register-response').innerHTML = 
+                    `<div class="response error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('login-email').value,
+                        password: document.getElementById('login-password').value
+                    })
+                });
+                const data = await response.json();
+                if (data.data?.token) {
+                    token = data.data.token;
+                    document.getElementById('login-response').innerHTML = 
+                        `<div class="response success">✅ Logged in! Token saved.\n${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    document.getElementById('login-response').innerHTML = 
+                        `<div class="response error">${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('login-response').innerHTML = 
+                    `<div class="response error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function testGoals() {
+            try {
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                const response = await fetch(`${API_URL}/api/goals`, { headers });
+                const data = await response.json();
+                document.getElementById('goals-response').innerHTML = 
+                    `<div class="response success">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('goals-response').innerHTML = 
+                    `<div class="response error">❌ ${error.message}</div>`;
+            }
+        }
+
+        async function testActions() {
+            try {
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                const response = await fetch(`${API_URL}/api/actions/daily`, { headers });
+                const data = await response.json();
+                document.getElementById('actions-response').innerHTML = 
+                    `<div class="response success">${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                document.getElementById('actions-response').innerHTML = 
+                    `<div class="response error">❌ ${error.message}</div>`;
+            }
+        }
+
+        // Test health on load
+        window.onload = () => testHealth();
+    </script>
+</body>
+</html>

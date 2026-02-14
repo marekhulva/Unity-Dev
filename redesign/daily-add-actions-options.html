@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Tab - Add Actions Button Options</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 60px;
+      letter-spacing: -0.5px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 1024px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-card {
+      background: #0A0A0A;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #E7B43A, #FFD700, #E7B43A);
+    }
+
+    .option-header {
+      margin-bottom: 24px;
+    }
+
+    .option-number {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      border-radius: 8px;
+      text-align: center;
+      line-height: 32px;
+      font-weight: 800;
+      color: #000;
+      margin-bottom: 12px;
+    }
+
+    .option-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .option-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      line-height: 1.6;
+    }
+
+    .mockup {
+      background: #1A1A1A;
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 400px;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Daily Tab Header */
+    .daily-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .daily-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    /* Option 1: Top Right Button */
+    .add-btn-top-right {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 12px rgba(231, 180, 58, 0.3);
+    }
+
+    .add-btn-top-right:hover {
+      transform: scale(1.05);
+    }
+
+    /* Modal for Option 1 */
+    .modal {
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: #0A0A0A;
+      border: 1px solid rgba(231, 180, 58, 0.3);
+      border-radius: 16px;
+      padding: 16px;
+      min-width: 200px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-option {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .modal-option-icon {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Option 2: Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.3;
+    }
+
+    .empty-state-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 32px;
+      max-width: 280px;
+    }
+
+    .luxury-btn {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 16px rgba(231, 180, 58, 0.4);
+    }
+
+    .luxury-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Option 3: Section Header Button */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .add-btn-inline {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .add-btn-inline:hover {
+      transform: scale(1.1);
+    }
+
+    /* Option 4: Bottom FAB */
+    .fab {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #E7B43A, #FFD700);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(231, 180, 58, 0.5);
+      transition: transform 0.2s;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+    }
+
+    /* Action Items */
+    .action-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-emoji {
+      font-size: 24px;
+    }
+
+    .action-details {
+      flex: 1;
+    }
+
+    .action-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .action-time {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .action-checkbox {
+      width: 24px;
+      height: 24px;
+      border: 2px solid rgba(231, 180, 58, 0.5);
+      border-radius: 6px;
+    }
+
+    /* Recommendation Badge */
+    .recommendation {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(231, 180, 58, 0.1);
+      border: 1px solid rgba(231, 180, 58, 0.3);
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .recommendation strong {
+      color: #FFD700;
+    }
+
+    .pros-cons {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .pros, .cons {
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .pros strong {
+      color: #4ECDC4;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .cons strong {
+      color: #E74C3C;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .pros ul, .cons ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .pros li::before {
+      content: "✓ ";
+      color: #4ECDC4;
+      font-weight: 700;
+    }
+
+    .cons li::before {
+      content: "✗ ";
+      color: #E74C3C;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Daily Tab - "Add Actions" Button Options</h1>
+
+    <div class="options-grid">
+      <!-- OPTION 1 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-number">1</div>
+          <h2 class="option-title">Top Right "+" Button with Modal</h2>
+          <p class="option-subtitle">Small luxury button in top right corner. Tapping opens a menu with "Add Action", "Set Goal", "Build Routine" options.</p>
+        </div>
+
+        <div class="mockup">
+          <div class="daily-header">
+            <div class="daily-title">Daily</div>
+            <div class="add-btn-top-right">+</div>
+          </div>
+
+          <div class="modal">
+            <div class="modal-option">
+              <span class="modal-option-icon">✦</span>
+              <span>Add Action</span>
+            </div>
+            <div class="modal-option">
+              <span class="modal-option-icon">🎯</span>
+              <span>Set Goal</span>
+            </div>
+            <div class="modal-option">
+              <span class="modal-option-icon">⚡</span>
+              <span>Build Routine</span>
+            </div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">💪</div>
+            <div class="action-details">
+              <div class="action-title">Morning Workout</div>
+              <div class="action-time">7:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">📚</div>
+            <div class="action-details">
+              <div class="action-title">Deep Work Session</div>
+              <div class="action-time">9:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong>
+            <ul>
+              <li>Always visible</li>
+              <li>Doesn't block content</li>
+              <li>Clear options in modal</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <strong>Cons:</strong>
+            <ul>
+              <li>Requires 2 taps</li>
+              <li>Modal might overlay content</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 2 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-number">2</div>
+          <h2 class="option-title">Empty State CTA (No Actions)</h2>
+          <p class="option-subtitle">Beautiful empty state shown when user has 0 actions. Large luxury button launches full onboarding flow.</p>
+        </div>
+
+        <div class="mockup">
+          <div class="empty-state">
+            <div class="empty-state-icon">✦</div>
+            <h3 class="empty-state-title">Build Your Daily Routine</h3>
+            <p class="empty-state-subtitle">Set goals, create actions, and build the life you want</p>
+            <button class="luxury-btn">Get Started</button>
+          </div>
+        </div>
+
+        <div class="recommendation">
+          <strong>⭐ RECOMMENDED</strong> for new users or users with 0 actions
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong>
+            <ul>
+              <li>Prominent when needed</li>
+              <li>Beautiful onboarding UX</li>
+              <li>Clear call-to-action</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <strong>Cons:</strong>
+            <ul>
+              <li>Only for empty state</li>
+              <li>Hidden once actions exist</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 3 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-number">3</div>
+          <h2 class="option-title">Section Header "+" Button</h2>
+          <p class="option-subtitle">Small gold "+" button next to "Daily Actions" header. Subtle and integrated into the existing layout.</p>
+        </div>
+
+        <div class="mockup">
+          <div class="daily-header">
+            <div class="daily-title">Daily</div>
+          </div>
+
+          <div class="section-header">
+            <div class="section-title">Daily Actions</div>
+            <div class="add-btn-inline">+</div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">💪</div>
+            <div class="action-details">
+              <div class="action-title">Morning Workout</div>
+              <div class="action-time">7:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">📚</div>
+            <div class="action-details">
+              <div class="action-title">Deep Work Session</div>
+              <div class="action-time">9:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">🧘</div>
+            <div class="action-details">
+              <div class="action-title">Evening Meditation</div>
+              <div class="action-time">8:00 PM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong>
+            <ul>
+              <li>Contextual placement</li>
+              <li>Doesn't obstruct view</li>
+              <li>Clean and minimal</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <strong>Cons:</strong>
+            <ul>
+              <li>Less discoverable</li>
+              <li>Smaller touch target</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION 4 -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-number">4</div>
+          <h2 class="option-title">Floating Action Button (FAB)</h2>
+          <p class="option-subtitle">Large gold gradient FAB at bottom right. Always visible, elevated design, premium feel.</p>
+        </div>
+
+        <div class="mockup">
+          <div class="daily-header">
+            <div class="daily-title">Daily</div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">💪</div>
+            <div class="action-details">
+              <div class="action-title">Morning Workout</div>
+              <div class="action-time">7:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">📚</div>
+            <div class="action-details">
+              <div class="action-title">Deep Work Session</div>
+              <div class="action-time">9:00 AM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="action-item">
+            <div class="action-emoji">🧘</div>
+            <div class="action-details">
+              <div class="action-title">Evening Meditation</div>
+              <div class="action-time">8:00 PM</div>
+            </div>
+            <div class="action-checkbox"></div>
+          </div>
+
+          <div class="fab">+</div>
+        </div>
+
+        <div class="recommendation">
+          <strong>⭐ RECOMMENDED</strong> for existing users with actions
+        </div>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <strong>Pros:</strong>
+            <ul>
+              <li>Always accessible</li>
+              <li>Premium luxury feel</li>
+              <li>Large touch target</li>
+              <li>Familiar pattern</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <strong>Cons:</strong>
+            <ul>
+              <li>May block bottom content</li>
+              <li>Can feel obtrusive</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL RECOMMENDATION -->
+    <div style="max-width: 800px; margin: 40px auto; padding: 32px; background: linear-gradient(135deg, rgba(231, 180, 58, 0.1), rgba(255, 215, 0, 0.05)); border: 2px solid rgba(231, 180, 58, 0.3); border-radius: 24px; text-align: center;">
+      <h2 style="font-size: 24px; font-weight: 800; background: linear-gradient(135deg, #E7B43A, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px;">
+        💡 Final Recommendation
+      </h2>
+      <p style="font-size: 16px; color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-bottom: 20px;">
+        <strong style="color: #FFD700;">HYBRID APPROACH:</strong>
+      </p>
+      <div style="text-align: left; max-width: 600px; margin: 0 auto; font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, 0.7);">
+        <p style="margin-bottom: 12px;">
+          <strong style="color: #E7B43A;">If user has 0 actions:</strong> Show <strong>Option 2</strong> (Empty State CTA)
+        </p>
+        <p>
+          <strong style="color: #E7B43A;">If user has 1+ actions:</strong> Show <strong>Option 4</strong> (Bottom FAB)
+        </p>
+      </div>
+      <p style="margin-top: 20px; font-size: 13px; color: rgba(255, 255, 255, 0.5);">
+        This gives new users a clear onboarding path, while giving existing users quick access to add more actions.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

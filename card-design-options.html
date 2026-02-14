@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Design Options - Unity</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #E7B43A;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 14px;
+      margin-bottom: 50px;
+    }
+
+    .section {
+      margin-bottom: 60px;
+    }
+
+    .section-title {
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-left: 4px;
+    }
+
+    .cards-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card-wrapper {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .card-label {
+      color: rgba(255,255,255,0.3);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* Base Card Styles */
+    .card {
+      background: linear-gradient(145deg, rgba(15,15,15,0.95), rgba(8,8,8,0.98));
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .avatar.gold-ring {
+      border: 2px solid #E7B43A;
+      box-shadow: 0 0 12px rgba(231,180,58,0.3);
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .post-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .card-content {
+      margin-bottom: 14px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .check-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #E7B43A, #B8912E);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .action-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .goal-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .goal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+    }
+
+    .engagement {
+      display: flex;
+      gap: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .engagement-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.5);
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .engagement-btn:hover {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .engagement-btn.active {
+      color: #E7B43A;
+    }
+
+    /* ========== CHALLENGE CARD OPTIONS ========== */
+
+    /* Option A: Silver/Metallic Border */
+    .card.option-a {
+      border: 1px solid rgba(192,192,192,0.4);
+      box-shadow:
+        0 0 20px rgba(192,192,192,0.08),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* Option B: Challenge Badge/Chip */
+    .challenge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: linear-gradient(135deg, rgba(192,192,192,0.15), rgba(192,192,192,0.08));
+      border: 1px solid rgba(192,192,192,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #C0C0C0;
+      font-weight: 500;
+      margin-left: auto;
+    }
+
+    /* Challenge name row (Option 2) */
+    .challenge-name-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding: 6px 0;
+    }
+
+    .challenge-context {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .challenge-name-text {
+      font-size: 12px;
+      color: #C0C0C0;
+      font-weight: 500;
+    }
+
+    /* Challenge subtitle under username (Option 3) */
+    .user-challenge-subtitle {
+      font-size: 11px;
+      color: #C0C0C0;
+      margin-top: 2px;
+    }
+
+    /* Challenge banner (Option 4) */
+    .challenge-banner {
+      background: linear-gradient(135deg, rgba(192,192,192,0.1), rgba(192,192,192,0.05));
+      border: 1px solid rgba(192,192,192,0.15);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #C0C0C0;
+      margin-bottom: 10px;
+    }
+
+    /* Option C: Different Background Tint */
+    .card.option-c {
+      background: linear-gradient(145deg,
+        rgba(192,192,192,0.08) 0%,
+        rgba(15,15,15,0.95) 30%,
+        rgba(8,8,8,0.98) 100%
+      );
+      border: 1px solid rgba(192,192,192,0.12);
+    }
+
+    /* Option D: Subtle Left Accent */
+    .card.option-d {
+      border-left: 3px solid #C0C0C0;
+      padding-left: 14px;
+    }
+
+    /* Option E: Top Gradient Line */
+    .card.option-e {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.option-e::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        #C0C0C0 20%,
+        #E8E8E8 50%,
+        #C0C0C0 80%,
+        transparent 100%
+      );
+    }
+
+    /* Option F: Combined (Border + Chip) */
+    .card.option-f {
+      border: 1px solid rgba(192,192,192,0.3);
+      background: linear-gradient(145deg,
+        rgba(192,192,192,0.04) 0%,
+        rgba(15,15,15,0.95) 20%,
+        rgba(8,8,8,0.98) 100%
+      );
+    }
+
+    /* Comparison Section */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .comparison-title {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #E7B43A;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* Status Post Style */
+    .status-content {
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+    }
+
+    /* Photo indicator */
+    .photo-placeholder {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border-radius: 12px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.2);
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .note {
+      background: rgba(231,180,58,0.1);
+      border: 1px solid rgba(231,180,58,0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 40px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .note strong {
+      color: #E7B43A;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>UNITY</h1>
+    <p class="subtitle">Card Design Options - Challenge vs Regular Posts</p>
+
+    <!-- BASELINE: Regular Check-in -->
+    <div class="section">
+      <div class="section-title">Baseline: Regular Check-in (No Challenge)</div>
+      <div class="cards-row">
+        <div class="card-wrapper">
+          <div class="card-label">Simple activity completion</div>
+          <div class="card">
+            <div class="card-header">
+              <div class="avatar">🏃</div>
+              <div class="user-info">
+                <div class="user-name">Sarah</div>
+                <div class="post-time">2h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Run</div>
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot"></div>
+                Fitness Goal
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 12</div>
+              <div class="engagement-btn">💬 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHALLENGE OPTIONS -->
+    <div class="section">
+      <div class="section-title">Challenge Post Options - Pick One</div>
+      <div class="cards-row">
+
+        <!-- Option 1: Challenge name IN the chip -->
+        <div class="card-wrapper">
+          <div class="card-label">Option 1: Full name in chip</div>
+          <div class="card option-a">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+              <div class="challenge-chip">🏆 30-Day Meditation</div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot" style="background: #60A5FA;"></div>
+                Mindfulness
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: Challenge name below action -->
+        <div class="card-wrapper">
+          <div class="card-label">Option 2: Name below action title</div>
+          <div class="card option-a">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+              <div class="challenge-chip">🏆</div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div class="challenge-name-row">
+                <span class="challenge-context">Part of</span>
+                <span class="challenge-name-text">30-Day Meditation Master</span>
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot" style="background: #60A5FA;"></div>
+                Mindfulness
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-row" style="margin-top: 20px;">
+        <!-- Option 3: Challenge name as subtitle under username -->
+        <div class="card-wrapper">
+          <div class="card-label">Option 3: Subtitle under username</div>
+          <div class="card option-a">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="user-challenge-subtitle">🏆 30-Day Meditation Master</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot" style="background: #60A5FA;"></div>
+                Mindfulness
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 4: Chip with day + name below -->
+        <div class="card-wrapper">
+          <div class="card-label">Option 4: Day chip + name below</div>
+          <div class="card option-a">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+              <div class="challenge-chip">Day 5/30</div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div class="challenge-banner">
+                🏆 30-Day Meditation Master
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot" style="background: #60A5FA;"></div>
+                Mindfulness
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-row" style="margin-top: 20px;">
+        <!-- Option C: Background Tint -->
+        <div class="card-wrapper">
+          <div class="card-label">Option C: Subtle Silver Background Tint</div>
+          <div class="card option-c">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div class="goal-tag">
+                  <div class="goal-dot" style="background: #60A5FA;"></div>
+                  Mindfulness
+                </div>
+                <div class="goal-tag" style="background: rgba(192,192,192,0.1);">
+                  🏆 30-Day Challenge
+                </div>
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option D: Left Accent -->
+        <div class="card-wrapper">
+          <div class="card-label">Option D: Silver Left Accent Bar</div>
+          <div class="card option-d">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div class="goal-tag">
+                  <div class="goal-dot" style="background: #60A5FA;"></div>
+                  Mindfulness
+                </div>
+                <div class="goal-tag" style="background: rgba(192,192,192,0.1);">
+                  🏆 30-Day Challenge
+                </div>
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-row" style="margin-top: 20px;">
+        <!-- Option E: Top Line -->
+        <div class="card-wrapper">
+          <div class="card-label">Option E: Silver Top Gradient Line</div>
+          <div class="card option-e">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <div class="goal-tag">
+                  <div class="goal-dot" style="background: #60A5FA;"></div>
+                  Mindfulness
+                </div>
+                <div class="goal-tag" style="background: rgba(192,192,192,0.1);">
+                  🏆 30-Day Challenge
+                </div>
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option F: Combined -->
+        <div class="card-wrapper">
+          <div class="card-label">Option F: Border + Tint + Chip (Combined)</div>
+          <div class="card option-f">
+            <div class="card-header">
+              <div class="avatar gold-ring">🧘</div>
+              <div class="user-info">
+                <div class="user-name">Mike</div>
+                <div class="post-time">1h ago</div>
+              </div>
+              <div class="challenge-chip">🏆 Day 5/30</div>
+            </div>
+            <div class="card-content">
+              <div class="action-row">
+                <div class="check-icon">✓</div>
+                <div class="action-title">Morning Meditation</div>
+              </div>
+              <div class="goal-tag">
+                <div class="goal-dot" style="background: #60A5FA;"></div>
+                Mindfulness
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 24</div>
+              <div class="engagement-btn">💬 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDE BY SIDE COMPARISON -->
+    <div class="comparison">
+      <div class="comparison-title">Side-by-Side: Regular vs Challenge</div>
+
+      <div>
+        <div class="card-label">Regular Check-in</div>
+        <div class="card">
+          <div class="card-header">
+            <div class="avatar">🏃</div>
+            <div class="user-info">
+              <div class="user-name">Sarah</div>
+              <div class="post-time">2h ago</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="action-row">
+              <div class="check-icon">✓</div>
+              <div class="action-title">Morning Run</div>
+            </div>
+            <div class="goal-tag">
+              <div class="goal-dot"></div>
+              Fitness Goal
+            </div>
+          </div>
+          <div class="engagement">
+            <div class="engagement-btn active">🔥 12</div>
+            <div class="engagement-btn">💬 3</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card-label">Challenge Check-in (A+B Combined)</div>
+        <div class="card option-a">
+          <div class="card-header">
+            <div class="avatar gold-ring">🧘</div>
+            <div class="user-info">
+              <div class="user-name">Mike</div>
+              <div class="post-time">1h ago</div>
+            </div>
+            <div class="challenge-chip">🏆 30-Day</div>
+          </div>
+          <div class="card-content">
+            <div class="action-row">
+              <div class="check-icon">✓</div>
+              <div class="action-title">Morning Meditation</div>
+            </div>
+            <div class="goal-tag">
+              <div class="goal-dot" style="background: #60A5FA;"></div>
+              Mindfulness
+            </div>
+          </div>
+          <div class="engagement">
+            <div class="engagement-btn active">🔥 24</div>
+            <div class="engagement-btn">💬 8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTHER POST TYPES -->
+    <div class="section" style="margin-top: 60px;">
+      <div class="section-title">Other Post Types (For Reference)</div>
+      <div class="cards-row">
+
+        <!-- Status Post -->
+        <div class="card-wrapper">
+          <div class="card-label">Status Post (Text Only)</div>
+          <div class="card">
+            <div class="card-header">
+              <div class="avatar">😊</div>
+              <div class="user-info">
+                <div class="user-name">Emma</div>
+                <div class="post-time">3h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="status-content">
+                Feeling great after hitting all my goals this week! Ready to crush next week too 💪
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 8</div>
+              <div class="engagement-btn">💬 2</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Photo Post -->
+        <div class="card-wrapper">
+          <div class="card-label">Photo Post</div>
+          <div class="card">
+            <div class="card-header">
+              <div class="avatar">📸</div>
+              <div class="user-info">
+                <div class="user-name">Jake</div>
+                <div class="post-time">4h ago</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="photo-placeholder">[ Photo would display here ]</div>
+              <div class="status-content" style="font-size: 13px;">
+                Post-workout protein shake 🥤
+              </div>
+            </div>
+            <div class="engagement">
+              <div class="engagement-btn active">🔥 15</div>
+              <div class="engagement-btn">💬 4</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Summary of Options:</strong><br><br>
+      <strong>A:</strong> Silver border glow - Subtle but noticeable<br>
+      <strong>B:</strong> Challenge chip in header - Clean, informative<br>
+      <strong>C:</strong> Background tint - Very subtle differentiation<br>
+      <strong>D:</strong> Left accent bar - Clear but different style<br>
+      <strong>E:</strong> Top gradient line - Elegant separator<br>
+      <strong>F:</strong> Combined approach - Most distinctive<br><br>
+      All options use the same base card design with gold/black luxury theme.
+    </div>
+  </div>
+</body>
+</html>

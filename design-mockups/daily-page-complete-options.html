@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Daily Page - 3 Complete Options</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .option-container {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 40px;
+        }
+
+        .option-label {
+            font-size: 16px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* iPhone mockup container */
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 8px solid #1a1a1a;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .time {
+            color: #fff;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 6px;
+            color: #fff;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* OPTION 1: Clean Timeline with Minimal Cards */
+        .o1-header {
+            padding: 20px 20px 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .o1-date {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .o1-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+        }
+
+        .o1-progress-bar {
+            margin-top: 16px;
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .o1-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E7B43A, #FFD700);
+            width: 60%;
+            border-radius: 3px;
+        }
+
+        .o1-feed {
+            padding: 24px 20px;
+        }
+
+        .o1-activity {
+            margin-bottom: 16px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .o1-activity.completed {
+            background: linear-gradient(135deg, rgba(231,180,58,0.08), rgba(255,215,0,0.04));
+            border-color: rgba(231,180,58,0.2);
+        }
+
+        .o1-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .o1-activity.completed .o1-icon {
+            background: linear-gradient(135deg, rgba(231,180,58,0.2), rgba(255,215,0,0.1));
+            border: 1px solid rgba(231,180,58,0.3);
+        }
+
+        .o1-check {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(231,180,58,0.5);
+            margin-left: 36px;
+            margin-top: -8px;
+        }
+
+        .o1-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .o1-action-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .o1-activity.completed .o1-action-name {
+            color: #E7B43A;
+        }
+
+        .o1-meta {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .o1-metrics {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .o1-metric-badge {
+            background: rgba(231,180,58,0.12);
+            border: 1px solid rgba(231,180,58,0.25);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        .o1-time-slot {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+
+        .o1-activity.completed .o1-time-slot {
+            color: rgba(231,180,58,0.6);
+        }
+
+        /* OPTION 2: Timeline with Vertical Line */
+        .o2-header {
+            padding: 20px 20px 20px 20px;
+        }
+
+        .o2-greeting {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .o2-date-info {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 16px;
+        }
+
+        .o2-stats-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .o2-stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .o2-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .o2-stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .o2-timeline {
+            padding: 24px 20px 24px 20px;
+            position: relative;
+        }
+
+        .o2-timeline::before {
+            content: '';
+            position: absolute;
+            left: 39px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A, rgba(231,180,58,0.2));
+        }
+
+        .o2-item {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 28px;
+        }
+
+        .o2-dot {
+            position: absolute;
+            left: 32px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #0B0F12;
+        }
+
+        .o2-item.completed .o2-dot {
+            background: #E7B43A;
+            box-shadow: 0 0 12px rgba(231,180,58,0.6);
+        }
+
+        .o2-time {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+        }
+
+        .o2-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        .o2-item.completed .o2-card {
+            background: linear-gradient(135deg, rgba(231,180,58,0.1), rgba(255,215,0,0.04));
+            border-color: rgba(231,180,58,0.2);
+        }
+
+        .o2-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .o2-activity-icon {
+            font-size: 20px;
+        }
+
+        .o2-activity-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            flex: 1;
+        }
+
+        .o2-item.completed .o2-activity-name {
+            color: #E7B43A;
+        }
+
+        .o2-check-icon {
+            font-size: 16px;
+            color: #E7B43A;
+        }
+
+        .o2-card-details {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+        }
+
+        .o2-metrics-grid {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .o2-metric-chip {
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        /* OPTION 3: Card Stack with Floating Actions */
+        .o3-header {
+            padding: 20px 20px 16px 20px;
+        }
+
+        .o3-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .o3-title-section {
+            flex: 1;
+        }
+
+        .o3-date-small {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .o3-title-large {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.8px;
+        }
+
+        .o3-progress-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: conic-gradient(#E7B43A 0% 60%, rgba(255,255,255,0.08) 60% 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .o3-progress-inner {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .o3-progress-num {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+            line-height: 1;
+        }
+
+        .o3-progress-total {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .o3-summary {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 16px;
+        }
+
+        .o3-filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .o3-tab {
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+        }
+
+        .o3-tab.active {
+            background: linear-gradient(135deg, rgba(231,180,58,0.2), rgba(255,215,0,0.1));
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        .o3-feed {
+            padding: 20px;
+        }
+
+        .o3-section-title {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .o3-activity-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .o3-activity-card.completed {
+            background: linear-gradient(135deg, rgba(231,180,58,0.12), rgba(255,215,0,0.06));
+            border-color: rgba(231,180,58,0.25);
+        }
+
+        .o3-activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(231,180,58,0.4), transparent);
+            opacity: 0;
+        }
+
+        .o3-activity-card.completed::before {
+            opacity: 1;
+        }
+
+        .o3-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .o3-left-section {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .o3-activity-emoji {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .o3-activity-info {
+            flex: 1;
+        }
+
+        .o3-activity-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+
+        .o3-activity-card.completed .o3-activity-title {
+            color: #E7B43A;
+        }
+
+        .o3-activity-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .o3-time-badge {
+            background: rgba(255,255,255,0.08);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .o3-activity-card.completed .o3-time-badge {
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        .o3-metrics-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .o3-metric-item {
+            flex: 1;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .o3-metric-val {
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .o3-metric-lbl {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .o3-completed-section {
+            margin-top: 24px;
+        }
+
+        .o3-completed-simple {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(231,180,58,0.08);
+            border: 1px solid rgba(231,180,58,0.2);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        .o3-completed-check {
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .o3-completed-text {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        .o3-completed-time {
+            font-size: 12px;
+            color: rgba(231,180,58,0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Daily Page - 3 Complete Options</div>
+
+    <div class="options-wrapper">
+
+        <!-- OPTION 1: Clean Timeline with Minimal Cards -->
+        <div class="option-container">
+            <div class="option-label">Option 1: Clean Minimal Cards</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="o1-header">
+                        <div class="o1-date">Tuesday, Nov 24</div>
+                        <div class="o1-title">Today</div>
+                        <div class="o1-progress-bar">
+                            <div class="o1-progress-fill"></div>
+                        </div>
+                    </div>
+                    <div class="o1-feed">
+                        <div class="o1-activity completed">
+                            <div class="o1-icon">☀️</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Woke Up Before 6am</div>
+                                <div class="o1-meta">Morning Routine</div>
+                            </div>
+                            <div class="o1-time-slot">5:47am</div>
+                        </div>
+
+                        <div class="o1-activity completed">
+                            <div class="o1-icon">📖</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Read 10 Pages</div>
+                                <div class="o1-meta">Personal Growth</div>
+                            </div>
+                            <div class="o1-time-slot">6:15am</div>
+                        </div>
+
+                        <div class="o1-activity completed">
+                            <div class="o1-icon">🏃</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Morning Run</div>
+                                <div class="o1-meta">75 HARD • Marathon Training</div>
+                                <div class="o1-metrics">
+                                    <div class="o1-metric-badge">45 min</div>
+                                    <div class="o1-metric-badge">6.2 mi</div>
+                                </div>
+                            </div>
+                            <div class="o1-time-slot">7:30am</div>
+                        </div>
+
+                        <div class="o1-activity">
+                            <div class="o1-icon">🧘</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Meditation</div>
+                                <div class="o1-meta">Mindfulness</div>
+                            </div>
+                            <div class="o1-time-slot">12:00pm</div>
+                        </div>
+
+                        <div class="o1-activity">
+                            <div class="o1-icon">💪</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Evening Workout</div>
+                                <div class="o1-meta">75 HARD • Strength Training</div>
+                            </div>
+                            <div class="o1-time-slot">6:00pm</div>
+                        </div>
+
+                        <div class="o1-activity">
+                            <div class="o1-icon">💧</div>
+                            <div class="o1-content">
+                                <div class="o1-action-name">Drink Gallon of Water</div>
+                                <div class="o1-meta">75 HARD</div>
+                            </div>
+                            <div class="o1-time-slot">9:00pm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 2: Timeline with Vertical Line -->
+        <div class="option-container">
+            <div class="option-label">Option 2: Timeline with Vertical Line</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="o2-header">
+                        <div class="o2-greeting">Good Morning</div>
+                        <div class="o2-date-info">Tuesday, November 24</div>
+                        <div class="o2-stats-row">
+                            <div class="o2-stat-card">
+                                <span class="o2-stat-value">3/6</span>
+                                <div class="o2-stat-label">Complete</div>
+                            </div>
+                            <div class="o2-stat-card">
+                                <span class="o2-stat-value">12</span>
+                                <div class="o2-stat-label">Day Streak</div>
+                            </div>
+                            <div class="o2-stat-card">
+                                <span class="o2-stat-value">75%</span>
+                                <div class="o2-stat-label">This Week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o2-timeline">
+                        <div class="o2-item completed">
+                            <div class="o2-time">5:47</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">☀️</span>
+                                    <span class="o2-activity-name">Woke Up Before 6am</span>
+                                    <span class="o2-check-icon">✓</span>
+                                </div>
+                                <div class="o2-card-details">Morning Routine</div>
+                            </div>
+                        </div>
+
+                        <div class="o2-item completed">
+                            <div class="o2-time">6:15</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">📖</span>
+                                    <span class="o2-activity-name">Read 10 Pages</span>
+                                    <span class="o2-check-icon">✓</span>
+                                </div>
+                                <div class="o2-card-details">Personal Growth</div>
+                            </div>
+                        </div>
+
+                        <div class="o2-item completed">
+                            <div class="o2-time">7:30</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">🏃</span>
+                                    <span class="o2-activity-name">Morning Run</span>
+                                    <span class="o2-check-icon">✓</span>
+                                </div>
+                                <div class="o2-card-details">75 HARD • Marathon Training</div>
+                                <div class="o2-metrics-grid">
+                                    <div class="o2-metric-chip">45 min</div>
+                                    <div class="o2-metric-chip">6.2 mi</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="o2-item">
+                            <div class="o2-time">12:00</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">🧘</span>
+                                    <span class="o2-activity-name">Meditation</span>
+                                </div>
+                                <div class="o2-card-details">Mindfulness</div>
+                            </div>
+                        </div>
+
+                        <div class="o2-item">
+                            <div class="o2-time">18:00</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">💪</span>
+                                    <span class="o2-activity-name">Evening Workout</span>
+                                </div>
+                                <div class="o2-card-details">75 HARD • Strength Training</div>
+                            </div>
+                        </div>
+
+                        <div class="o2-item">
+                            <div class="o2-time">21:00</div>
+                            <div class="o2-dot"></div>
+                            <div class="o2-card">
+                                <div class="o2-card-header">
+                                    <span class="o2-activity-icon">💧</span>
+                                    <span class="o2-activity-name">Drink Gallon of Water</span>
+                                </div>
+                                <div class="o2-card-details">75 HARD</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 3: Card Stack with Floating Actions -->
+        <div class="option-container">
+            <div class="option-label">Option 3: Card Stack with Sections</div>
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="status-bar">
+                    <div class="time">9:41</div>
+                    <div class="status-icons">📶 📶 🔋</div>
+                </div>
+                <div class="screen-content">
+                    <div class="o3-header">
+                        <div class="o3-header-top">
+                            <div class="o3-title-section">
+                                <div class="o3-date-small">Tuesday, Nov 24</div>
+                                <div class="o3-title-large">My Day</div>
+                            </div>
+                            <div class="o3-progress-circle">
+                                <div class="o3-progress-inner">
+                                    <span class="o3-progress-num">3</span>
+                                    <span class="o3-progress-total">/6</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o3-summary">You're on a 12-day streak!</div>
+                        <div class="o3-filter-tabs">
+                            <div class="o3-tab active">All</div>
+                            <div class="o3-tab">Pending</div>
+                            <div class="o3-tab">Done</div>
+                        </div>
+                    </div>
+                    <div class="o3-feed">
+                        <div class="o3-section-title">Pending</div>
+
+                        <div class="o3-activity-card">
+                            <div class="o3-card-top">
+                                <div class="o3-left-section">
+                                    <div class="o3-activity-emoji">🧘</div>
+                                    <div class="o3-activity-info">
+                                        <div class="o3-activity-title">Meditation</div>
+                                        <div class="o3-activity-sub">Mindfulness</div>
+                                    </div>
+                                </div>
+                                <div class="o3-time-badge">12:00pm</div>
+                            </div>
+                        </div>
+
+                        <div class="o3-activity-card">
+                            <div class="o3-card-top">
+                                <div class="o3-left-section">
+                                    <div class="o3-activity-emoji">💪</div>
+                                    <div class="o3-activity-info">
+                                        <div class="o3-activity-title">Evening Workout</div>
+                                        <div class="o3-activity-sub">75 HARD • Strength Training</div>
+                                    </div>
+                                </div>
+                                <div class="o3-time-badge">6:00pm</div>
+                            </div>
+                        </div>
+
+                        <div class="o3-activity-card">
+                            <div class="o3-card-top">
+                                <div class="o3-left-section">
+                                    <div class="o3-activity-emoji">💧</div>
+                                    <div class="o3-activity-info">
+                                        <div class="o3-activity-title">Drink Gallon of Water</div>
+                                        <div class="o3-activity-sub">75 HARD</div>
+                                    </div>
+                                </div>
+                                <div class="o3-time-badge">9:00pm</div>
+                            </div>
+                        </div>
+
+                        <div class="o3-completed-section">
+                            <div class="o3-section-title">Completed</div>
+
+                            <div class="o3-completed-simple">
+                                <div class="o3-completed-check">✓</div>
+                                <div class="o3-completed-text">Woke Up Before 6am</div>
+                                <div class="o3-completed-time">5:47am</div>
+                            </div>
+
+                            <div class="o3-completed-simple">
+                                <div class="o3-completed-check">✓</div>
+                                <div class="o3-completed-text">Read 10 Pages</div>
+                                <div class="o3-completed-time">6:15am</div>
+                            </div>
+
+                            <div class="o3-activity-card completed">
+                                <div class="o3-card-top">
+                                    <div class="o3-left-section">
+                                        <div class="o3-activity-emoji">🏃</div>
+                                        <div class="o3-activity-info">
+                                            <div class="o3-activity-title">Morning Run</div>
+                                            <div class="o3-activity-sub">75 HARD • Marathon Training</div>
+                                        </div>
+                                    </div>
+                                    <div class="o3-time-badge">7:30am</div>
+                                </div>
+                                <div class="o3-metrics-row">
+                                    <div class="o3-metric-item">
+                                        <span class="o3-metric-val">45</span>
+                                        <div class="o3-metric-lbl">Minutes</div>
+                                    </div>
+                                    <div class="o3-metric-item">
+                                        <span class="o3-metric-val">6.2</span>
+                                        <div class="o3-metric-lbl">Miles</div>
+                                    </div>
+                                    <div class="o3-metric-item">
+                                        <span class="o3-metric-val">12</span>
+                                        <div class="o3-metric-lbl">Streak</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

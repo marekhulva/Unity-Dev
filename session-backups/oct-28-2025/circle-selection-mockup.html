@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Selection Modal - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Main composer area */
+        .composer {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .composer-header {
+            margin-bottom: 15px;
+        }
+
+        .composer-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 15px;
+            min-height: 100px;
+        }
+
+        /* Visibility selector button */
+        .visibility-button {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+            padding: 10px 16px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .visibility-button:hover {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.2);
+        }
+
+        .visibility-button .arrow {
+            opacity: 0.7;
+            font-size: 12px;
+        }
+
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal content */
+        .modal {
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: hidden;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            animation: slideUp 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #FFD700;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Quick options */
+        .quick-options {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 215, 0, 0.6);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .quick-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quick-option:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateX(2px);
+        }
+
+        .quick-option.selected {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .quick-option-icon {
+            font-size: 20px;
+        }
+
+        .quick-option-text {
+            flex: 1;
+        }
+
+        .quick-option-label {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .quick-option-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 215, 0, 0.3),
+                transparent
+            );
+            margin: 20px 0;
+        }
+
+        /* Circle selection */
+        .circle-list {
+            margin-top: 12px;
+        }
+
+        .circle-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .circle-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .circle-item.checked {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .circle-item.checked .checkbox {
+            background: #FFD700;
+            border-color: #FFD700;
+        }
+
+        .checkbox-check {
+            display: none;
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .circle-item.checked .checkbox-check {
+            display: block;
+        }
+
+        .circle-emoji {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+
+        .circle-info {
+            flex: 1;
+        }
+
+        .circle-name {
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+
+        .circle-members {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-select-all,
+        .btn-clear {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: transparent;
+            color: #FFD700;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-select-all:hover,
+        .btn-clear:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        /* Modal footer */
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .selection-summary {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .selection-summary strong {
+            color: #FFD700;
+        }
+
+        .footer-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-cancel,
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Explore section */
+        .explore-section {
+            margin: 20px 0;
+        }
+
+        .explore-toggle {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 14px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .explore-toggle:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .explore-toggle.checked {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .explore-toggle .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .explore-toggle.checked .checkbox {
+            background: #FFD700;
+            border-color: #FFD700;
+        }
+
+        .explore-toggle .checkbox-check {
+            display: none;
+            color: #000;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .explore-toggle.checked .checkbox-check {
+            display: block;
+        }
+
+        /* Warning for public posts */
+        .warning {
+            background: rgba(255, 100, 0, 0.1);
+            border: 1px solid rgba(255, 100, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #FFA500;
+            display: none;
+        }
+
+        .warning.show {
+            display: block;
+        }
+
+        .warning-icon {
+            margin-right: 6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main composer mockup -->
+    <div class="composer">
+        <div class="composer-header">
+            <h3 style="margin-bottom: 10px;">Create Post</h3>
+        </div>
+        <textarea class="composer-textarea" placeholder="What's on your mind?">Just completed my morning workout! 💪</textarea>
+
+        <button class="visibility-button" onclick="openModal()">
+            <span id="visibility-display">⭕ 2 Circles</span>
+            <span class="arrow">▼</span>
+        </button>
+    </div>
+
+    <!-- Circle Selection Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Who can see this?</h2>
+            </div>
+
+            <div class="modal-body">
+                <!-- Quick Options -->
+                <div class="quick-options">
+                    <div class="section-label">Quick Options</div>
+
+                    <div class="quick-option" onclick="selectQuickOption('private', this)">
+                        <span class="quick-option-icon">🔒</span>
+                        <div class="quick-option-text">
+                            <div class="quick-option-label">Only Me</div>
+                            <div class="quick-option-desc">Private - save for yourself</div>
+                        </div>
+                    </div>
+
+                    <div class="quick-option" onclick="selectQuickOption('network', this)">
+                        <span class="quick-option-icon">🌐</span>
+                        <div class="quick-option-text">
+                            <div class="quick-option-label">My Network</div>
+                            <div class="quick-option-desc">All circles & followers</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explore Toggle -->
+                <div class="explore-section">
+                    <div class="section-label">Discovery</div>
+                    <div class="explore-toggle" onclick="toggleExplore(this)">
+                        <div class="checkbox">
+                            <span class="checkbox-check">✓</span>
+                        </div>
+                        <span class="quick-option-icon">🌍</span>
+                        <div class="quick-option-text">
+                            <div class="quick-option-label">Share to Explore</div>
+                            <div class="quick-option-desc">Make discoverable by everyone</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Circle Selection -->
+                <div class="circle-selection">
+                    <div class="section-label">Or Select Specific Circles</div>
+
+                    <div class="circle-list">
+                        <div class="circle-item checked" onclick="toggleCircle(this)">
+                            <div class="checkbox">
+                                <span class="checkbox-check">✓</span>
+                            </div>
+                            <span class="circle-emoji">💼</span>
+                            <div class="circle-info">
+                                <div class="circle-name">Work Team</div>
+                                <div class="circle-members">12 members</div>
+                            </div>
+                        </div>
+
+                        <div class="circle-item checked" onclick="toggleCircle(this)">
+                            <div class="checkbox">
+                                <span class="checkbox-check">✓</span>
+                            </div>
+                            <span class="circle-emoji">🏋️</span>
+                            <div class="circle-info">
+                                <div class="circle-name">Fitness Crew</div>
+                                <div class="circle-members">8 members</div>
+                            </div>
+                        </div>
+
+                        <div class="circle-item" onclick="toggleCircle(this)">
+                            <div class="checkbox">
+                                <span class="checkbox-check">✓</span>
+                            </div>
+                            <span class="circle-emoji">🏀</span>
+                            <div class="circle-info">
+                                <div class="circle-name">Basketball Squad</div>
+                                <div class="circle-members">15 members</div>
+                            </div>
+                        </div>
+
+                        <div class="circle-item" onclick="toggleCircle(this)">
+                            <div class="checkbox">
+                                <span class="checkbox-check">✓</span>
+                            </div>
+                            <span class="circle-emoji">👨‍👩‍👧</span>
+                            <div class="circle-info">
+                                <div class="circle-name">Family</div>
+                                <div class="circle-members">6 members</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-select-all" onclick="selectAll()">Select All</button>
+                        <button class="btn-clear" onclick="clearAll()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="warning" id="explore-warning">
+                    <span class="warning-icon">⚠️</span>
+                    Posts shared to Explore will be discoverable by everyone on the platform, even if you're also sharing with specific circles.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="selection-summary" id="summary">
+                    <strong>2 circles selected</strong> (20 people total)
+                </div>
+                <div class="footer-buttons">
+                    <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button class="btn-confirm" onclick="confirmSelection()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isPrivate = false;
+        let isNetwork = false;
+        let isExplore = false;
+        let selectedCircles = new Set(['Work Team', 'Fitness Crew']);
+
+        // Initialize with 2 circles selected
+        window.onload = function() {
+            document.querySelectorAll('.circle-item').forEach(item => {
+                const name = item.querySelector('.circle-name').textContent;
+                if (selectedCircles.has(name)) {
+                    item.classList.add('checked');
+                }
+            });
+        };
+
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+            updateSummary();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function selectQuickOption(option, element) {
+            // Clear all quick options
+            document.querySelectorAll('.quick-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            if (option === 'private') {
+                // Private is exclusive - clear everything else
+                element.classList.add('selected');
+                isPrivate = true;
+                isNetwork = false;
+                isExplore = false;
+                selectedCircles.clear();
+
+                // Clear all UI selections
+                document.querySelectorAll('.circle-item').forEach(item => {
+                    item.classList.remove('checked');
+                });
+                document.querySelector('.explore-toggle').classList.remove('checked');
+                document.getElementById('explore-warning').classList.remove('show');
+
+            } else if (option === 'network') {
+                element.classList.add('selected');
+                isNetwork = true;
+                isPrivate = false;
+                selectedCircles.clear();
+
+                // Clear circle selections but keep Explore if it was selected
+                document.querySelectorAll('.circle-item').forEach(item => {
+                    item.classList.remove('checked');
+                });
+            }
+
+            updateSummary();
+        }
+
+        function toggleExplore(element) {
+            element.classList.toggle('checked');
+            isExplore = element.classList.contains('checked');
+
+            // If turning on Explore, disable Private option
+            if (isExplore) {
+                isPrivate = false;
+                document.querySelectorAll('.quick-option').forEach(opt => {
+                    if (opt.textContent.includes('Only Me')) {
+                        opt.classList.remove('selected');
+                    }
+                });
+                document.getElementById('explore-warning').classList.add('show');
+            } else {
+                document.getElementById('explore-warning').classList.remove('show');
+            }
+
+            updateSummary();
+        }
+
+        function toggleCircle(element) {
+            element.classList.toggle('checked');
+            const circleName = element.querySelector('.circle-name').textContent;
+
+            if (element.classList.contains('checked')) {
+                selectedCircles.add(circleName);
+            } else {
+                selectedCircles.delete(circleName);
+            }
+
+            // If selecting circles, clear Private and Network options
+            if (selectedCircles.size > 0) {
+                isPrivate = false;
+                isNetwork = false;
+                document.querySelectorAll('.quick-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+            }
+
+            updateSummary();
+        }
+
+        function selectAll() {
+            document.querySelectorAll('.circle-item').forEach(item => {
+                item.classList.add('checked');
+                const name = item.querySelector('.circle-name').textContent;
+                selectedCircles.add(name);
+            });
+
+            // Clear quick options
+            isPrivate = false;
+            isNetwork = false;
+            document.querySelectorAll('.quick-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            updateSummary();
+        }
+
+        function clearAll() {
+            document.querySelectorAll('.circle-item').forEach(item => {
+                item.classList.remove('checked');
+            });
+            selectedCircles.clear();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            let summaryText = '';
+
+            if (isPrivate) {
+                summaryText = '<strong>Private</strong> - Only you can see this';
+            } else {
+                const parts = [];
+
+                // Add Explore if selected
+                if (isExplore) {
+                    parts.push('<strong>Explore</strong>');
+                }
+
+                // Add Network or Circles
+                if (isNetwork) {
+                    parts.push('<strong>My Network</strong>');
+                } else if (selectedCircles.size > 0) {
+                    const checkedCircles = document.querySelectorAll('.circle-item.checked');
+                    let totalMembers = 0;
+                    checkedCircles.forEach(circle => {
+                        const members = parseInt(circle.querySelector('.circle-members').textContent);
+                        totalMembers += members;
+                    });
+                    const circleText = selectedCircles.size === 1 ?
+                        `<strong>${Array.from(selectedCircles)[0]}</strong>` :
+                        `<strong>${selectedCircles.size} circles</strong> (${totalMembers} people)`;
+                    parts.push(circleText);
+                }
+
+                if (parts.length === 0) {
+                    summaryText = 'No audience selected';
+                } else if (parts.length === 1) {
+                    summaryText = parts[0];
+                } else {
+                    summaryText = parts.join(' + ');
+                }
+
+                // Add clarification for Explore combinations
+                if (isExplore && parts.length > 1) {
+                    summaryText += '<br><em style="font-size:11px;opacity:0.8">Visible to selected audience and discoverable by everyone</em>';
+                }
+            }
+
+            summary.innerHTML = summaryText;
+        }
+
+        function confirmSelection() {
+            const display = document.getElementById('visibility-display');
+
+            if (isPrivate) {
+                display.textContent = '🔒 Only Me';
+            } else {
+                const parts = [];
+
+                if (isExplore) {
+                    parts.push('🌍 Explore');
+                }
+
+                if (isNetwork) {
+                    parts.push('🌐 Network');
+                } else if (selectedCircles.size === 1) {
+                    const circleName = Array.from(selectedCircles)[0];
+                    const circleEl = Array.from(document.querySelectorAll('.circle-item')).find(
+                        item => item.querySelector('.circle-name').textContent === circleName
+                    );
+                    const emoji = circleEl ? circleEl.querySelector('.circle-emoji').textContent : '⭕';
+                    parts.push(`${emoji} ${circleName}`);
+                } else if (selectedCircles.size > 1) {
+                    parts.push(`⭕ ${selectedCircles.size} Circles`);
+                }
+
+                display.textContent = parts.length > 0 ? parts.join(' + ') : '🔒 Only Me';
+            }
+
+            closeModal();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

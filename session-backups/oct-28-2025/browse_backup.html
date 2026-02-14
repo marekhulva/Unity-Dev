@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Backup Browser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            font-weight: bold;
+        }
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .tab:hover {
+            background: #45a049;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .stats {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .search {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .count {
+            background: #2196F3;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Database Backup Browser</h1>
+        
+        <div class="stats">
+            <h3>Database Summary</h3>
+            <p>📁 Backup File: db_cluster-29-08-2025@08-28-17.backup (32MB)</p>
+            <p>📅 Created: August 29, 2025</p>
+            <p>👥 Total Users: <span id="userCount">93</span></p>
+            <p>🏘️ Total Circles: <span id="circleCount">2</span></p>
+            <p>📝 Total Posts: <span id="postCount">104</span></p>
+        </div>
+
+        <input type="text" class="search" id="searchBox" placeholder="🔍 Search across all tables...">
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTable('circles')">Circles <span class="count">2</span></button>
+            <button class="tab" onclick="showTable('profiles')">Profiles <span class="count">93</span></button>
+            <button class="tab" onclick="showTable('posts')">Posts <span class="count">104</span></button>
+            <button class="tab" onclick="showTable('challenges')">Challenges <span class="count">1</span></button>
+            <button class="tab" onclick="showTable('actions')">Actions <span class="count">125</span></button>
+        </div>
+        
+        <div id="tableContent"></div>
+    </div>
+
+    <script>
+        // Sample data from your backup
+        const data = {
+            circles: [
+                {id: '37467c2e-24dc...', name: 'Test Circle', invite_code: 'TEST123', members: 80, description: 'A test circle for development'},
+                {id: '3ea414a5-7b57...', name: 'Retreat', invite_code: 'JING', members: 2, description: 'Daily energy cultivation practices'}
+            ],
+            profiles: [
+                {id: 'user1', email: '888@888.com', name: '888888', username: 'user888'},
+                {id: 'user2', email: '111111@user.com', name: '111111', username: 'user111'},
+                {id: 'user3', email: '555@555.com', name: '5555555', username: 'user555'},
+                // ... more users
+            ],
+            posts: [
+                {id: 'post1', type: 'photo', content: 'Check out my progress!', user: 'user1', created: '2025-08-28'},
+                {id: 'post2', type: 'audio', content: 'Morning meditation', user: 'user2', created: '2025-08-28'},
+                // ... more posts
+            ],
+            challenges: [
+                {id: 'chal1', name: 'Jing Challenge', circle: 'TEST123', participants: 45, status: 'active'}
+            ],
+            actions: [
+                {id: 'act1', title: 'Morning Meditation', user: 'user1', frequency: 'daily', completed: true},
+                {id: 'act2', title: 'Exercise', user: 'user2', frequency: 'daily', completed: false},
+                // ... more actions
+            ]
+        };
+
+        function showTable(tableName) {
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Display table data
+            const tableData = data[tableName];
+            let html = '<table><thead><tr>';
+            
+            // Get headers from first row
+            if (tableData && tableData.length > 0) {
+                Object.keys(tableData[0]).forEach(key => {
+                    html += `<th>${key.charAt(0).toUpperCase() + key.slice(1)}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                // Add rows
+                tableData.forEach(row => {
+                    html += '<tr>';
+                    Object.values(row).forEach(value => {
+                        html += `<td>${value}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            } else {
+                html = '<p>No data in this table</p>';
+            }
+            
+            document.getElementById('tableContent').innerHTML = html;
+        }
+        
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        // Show circles by default
+        showTable('circles');
+    </script>
+</body>
+</html>

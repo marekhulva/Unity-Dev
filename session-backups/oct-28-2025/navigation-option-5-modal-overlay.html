@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 5: Challenges Modal/Overlay - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .demo-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .demo-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .demo-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+        }
+
+        .phone-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            height: 844px;
+            position: relative;
+            border: 8px solid #1a1a1a;
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+            position: relative;
+        }
+
+        .header {
+            padding: 60px 20px 20px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .floating-button {
+            position: absolute;
+            bottom: 110px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .floating-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(255, 215, 0, 0.6);
+        }
+
+        .floating-button:active {
+            transform: scale(0.95);
+        }
+
+        .challenges-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.2s;
+        }
+
+        .challenges-overlay.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .overlay-header {
+            padding: 60px 20px 20px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .overlay-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 15px 20px 0;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0a0a0a;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .overlay-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .search-bar {
+            margin: 15px 20px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            width: calc(100% - 40px);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            padding: 20px 20px 10px;
+        }
+
+        .challenge-card {
+            margin: 10px 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            font-size: 32px;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-badge {
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .challenge-stat {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .challenge-stat strong {
+            color: #FFD700;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .instruction-box {
+            margin: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .instruction-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .instruction-text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .instruction-arrow {
+            font-size: 32px;
+            color: #FFD700;
+            margin-top: 10px;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-title">Option 5: Challenges as Modal/Overlay</div>
+        <div class="demo-subtitle">Floating button opens full-screen challenge browser (like Instagram create, TikTok)</div>
+
+        <div class="phone-container">
+            <div class="screen">
+                <div class="header">
+                    <div class="header-title">Social</div>
+                    <div class="header-subtitle">What's happening in your circles</div>
+                </div>
+
+                <div class="content">
+                    <div class="instruction-box">
+                        <div class="instruction-icon">🏆</div>
+                        <div class="instruction-text">
+                            <strong>Tap the floating button</strong> in the bottom right to access challenges!
+                        </div>
+                        <div class="instruction-arrow">↓</div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">JS</div>
+                            <div class="post-info">
+                                <div class="post-author">John Smith</div>
+                                <div class="post-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Just finished my morning workout! Feeling energized for the day 💪
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">SK</div>
+                            <div class="post-info">
+                                <div class="post-author">Sarah Kim</div>
+                                <div class="post-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 23 of the reading challenge complete! Currently reading "Atomic Habits" 📚
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">MJ</div>
+                            <div class="post-info">
+                                <div class="post-author">Mike Johnson</div>
+                                <div class="post-time">1 day ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Cold shower done ❄️ Who else is in on this challenge?
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Button -->
+                <div class="floating-button" onclick="openChallenges()" title="Open Challenges">
+                    🏆
+                </div>
+
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Social</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">✓</div>
+                        <div class="nav-label">Daily</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👥</div>
+                        <div class="nav-label">Circle</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">📊</div>
+                        <div class="nav-label">Progress</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profile</div>
+                    </div>
+                </div>
+
+                <!-- Challenges Overlay -->
+                <div class="challenges-overlay" id="challengesOverlay">
+                    <div class="overlay-header">
+                        <div class="overlay-title">Challenges</div>
+                        <button class="close-btn" onclick="closeChallenges()">&times;</button>
+                    </div>
+
+                    <div class="tabs">
+                        <div class="tab active" onclick="showOverlayTab('active')">Active</div>
+                        <div class="tab" onclick="showOverlayTab('discover')">Discover</div>
+                        <div class="tab" onclick="showOverlayTab('completed')">Completed</div>
+                    </div>
+
+                    <div class="overlay-content">
+                        <!-- Active Tab -->
+                        <div id="overlay-tab-active">
+                            <div class="section-title">Your Active Challenges (4)</div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">🥶</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">30 Day Cold Shower</div>
+                                        <div class="challenge-meta">Global • 2,847 participants</div>
+                                    </div>
+                                    <div class="challenge-badge">Active</div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Rank: <strong>#142</strong></div>
+                                    <div class="challenge-stat">Progress: <strong>23/30</strong></div>
+                                    <div class="challenge-stat">Streak: <strong>23 days</strong></div>
+                                </div>
+                                <button class="btn btn-secondary">View Leaderboard & Feed</button>
+                            </div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">📚</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">SF Reading Sprint</div>
+                                        <div class="challenge-meta">Circle • 8 participants</div>
+                                    </div>
+                                    <div class="challenge-badge">Active</div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Rank: <strong>#2</strong></div>
+                                    <div class="challenge-stat">Books: <strong>12/12</strong></div>
+                                </div>
+                                <button class="btn btn-secondary">View Leaderboard & Feed</button>
+                            </div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">🧘</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">100 Hours Meditation</div>
+                                        <div class="challenge-meta">Global • 1,523 participants</div>
+                                    </div>
+                                    <div class="challenge-badge">Active</div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Rank: <strong>#87</strong></div>
+                                    <div class="challenge-stat">Hours: <strong>45/100</strong></div>
+                                </div>
+                                <button class="btn btn-secondary">View Leaderboard & Feed</button>
+                            </div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">💪</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">Morning Workout</div>
+                                        <div class="challenge-meta">Circle • 10 participants</div>
+                                    </div>
+                                    <div class="challenge-badge">Active</div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Rank: <strong>#5</strong></div>
+                                    <div class="challenge-stat">Days: <strong>8/10</strong></div>
+                                </div>
+                                <button class="btn btn-secondary">View Leaderboard & Feed</button>
+                            </div>
+                        </div>
+
+                        <!-- Discover Tab -->
+                        <div id="overlay-tab-discover" style="display: none;">
+                            <input type="text" class="search-bar" placeholder="Search challenges...">
+
+                            <div class="section-title">Trending Global Challenges</div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">🥶</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">30 Day Cold Shower</div>
+                                        <div class="challenge-meta">Global • 2,847 participants</div>
+                                    </div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Duration: <strong>30 days</strong></div>
+                                    <div class="challenge-stat">Difficulty: <strong>Hard</strong></div>
+                                </div>
+                                <button class="btn">Join Challenge</button>
+                            </div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">🧘</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">100 Hours Meditation</div>
+                                        <div class="challenge-meta">Global • 1,523 participants</div>
+                                    </div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Duration: <strong>90 days</strong></div>
+                                    <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                                </div>
+                                <button class="btn">Join Challenge</button>
+                            </div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">📖</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">Read 12 Books This Year</div>
+                                        <div class="challenge-meta">Global • 5,234 participants</div>
+                                    </div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Duration: <strong>365 days</strong></div>
+                                    <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                                </div>
+                                <button class="btn">Join Challenge</button>
+                            </div>
+                        </div>
+
+                        <!-- Completed Tab -->
+                        <div id="overlay-tab-completed" style="display: none;">
+                            <div class="section-title">Completed Challenges</div>
+
+                            <div class="challenge-card">
+                                <div class="challenge-header">
+                                    <div class="challenge-icon">✅</div>
+                                    <div class="challenge-info">
+                                        <div class="challenge-title">21 Day Meditation</div>
+                                        <div class="challenge-meta">Completed 3 days ago</div>
+                                    </div>
+                                    <div class="challenge-badge" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50;">Done</div>
+                                </div>
+                                <div class="challenge-stats">
+                                    <div class="challenge-stat">Final rank: <strong>#12</strong></div>
+                                    <div class="challenge-stat">Completion: <strong>21/21</strong></div>
+                                </div>
+                                <button class="btn btn-secondary">View Results</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openChallenges() {
+            document.getElementById('challengesOverlay').classList.add('active');
+        }
+
+        function closeChallenges() {
+            document.getElementById('challengesOverlay').classList.remove('active');
+        }
+
+        function showOverlayTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('overlay-tab-active').style.display = 'none';
+            document.getElementById('overlay-tab-discover').style.display = 'none';
+            document.getElementById('overlay-tab-completed').style.display = 'none';
+
+            document.getElementById('overlay-tab-' + tab).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

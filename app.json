@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Unity",
+    "slug": "freestyle-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hmarek.freestyle",
+      "buildNumber": "80",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "scheme": "freestyle",
+    "extra": {
+      "eas": {
+        "projectId": "45fa4417-6061-4661-9881-0ee7cf571b4e"
+      }
+    },
+    "plugins": [
+      "expo-audio",
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app needs access to your photos to let you share them.",
+          "cameraPermission": "The app needs access to your camera to let you take photos."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#E7B43A"
+        }
+      ]
+    ]
+  }
+}

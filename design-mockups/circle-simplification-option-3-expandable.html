@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Simplification - Option 3: Expandable Sections</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: #000;
+            padding: 20px 0 16px;
+            z-index: 10;
+            border-bottom: 1px solid rgba(231,180,58,0.2);
+        }
+        .circle-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .circle-emoji {
+            font-size: 32px;
+        }
+        .circle-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .circle-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(231,180,58,0.3);
+            background: rgba(231,180,58,0.1);
+            color: #E7B43A;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding-top: 20px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Expandable Sections */
+        .expandable-section {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            cursor: pointer;
+        }
+
+        .section-header:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .section-title-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .section-subtitle {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .section-chevron {
+            font-size: 20px;
+            color: rgba(255,255,255,0.4);
+            transition: transform 0.2s;
+        }
+
+        .expandable-section.expanded .section-chevron {
+            transform: rotate(90deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .expandable-section.expanded .section-content {
+            max-height: 2000px;
+        }
+
+        .section-inner {
+            padding: 0 16px 16px;
+        }
+
+        /* Podium */
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .podium-place {
+            text-align: center;
+            flex: 1;
+        }
+
+        .podium-place.first {
+            order: 2;
+        }
+        .podium-place.second {
+            order: 1;
+        }
+        .podium-place.third {
+            order: 3;
+        }
+
+        .podium-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #E7B43A 0%, rgba(231,180,58,0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 8px;
+        }
+
+        .podium-place.first .podium-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            font-size: 28px;
+        }
+
+        .podium-medal {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .podium-name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .podium-points {
+            font-size: 10px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Challenge Card */
+        .challenge-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .challenge-emoji {
+            font-size: 28px;
+        }
+
+        .challenge-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .challenge-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Activity Item */
+        .activity-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .activity-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .activity-content {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 6px;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Member Item */
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .member-stats {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .label {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #E7B43A;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        .collapsed-preview {
+            text-align: center;
+            padding: 8px;
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+        }
+    </style>
+    <script>
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('expanded');
+        }
+    </script>
+</head>
+<body>
+    <div class="label">OPTION 3: Expandable</div>
+
+    <div class="header">
+        <div class="circle-name">
+            <div class="circle-emoji">⚡</div>
+            <div class="circle-title">Warriors</div>
+        </div>
+        <div class="circle-actions">
+            <button class="btn">Invite</button>
+            <button class="btn">Settings</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- Stats always visible -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">47</div>
+                <div class="stat-label">Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Challenges</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">342</div>
+                <div class="stat-label">Posts</div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section (Expandable) -->
+        <div class="expandable-section expanded" id="leaderboard">
+            <div class="section-header" onclick="toggleSection('leaderboard')">
+                <div class="section-title-container">
+                    <div class="section-icon">🏆</div>
+                    <div>
+                        <div class="section-title">Leaderboard</div>
+                        <div class="section-subtitle">Top 3 • 47 total</div>
+                    </div>
+                </div>
+                <div class="section-chevron">›</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="podium">
+                        <div class="podium-place second">
+                            <div class="podium-medal">🥈</div>
+                            <div class="podium-avatar">M</div>
+                            <div class="podium-name">Maria</div>
+                            <div class="podium-points">2,450</div>
+                        </div>
+                        <div class="podium-place first">
+                            <div class="podium-medal">🥇</div>
+                            <div class="podium-avatar">J</div>
+                            <div class="podium-name">John</div>
+                            <div class="podium-points">3,120</div>
+                        </div>
+                        <div class="podium-place third">
+                            <div class="podium-medal">🥉</div>
+                            <div class="podium-avatar">S</div>
+                            <div class="podium-name">Sarah</div>
+                            <div class="podium-points">2,180</div>
+                        </div>
+                    </div>
+                    <div class="collapsed-preview">Tap to see full rankings →</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Challenges Section (Expandable) -->
+        <div class="expandable-section" id="challenges">
+            <div class="section-header" onclick="toggleSection('challenges')">
+                <div class="section-title-container">
+                    <div class="section-icon">🎯</div>
+                    <div>
+                        <div class="section-title">Challenges</div>
+                        <div class="section-subtitle">5 active • 7 total</div>
+                    </div>
+                </div>
+                <div class="section-chevron">›</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-emoji">🧊</div>
+                            <div>
+                                <div class="challenge-title">7-Day Cold Shower</div>
+                                <div class="challenge-meta">32 participants • 5 days left</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-emoji">📖</div>
+                            <div>
+                                <div class="challenge-title">Read 30 Minutes Daily</div>
+                                <div class="challenge-meta">28 participants • 12 days left</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-emoji">🏃</div>
+                            <div>
+                                <div class="challenge-title">Morning Run Streak</div>
+                                <div class="challenge-meta">19 participants • 21 days left</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapsed-preview">+ 2 more challenges</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Section (Expandable) -->
+        <div class="expandable-section" id="activity">
+            <div class="section-header" onclick="toggleSection('activity')">
+                <div class="section-title-container">
+                    <div class="section-icon">📱</div>
+                    <div>
+                        <div class="section-title">Recent Activity</div>
+                        <div class="section-subtitle">Last 24 hours</div>
+                    </div>
+                </div>
+                <div class="section-chevron">›</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <div class="activity-avatar">J</div>
+                            <div class="activity-name">John completed Cold Shower 🧊</div>
+                        </div>
+                        <div class="activity-content">Day 5/7 complete! Feeling unstoppable 💪</div>
+                        <div class="activity-stats">
+                            <span>❤️ 12</span>
+                            <span>💬 3</span>
+                            <span>2h ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <div class="activity-avatar">M</div>
+                            <div class="activity-name">Maria completed Run 🏃</div>
+                        </div>
+                        <div class="activity-content">5K before sunrise ☀️</div>
+                        <div class="activity-stats">
+                            <span>❤️ 8</span>
+                            <span>💬 1</span>
+                            <span>5h ago</span>
+                        </div>
+                    </div>
+                    <div class="collapsed-preview">+ 15 more updates</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Members Section (Expandable) -->
+        <div class="expandable-section" id="members">
+            <div class="section-header" onclick="toggleSection('members')">
+                <div class="section-title-container">
+                    <div class="section-icon">👥</div>
+                    <div>
+                        <div class="section-title">Members</div>
+                        <div class="section-subtitle">47 members • 3 admins</div>
+                    </div>
+                </div>
+                <div class="section-chevron">›</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="member-item">
+                        <div class="member-avatar">J</div>
+                        <div class="member-info">
+                            <div class="member-name">John (Admin)</div>
+                            <div class="member-stats">3,120 pts • 94% consistency</div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar">M</div>
+                        <div class="member-info">
+                            <div class="member-name">Maria</div>
+                            <div class="member-stats">2,450 pts • 88% consistency</div>
+                        </div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar">S</div>
+                        <div class="member-info">
+                            <div class="member-name">Sarah</div>
+                            <div class="member-stats">2,180 pts • 85% consistency</div>
+                        </div>
+                    </div>
+                    <div class="collapsed-preview">+ 44 more members</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 80px;"></div>
+
+    <script>
+        // Auto-expand first section on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('leaderboard').classList.add('expanded');
+        });
+    </script>
+</body>
+</html>

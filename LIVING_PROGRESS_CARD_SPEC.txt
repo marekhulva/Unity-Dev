@@ -1,0 +1,379 @@
+================================================================================
+LIVING PROGRESS CARD - IMPLEMENTATION SPEC
+================================================================================
+Created: 2026-01-29
+Status: PLANNING (Not Implemented)
+Reversible: YES - All changes can be rolled back
+
+================================================================================
+PROBLEM STATEMENT
+================================================================================
+
+Current Behavior:
+- User completes "Meditate" → Creates new check-in post
+- User completes "Run" → Creates ANOTHER new check-in post
+- Result: Feed is spammed with multiple cards from same user
+
+Desired Behavior:
+- User completes "Meditate" → Creates/updates ONE daily progress card
+- User completes "Run" → UPDATES the same card
+- Result: Feed shows ONE living card per user per day that updates in real-time
+
+================================================================================
+SOLUTION OVERVIEW
+================================================================================
+
+Core Concept: "One Card Per User Per Day"
+
+Instead of creating a new post for each completed action, we:
+1. Find today's existing progress card for the user
+2. If exists: UPDATE it with new completion
+3. If not exists: CREATE first progress card for today
+
+The card shows:
+- Latest completed action (highlighted)
+- All completed actions (in order)
+- Remaining actions
+- Progress percentage (2 of 4 = 50%)
+- Relative time ("2 min ago")
+
+================================================================================
+DATABASE CHANGES
+================================================================================
+
+Table: posts
+-----------
+ADD COLUMNS:
+  - is_daily_progress (boolean, default false)
+    Purpose: Flag to identify daily progress cards vs regular posts
+
+  - progress_snapshot (jsonb, nullable)
+    Purpose: Store daily progress data
+    Structure: {
+      "completed": ["Meditate", "Run"],
+      "total": 4,
+      "remaining": ["Workout", "Read"],
+      "latest": "Run",
+      "percentage": 50,
+      "completed_count": 2
+    }
+
+Migration SQL:
+--------------
+ALTER TABLE posts
+ADD COLUMN is_daily_progress BOOLEAN DEFAULT FALSE,
+ADD COLUMN progress_snapshot JSONB;
+
+CREATE INDEX idx_posts_daily_progress
+ON posts(user_id, created_at)
+WHERE is_daily_progress = true;
+
+Rollback SQL:
+-------------
+DROP INDEX IF EXISTS idx_posts_daily_progress;
+ALTER TABLE posts
+DROP COLUMN IF EXISTS progress_snapshot,
+DROP COLUMN IF EXISTS is_daily_progress;
+
+================================================================================
+BACKEND CHANGES
+================================================================================
+
+File: src/services/supabase.service.ts
+---------------------------------------
+
+NEW FUNCTION: findTodaysProgressPost()
+Purpose: Find existing progress card for user for today
+Logic:
+  - Query posts WHERE user_id = X
+                AND is_daily_progress = true
+                AND DATE(created_at) = CURRENT_DATE
+  - Return post or null
+
+NEW FUNCTION: updateProgressPost()
+Purpose: Update existing progress card with new completion
+Logic:
+  - Get user's daily actions (all 4 tasks)
+  - Calculate: completed, remaining, percentage
+  - Update post.progress_snapshot with new data
+  - Update post.updated_at for feed sorting
+
+MODIFY FUNCTION: createDailyProgressPost()
+Purpose: Create first progress card of the day
+Logic:
+  - Set is_daily_progress = true
+  - Set progress_snapshot with initial data
+  - Set type = 'daily_progress' (new post type)
+
+MODIFY FUNCTION: completeAction() or equivalent
+Purpose: Hook into action completion
+Logic:
+  const todayCard = await findTodaysProgressPost(userId);
+  if (todayCard) {
+    await updateProgressPost(todayCard.id, actionTitle);
+  } else {
+    await createDailyProgressPost(userId, actionTitle);
+  }
+
+================================================================================
+FRONTEND CHANGES
+================================================================================
+
+File: src/features/social/LivingProgressCard.tsx (NEW FILE)
+------------------------------------------------------------
+
+Component Structure:
+  <Card>
+    <Header>
+      <Avatar />
+      <Username />
+      <TimeAgo /> {/* "2 min ago" */}
+    </Header>
+
+    <LatestPill>
+      Just did: Run ✅  {/* Highlighted */}
+    </LatestPill>
+
+    <ProgressSection>
+      <ProgressRing percentage={50} />
+      <Stats>2 of 4 • 50% • 2 left</Stats>
+    </ProgressSection>
+
+    <TaskLists>
+      <CompletedList>
+        ✅ Run
+        ✅ Meditate
+      </CompletedList>
+      <RemainingList>
+        ⬜ Workout
+        ⬜ Read
+      </RemainingList>
+    </TaskLists>
+  </Card>
+
+Props Interface:
+  {
+    post: {
+      user: string,
+      userId: string,
+      avatar: string,
+      updated_at: string,
+      progress_snapshot: {
+        completed: string[],
+        total: number,
+        remaining: string[],
+        latest: string,
+        percentage: number
+      }
+    }
+  }
+
+File: src/features/social/SocialScreenUnified.tsx (MODIFY)
+-----------------------------------------------------------
+
+MODIFY: renderPost()
+Add condition:
+  if (post.is_daily_progress) {
+    return <LivingProgressCard post={post} />;
+  }
+  // else render regular cards
+
+File: src/state/slices/socialSlice.ts (MODIFY)
+-----------------------------------------------
+
+ADD: Post type definition
+  type PostType = 'checkin' | 'status' | 'photo' | 'audio' | 'daily_progress';
+
+MODIFY: completeAction() or similar
+  Call new backend function that handles find-or-create logic
+
+================================================================================
+VISUAL DESIGN SPECS
+================================================================================
+
+Card Layout:
+  Width: Full width (same as current cards)
+  Height: Auto
+  Background: Dark card (current style)
+  Border: Gold accent on left (for progress cards)
+
+Typography:
+  Username: 16px, bold, white
+  Time: 13px, gray, "X min ago"
+  "Just did" pill: 14px, bold, gold bg
+  Stats: 14px, white
+  Task names: 14px, white (completed) / gray (remaining)
+
+Progress Ring:
+  Size: 60px diameter
+  Stroke: 6px
+  Colors:
+    - 0-33%: Red gradient
+    - 34-66%: Yellow gradient
+    - 67-100%: Green gradient
+
+Spacing:
+  Header: 16px padding
+  Pill: 12px margin top/bottom
+  Progress section: 16px padding
+  Task lists: 8px between items
+
+================================================================================
+IMPLEMENTATION PHASES
+================================================================================
+
+Phase 1: Database Setup (Reversible)
+-------------------------------------
+[ ] Run migration to add columns
+[ ] Create index
+[ ] Test rollback works
+[ ] Verify existing posts unaffected
+
+Phase 2: Backend Logic (Reversible via feature flag)
+-----------------------------------------------------
+[ ] Create findTodaysProgressPost()
+[ ] Create updateProgressPost()
+[ ] Create createDailyProgressPost()
+[ ] Add feature flag: ENABLE_LIVING_CARDS (default: false)
+[ ] Test with flag OFF (should work as before)
+[ ] Test with flag ON (new behavior)
+
+Phase 3: Frontend Component (Reversible via toggle)
+----------------------------------------------------
+[ ] Create LivingProgressCard.tsx
+[ ] Build static version first (no data)
+[ ] Add progress ring component
+[ ] Add time-ago formatting
+[ ] Test in isolation (Storybook/separate page)
+
+Phase 4: Integration (Reversible via feature flag)
+---------------------------------------------------
+[ ] Integrate into SocialScreenUnified
+[ ] Use USE_LIVING_CARDS toggle (like USE_TIMELINE_CARDS)
+[ ] Test with small dataset
+[ ] Test with multiple users
+[ ] Test edge cases
+
+Phase 5: Polish (After core works)
+-----------------------------------
+[ ] Animations (progress bar fill)
+[ ] Highlight latest pill
+[ ] Handle midnight rollover
+[ ] Handle "all tasks done" celebration
+[ ] Optimize re-renders
+
+================================================================================
+ROLLBACK PLAN
+================================================================================
+
+If Something Goes Wrong:
+
+Level 1: Feature Flag (Instant)
+  - Set USE_LIVING_CARDS = false
+  - App reverts to old behavior immediately
+  - No data loss
+
+Level 2: Code Revert (5 minutes)
+  - git revert <commit-hash>
+  - git push
+  - Redeploy
+
+Level 3: Database Rollback (10 minutes)
+  - Run rollback SQL (see above)
+  - Drops new columns
+  - Existing posts unaffected
+  - New posts will fail (need code rollback too)
+
+Full Rollback Order:
+  1. Disable feature flag (instant)
+  2. Revert code changes (5 min)
+  3. Run database rollback if needed (10 min)
+
+================================================================================
+TESTING CHECKLIST
+================================================================================
+
+Before Enabling Feature Flag:
+[ ] Database migration runs successfully
+[ ] Rollback works (test on dev database)
+[ ] Old posts still render correctly
+[ ] Feed loads without errors
+
+With Feature Flag ON:
+[ ] Complete first action → Creates progress card
+[ ] Complete second action → Updates same card (doesn't create new)
+[ ] Progress percentage calculates correctly
+[ ] "Latest" action shows correctly
+[ ] Time-ago updates ("2 min ago" → "5 min ago")
+[ ] Other users see the card in their feed
+[ ] Midnight rollover creates new card next day
+
+Edge Cases:
+[ ] User has 0 tasks today
+[ ] User completes all tasks (100%)
+[ ] User uncompletes an action
+[ ] Multiple users complete actions simultaneously
+[ ] Very long action names
+[ ] User with 10+ actions
+
+================================================================================
+SUCCESS METRICS
+================================================================================
+
+Before:
+- 4 actions completed = 4 separate posts in feed
+- Feed noise high
+- Hard to see user's daily progress
+
+After:
+- 4 actions completed = 1 updated post in feed
+- Feed clean
+- Easy to see user's progress at a glance
+
+Measurable:
+- Posts created per user per day: 4+ → 1 (75% reduction)
+- Feed scroll distance to see all users: High → Low
+- User engagement with progress cards: Track likes/comments
+
+================================================================================
+RISKS & MITIGATION
+================================================================================
+
+Risk 1: Database migration fails
+  Mitigation: Test on dev database first, have rollback ready
+
+Risk 2: Feed becomes confusing with mixed card types
+  Mitigation: Use feature flag, test with small group first
+
+Risk 3: Real-time updates don't work
+  Mitigation: Start with pull-to-refresh, add real-time later
+
+Risk 4: Performance degradation (updating vs creating)
+  Mitigation: Benchmark both approaches, optimize queries
+
+Risk 5: Users miss individual completions
+  Mitigation: Keep notification system for individual actions
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Review this spec document
+2. Decide: Database-first or UI-first?
+3. Create feature branch: feature/living-progress-cards
+4. Implement Phase 1 (database)
+5. Test and verify rollback works
+6. Continue to Phase 2
+
+================================================================================
+NOTES
+================================================================================
+
+- Keep USE_LIVING_CARDS feature flag until fully stable
+- Don't delete old check-in card code yet (might need it)
+- Document any deviations from this spec in git commits
+- Update this file as design evolves
+
+================================================================================
+END OF SPEC
+================================================================================

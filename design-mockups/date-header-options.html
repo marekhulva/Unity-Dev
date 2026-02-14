@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Header Design Options</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 40px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .preview-container {
+            background: #000;
+            border-radius: 16px;
+            padding: 20px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Option 1: Minimal Elegant */
+        .date-option-1 {
+            text-align: center;
+        }
+        .date-option-1 .day {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+        .date-option-1 .date {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Option 2: Calendar Card */
+        .date-option-2 {
+            background: linear-gradient(135deg, rgba(231, 180, 58, 0.15), rgba(255, 215, 0, 0.08));
+            border: 2px solid rgba(231, 180, 58, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-align: center;
+            max-width: 140px;
+        }
+        .date-option-2 .month {
+            font-size: 12px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .date-option-2 .day-num {
+            font-size: 56px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .date-option-2 .day-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Option 3: Horizontal Badge */
+        .date-option-3 {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 100px;
+            padding: 12px 24px;
+        }
+        .date-option-3 .day-badge {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .date-option-3 .date-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Option 4: Split Layout */
+        .date-option-4 {
+            display: flex;
+            align-items: stretch;
+            background: rgba(255,255,255,0.04);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .date-option-4 .left {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 80px;
+        }
+        .date-option-4 .day-num {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1;
+        }
+        .date-option-4 .month-short {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(0,0,0,0.7);
+            text-transform: uppercase;
+        }
+        .date-option-4 .right {
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .date-option-4 .day-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .date-option-4 .year {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 5: Gradient Banner */
+        .date-option-5 {
+            background: linear-gradient(90deg, rgba(231, 180, 58, 0.2) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border-left: 4px solid #E7B43A;
+            border-radius: 12px;
+            padding: 20px 24px;
+        }
+        .date-option-5 .day-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .date-option-5 .full-date {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            font-weight: 500;
+        }
+
+        /* Option 6: Stacked with Icon */
+        .date-option-6 {
+            text-align: center;
+        }
+        .date-option-6 .icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .date-option-6 .day-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 6px;
+        }
+        .date-option-6 .date-full {
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 500;
+        }
+
+        /* Option 7: Neumorphic Style */
+        .date-option-7 {
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(10, 10, 10, 0.8));
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow:
+                8px 8px 16px rgba(0, 0, 0, 0.5),
+                -8px -8px 16px rgba(40, 40, 40, 0.2);
+            text-align: center;
+        }
+        .date-option-7 .day-name {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .date-option-7 .date {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Option 8: Glass Card Heavy */
+        .date-option-8 {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .date-option-8::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+        .date-option-8 .day-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 6px;
+        }
+        .date-option-8 .date {
+            font-size: 15px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Option 9: Minimalist Line */
+        .date-option-9 {
+            position: relative;
+            padding-bottom: 20px;
+        }
+        .date-option-9::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #E7B43A, transparent);
+            border-radius: 2px;
+        }
+        .date-option-9 .day-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .date-option-9 .date {
+            font-size: 14px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 500;
+        }
+
+        /* Option 10: Bold Statement */
+        .date-option-10 {
+            text-align: center;
+            padding: 20px;
+        }
+        .date-option-10 .day-name {
+            font-size: 52px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #E7B43A 0%, #FFD700 50%, #E7B43A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .date-option-10 .date {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">10 Date Header Design Options</div>
+
+        <div class="options-grid">
+            <!-- Option 1 -->
+            <div class="option-card">
+                <div class="option-label">Option 1: Minimal Elegant</div>
+                <div class="preview-container">
+                    <div class="date-option-1">
+                        <div class="day">Wednesday</div>
+                        <div class="date">Nov 20</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 2 -->
+            <div class="option-card">
+                <div class="option-label">Option 2: Calendar Card</div>
+                <div class="preview-container">
+                    <div class="date-option-2">
+                        <div class="month">November</div>
+                        <div class="day-num">20</div>
+                        <div class="day-name">Wednesday</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 3 -->
+            <div class="option-card">
+                <div class="option-label">Option 3: Horizontal Badge</div>
+                <div class="preview-container">
+                    <div class="date-option-3">
+                        <div class="day-badge">Wed</div>
+                        <div class="date-text">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 4 -->
+            <div class="option-card">
+                <div class="option-label">Option 4: Split Layout</div>
+                <div class="preview-container">
+                    <div class="date-option-4">
+                        <div class="left">
+                            <div class="day-num">20</div>
+                            <div class="month-short">NOV</div>
+                        </div>
+                        <div class="right">
+                            <div class="day-name">Wednesday</div>
+                            <div class="year">2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 5 -->
+            <div class="option-card">
+                <div class="option-label">Option 5: Gradient Banner</div>
+                <div class="preview-container">
+                    <div class="date-option-5">
+                        <div class="day-name">Wednesday</div>
+                        <div class="full-date">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 6 -->
+            <div class="option-card">
+                <div class="option-label">Option 6: Stacked with Icon</div>
+                <div class="preview-container">
+                    <div class="date-option-6">
+                        <div class="icon">📅</div>
+                        <div class="day-name">Wednesday</div>
+                        <div class="date-full">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 7 -->
+            <div class="option-card">
+                <div class="option-label">Option 7: Neumorphic Style</div>
+                <div class="preview-container">
+                    <div class="date-option-7">
+                        <div class="day-name">Wednesday</div>
+                        <div class="date">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 8 -->
+            <div class="option-card">
+                <div class="option-label">Option 8: Glass Card Heavy</div>
+                <div class="preview-container">
+                    <div class="date-option-8">
+                        <div class="day-name">Wednesday</div>
+                        <div class="date">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 9 -->
+            <div class="option-card">
+                <div class="option-label">Option 9: Minimalist Line</div>
+                <div class="preview-container">
+                    <div class="date-option-9">
+                        <div class="day-name">Wednesday</div>
+                        <div class="date">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 10 -->
+            <div class="option-card">
+                <div class="option-label">Option 10: Bold Statement</div>
+                <div class="preview-container">
+                    <div class="date-option-10">
+                        <div class="day-name">Wednesday</div>
+                        <div class="date">November 20, 2024</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Warriors - Circle</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding-bottom: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Sticky Header */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 15px 20px 0;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .circle-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .circle-icon-small {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .circle-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .header-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .header-btn:hover {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.3);
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            scrollbar-width: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .tab-nav::-webkit-scrollbar { display: none; }
+        .tab-item {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .tab-item:hover {
+            color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.05);
+        }
+        .tab-item.active {
+            color: #E7B43A;
+            background: rgba(231,180,58,0.15);
+        }
+
+        /* View Container */
+        .view {
+            display: none;
+            padding: 20px;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Main Container */
+        .page-content {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        /* Circle Header (for Feed view) */
+        .circle-header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .circle-icon-large {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 15px;
+        }
+        .circle-description {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .circle-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .circle-stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+
+        /* Section */
+        .section {
+            padding: 25px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .section:first-child {
+            border-top: none;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-count {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+        }
+        .activity-user {
+            flex: 1;
+        }
+        .activity-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .activity-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        .activity-content {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .activity-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .activity-actions {
+            display: flex;
+            gap: 15px;
+        }
+        .activity-action {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+        .activity-action:hover {
+            color: #E7B43A;
+        }
+
+        /* Challenge Card - Compact (Home view) */
+        .challenge-card-compact {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .challenge-card-compact:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .challenge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .challenge-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .challenge-title-compact {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .challenge-meta {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+        .challenge-participants {
+            font-size: 10px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Challenge Card - Full (Challenges view) */
+        .challenge-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .challenge-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateY(-2px);
+        }
+        .challenge-image {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+        }
+        .challenge-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .challenge-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 40px 15px 12px;
+        }
+        .challenge-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .challenge-creator {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+        .challenge-info {
+            padding: 15px;
+        }
+        .challenge-description {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .stat-icon {
+            font-size: 14px;
+        }
+
+        /* Member List Item */
+        .member-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .member-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            background: #22c55e;
+            border: 2px solid #0B0F12;
+        }
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .member-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .member-role-badge {
+            display: inline-block;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        .member-stats {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+        .member-action {
+            font-size: 16px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        /* Search & Filter */
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .search-bar {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 40px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: rgba(255,255,255,0.4);
+        }
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
+        .filter-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .filter-pill.active {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        /* Podium */
+        .podium-section {
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.03), transparent);
+        }
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .podium-place {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+        .podium-place.first { order: 2; }
+        .podium-place.second { order: 1; }
+        .podium-place.third { order: 3; }
+        .podium-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            margin: 0 auto 10px;
+            position: relative;
+            border: 3px solid transparent;
+        }
+        .podium-place.first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            border-color: #FFD700;
+        }
+        .crown {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+        }
+        .podium-rank {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .podium-points {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        /* Ranking Item */
+        .ranking-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ranking-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .ranking-item.current-user {
+            background: rgba(231,180,58,0.08);
+            border-color: rgba(231,180,58,0.3);
+        }
+        .rank-number {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            flex-shrink: 0;
+        }
+
+        /* Leaderboard */
+        .leaderboard-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #E7B43A;
+            flex-shrink: 0;
+        }
+        .rank-badge.top {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            font-size: 16px;
+        }
+        .points-badge {
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+        }
+
+        /* Settings Items */
+        .setting-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .setting-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+        }
+        .setting-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .setting-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .setting-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .setting-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .setting-description {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .setting-arrow {
+            font-size: 16px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+        }
+        .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 10px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        .toggle-switch.active .toggle-knob {
+            left: 22px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(231,180,58,0.4);
+        }
+        .btn-block {
+            width: 100%;
+            display: block;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(231,180,58,0.5);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Settings Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .modal-content {
+            max-width: 420px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .modal-header {
+            background: #0B0F12;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .modal-body {
+            background: #0B0F12;
+            border-radius: 0 0 20px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sticky Header -->
+        <div class="sticky-header">
+            <div class="header-top">
+                <div class="circle-title">
+                    <div class="circle-icon-small">💪</div>
+                    <div class="circle-name">Fitness Warriors</div>
+                </div>
+                <div class="header-actions">
+                    <div class="header-btn" onclick="showModal()">⚙️</div>
+                </div>
+            </div>
+            <div class="tab-nav">
+                <div class="tab-item active" onclick="showView('home')">Home</div>
+                <div class="tab-item" onclick="showView('challenges')">Challenges</div>
+                <div class="tab-item" onclick="showView('members')">Members</div>
+                <div class="tab-item" onclick="showView('leaderboard')">Leaderboard</div>
+            </div>
+        </div>
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="view active">
+            <div class="page-content">
+                <div class="circle-header">
+                    <div class="circle-icon-large">💪</div>
+                    <div class="circle-description">A community dedicated to pushing limits, building strength, and supporting each other's fitness journey</div>
+                    <div class="circle-stats">
+                        <div class="circle-stat">
+                            <div class="stat-value">52</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="circle-stat">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Active Challenges</div>
+                        </div>
+                        <div class="circle-stat">
+                            <div class="stat-value">847</div>
+                            <div class="stat-label">Total Posts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                        <button class="btn" style="flex: 2; padding: 10px;">+ Create Challenge</button>
+                        <button class="btn btn-secondary" style="flex: 1; padding: 10px; font-size: 12px;">Invite</button>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Active Challenges</div>
+                        <div style="font-size: 12px; color: #E7B43A; font-weight: 600; cursor: pointer;" onclick="showView('challenges')">View All →</div>
+                    </div>
+
+                    <div class="challenge-card-compact">
+                        <div class="challenge-icon">🏃</div>
+                        <div class="challenge-content">
+                            <div class="challenge-title-compact">Marathon Training - 12 Weeks</div>
+                            <div class="challenge-meta">Started 3 weeks ago • 8 weeks left</div>
+                            <div class="challenge-participants">24 participants</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card-compact">
+                        <div class="challenge-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">💪</div>
+                        <div class="challenge-content">
+                            <div class="challenge-title-compact">100 Push-ups Daily</div>
+                            <div class="challenge-meta">Started 1 week ago • Ongoing</div>
+                            <div class="challenge-participants">18 participants</div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card-compact">
+                        <div class="challenge-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">🔥</div>
+                        <div class="challenge-content">
+                            <div class="challenge-title-compact">Morning Workout Streak</div>
+                            <div class="challenge-meta">Started 2 days ago • 28 days left</div>
+                            <div class="challenge-participants">32 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Members</div>
+                        <div style="font-size: 12px; color: #E7B43A; font-weight: 600; cursor: pointer;" onclick="showView('members')">View All (52) →</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #667eea, #764ba2); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Alex R.</div>
+                            <div style="font-size: 9px; color: #E7B43A;">Admin</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #f093fb, #f5576c); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Sarah M.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #4facfe, #00f2fe); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Mike T.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #43e97b, #38f9d7); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Emma L.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #fa709a, #fee140); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">James K.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #30cfd0, #330867); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Lisa P.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #a8edea, #fed6e3); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Chris D.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                        <div style="text-align: center; cursor: pointer;" onclick="showView('members')">
+                            <div style="width: 100%; aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #667eea, #764ba2); margin-bottom: 8px; border: 2px solid rgba(255,255,255,0.1);"></div>
+                            <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">Anna B.</div>
+                            <div style="font-size: 9px; color: rgba(255,255,255,0.5);">Member</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Recent Activity</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <div class="activity-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                            <div class="activity-user">
+                                <div class="activity-user-name">Sarah M.</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-content">Just completed day 7 of the push-up challenge! 💪 Feeling stronger every day. Who's joining me tomorrow?</div>
+                        <div class="activity-image"></div>
+                        <div class="activity-actions">
+                            <div class="activity-action">❤️ 24</div>
+                            <div class="activity-action">💬 8</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <div class="activity-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                            <div class="activity-user">
+                                <div class="activity-user-name">Mike T.</div>
+                                <div class="activity-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-content">New PR on deadlifts today! 225lbs ➡️ 245lbs 🎉</div>
+                        <div class="activity-actions">
+                            <div class="activity-action">❤️ 42</div>
+                            <div class="activity-action">💬 15</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-header">
+                            <div class="activity-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                            <div class="activity-user">
+                                <div class="activity-user-name">Emma L.</div>
+                                <div class="activity-time">Yesterday</div>
+                            </div>
+                        </div>
+                        <div class="activity-content">Morning run done! 5 miles in 42 minutes. Beautiful sunrise today 🌅</div>
+                        <div class="activity-image" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                        <div class="activity-actions">
+                            <div class="activity-action">❤️ 18</div>
+                            <div class="activity-action">💬 5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHALLENGES VIEW -->
+        <div id="view-challenges" class="view">
+            <div class="page-content">
+                <div class="section">
+                    <div class="filter-pills">
+                        <div class="filter-pill active">All</div>
+                        <div class="filter-pill">Active</div>
+                        <div class="filter-pill">Upcoming</div>
+                        <div class="filter-pill">Completed</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">Active Now</div>
+                        <div class="section-count">3 challenges</div>
+                    </div>
+                    <div class="challenge-card">
+                        <div class="challenge-image" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <div class="challenge-badge">🔥 5 days left</div>
+                            <div class="challenge-overlay">
+                                <div class="challenge-title">30-Day Meditation Journey</div>
+                                <div class="challenge-creator">Created by Sarah M.</div>
+                            </div>
+                        </div>
+                        <div class="challenge-info">
+                            <div class="challenge-description">Commit to daily meditation practice for 30 days. Build a lasting mindfulness habit together.</div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">👥</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">24</span> joined
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">⚡</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">500</span> pts
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-image" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <div class="challenge-badge">🔥 12 days left</div>
+                            <div class="challenge-overlay">
+                                <div class="challenge-title">100 Push-Ups Challenge</div>
+                                <div class="challenge-creator">Created by Mike T.</div>
+                            </div>
+                        </div>
+                        <div class="challenge-info">
+                            <div class="challenge-description">Work up to 100 push-ups in a single session through progressive training.</div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">👥</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">18</span> joined
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">⚡</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">300</span> pts
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-image" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                            <div class="challenge-badge">🔥 20 days left</div>
+                            <div class="challenge-overlay">
+                                <div class="challenge-title">10K Steps Daily</div>
+                                <div class="challenge-creator">Created by Alex R.</div>
+                            </div>
+                        </div>
+                        <div class="challenge-info">
+                            <div class="challenge-description">Walk 10,000 steps every day for a month. Stay active and build consistency!</div>
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <span class="stat-icon">👥</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">31</span> joined
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-icon">⚡</span>
+                                    <span style="color: #E7B43A; font-weight: 600;">400</span> pts
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBERS VIEW -->
+        <div id="view-members" class="view">
+            <div class="page-content">
+                <div class="section">
+                    <div class="search-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-bar" placeholder="Search members...">
+                    </div>
+                    <div class="filter-pills">
+                        <div class="filter-pill active">All</div>
+                        <div class="filter-pill">Admins</div>
+                        <div class="filter-pill">Online</div>
+                        <div class="filter-pill">Most Active</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Top Contributors</div>
+                    <div class="leaderboard-item">
+                        <div class="rank-badge top">🥇</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                        <div class="member-info">
+                            <div class="member-name">Sarah M.</div>
+                            <div class="member-stats">124 posts • 3 challenges</div>
+                        </div>
+                        <div class="points-badge">2,847 pts</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="rank-badge top">🥈</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                        <div class="member-info">
+                            <div class="member-name">Mike T.</div>
+                            <div class="member-stats">98 posts • 4 challenges</div>
+                        </div>
+                        <div class="points-badge">2,341 pts</div>
+                    </div>
+                    <div class="leaderboard-item">
+                        <div class="rank-badge top">🥉</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                        <div class="member-info">
+                            <div class="member-name">Alex R.</div>
+                            <div class="member-stats">87 posts • 2 challenges</div>
+                        </div>
+                        <div class="points-badge">1,982 pts</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">All Members</div>
+                        <div class="section-count">52 total</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">
+                                <span class="member-role-badge">Admin</span>
+                                Alex R.
+                            </div>
+                            <div class="member-stats">Joined 6 months ago • 847 points</div>
+                        </div>
+                        <div class="member-action">›</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">Sarah M.</div>
+                            <div class="member-stats">Joined 5 months ago • 2,847 points</div>
+                        </div>
+                        <div class="member-action">›</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                        <div class="member-info">
+                            <div class="member-name">Mike T.</div>
+                            <div class="member-stats">Joined 4 months ago • 2,341 points</div>
+                        </div>
+                        <div class="member-action">›</div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                            <div class="online-indicator"></div>
+                        </div>
+                        <div class="member-info">
+                            <div class="member-name">Emma L.</div>
+                            <div class="member-stats">Joined 3 months ago • 1,234 points</div>
+                        </div>
+                        <div class="member-action">›</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD VIEW -->
+        <div id="view-leaderboard" class="view">
+            <div class="page-content">
+                <div class="section">
+                    <div class="filter-pills">
+                        <div class="filter-pill">Today</div>
+                        <div class="filter-pill active">This Week</div>
+                        <div class="filter-pill">This Month</div>
+                        <div class="filter-pill">All Time</div>
+                    </div>
+                </div>
+
+                <div class="podium-section">
+                    <div class="podium">
+                        <div class="podium-place first">
+                            <div class="podium-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                                <div class="crown">👑</div>
+                            </div>
+                            <div class="podium-rank">🥇</div>
+                            <div class="member-name">Sarah M.</div>
+                            <div class="podium-points">2,847 pts</div>
+                        </div>
+                        <div class="podium-place second">
+                            <div class="podium-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                            <div class="podium-rank">🥈</div>
+                            <div class="member-name">Mike T.</div>
+                            <div class="podium-points">2,341 pts</div>
+                        </div>
+                        <div class="podium-place third">
+                            <div class="podium-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                            <div class="podium-rank">🥉</div>
+                            <div class="member-name">Alex R.</div>
+                            <div class="podium-points">1,982 pts</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">#7</div>
+                            <div class="stat-label">Your Rank</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">1,234</div>
+                            <div class="stat-label">Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">+142</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Full Rankings</div>
+                    <div class="ranking-item">
+                        <div class="rank-number">4</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                        <div class="member-info">
+                            <div class="member-name">Emma L.</div>
+                            <div class="member-stats">87 posts • 3 challenges</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 16px; font-weight: 700; color: #E7B43A;">1,756</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item">
+                        <div class="rank-number">5</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                        <div class="member-info">
+                            <div class="member-name">James K.</div>
+                            <div class="member-stats">64 posts • 2 challenges</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 16px; font-weight: 700; color: #E7B43A;">1,523</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item current-user">
+                        <div class="rank-number">7</div>
+                        <div class="member-avatar" style="background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+                        <div class="member-info">
+                            <div class="member-name">You (Chris D.)</div>
+                            <div class="member-stats">48 posts • 2 challenges</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 16px; font-weight: 700; color: #E7B43A;">1,234</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAB -->
+        <div class="fab" onclick="alert('Create new challenge!')">+</div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">⚙️ Settings</div>
+                    <div class="modal-close" onclick="hideModal()">✕</div>
+                </div>
+                <div class="modal-body">
+                    <div class="section">
+                        <div class="section-title">General</div>
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <div class="setting-icon">📝</div>
+                                <div class="setting-info">
+                                    <div class="setting-label">Circle Name</div>
+                                    <div class="setting-description">Fitness Warriors</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <div class="setting-icon">🌐</div>
+                                <div class="setting-info">
+                                    <div class="setting-label">Privacy</div>
+                                    <div style="font-size: 13px; color: #E7B43A; font-weight: 600;">Public</div>
+                                </div>
+                                <div class="setting-arrow">›</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Notifications</div>
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <div class="setting-icon">🔔</div>
+                                <div class="setting-info">
+                                    <div class="setting-label">New posts</div>
+                                    <div class="setting-description">Get notified when someone posts</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="event.stopPropagation(); this.classList.toggle('active')">
+                                    <div class="toggle-knob"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-header">
+                                <div class="setting-icon">🎯</div>
+                                <div class="setting-info">
+                                    <div class="setting-label">Challenge updates</div>
+                                    <div class="setting-description">New challenges and milestones</div>
+                                </div>
+                                <div class="toggle-switch active" onclick="event.stopPropagation(); this.classList.toggle('active')">
+                                    <div class="toggle-knob"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <button class="btn btn-block">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+
+            // Show selected view
+            document.getElementById('view-' + viewName).classList.add('active');
+
+            // Update tab items
+            document.querySelectorAll('.tab-item').forEach((item, index) => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function showModal() {
+            document.getElementById('settings-modal').classList.add('active');
+        }
+
+        function hideModal() {
+            document.getElementById('settings-modal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('settings-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal();
+            }
+        });
+    </script>
+</body>
+</html>

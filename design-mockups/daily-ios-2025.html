@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Daily - iOS 2025</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 20px) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 20px);
+            padding-top: max(env(safe-area-inset-top, 0), 20px);
+            padding-bottom: max(env(safe-area-inset-bottom, 0), 20px);
+            min-height: 100vh;
+        }
+        .container { max-width: 420px; margin: 0 auto; padding-bottom: 40px; }
+
+        /* Daily Container - matching profile */
+        .daily {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Hero Header - Today's Focus */
+        .daily-hero {
+            padding: 30px 20px 25px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.08), transparent);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .date-badge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .today-date {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .day-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .date-num {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+        .streak-badge {
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .daily-motto {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            font-style: italic;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        /* Progress Ring - matching profile avatar ring style */
+        .daily-progress {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .progress-ring-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+        .progress-ring-outer {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: conic-gradient(#E7B43A 0deg 270deg, rgba(255,255,255,0.08) 270deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(231,180,58,0.2);
+        }
+        .progress-ring-inner {
+            width: 68px;
+            height: 68px;
+            border-radius: 34px;
+            background: #0B0F12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .progress-percent {
+            font-size: 22px;
+            font-weight: 700;
+            color: #E7B43A;
+            line-height: 1;
+        }
+        .progress-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .progress-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .progress-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Section styling - matching profile */
+        .section {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .section-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Next Up Card - iOS style */
+        .next-up-card {
+            background: linear-gradient(135deg, rgba(231,180,58,0.12), rgba(231,180,58,0.05));
+            border: 1px solid rgba(231,180,58,0.35);
+            border-radius: 12px;
+            padding: 12px 14px;
+            box-shadow: 0 0 12px rgba(231, 180, 58, 0.15),
+                        0 0 6px rgba(231, 180, 58, 0.1);
+        }
+        .next-label {
+            font-size: 9px;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .next-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+            text-shadow: 0 0 12px rgba(231, 180, 58, 0.3),
+                         0 0 6px rgba(231, 180, 58, 0.2);
+        }
+        .next-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Timeline - Classic Vertical */
+        .timeline {
+            position: relative;
+            padding-left: 70px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A, rgba(231, 180, 58, 0.3));
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-time {
+            position: absolute;
+            left: -70px;
+            top: 14px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            width: 50px;
+            text-align: right;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -51px;
+            top: 16px;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #0B0F12;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .timeline-dot.completed {
+            background: #E7B43A;
+            box-shadow: 0 0 12px rgba(231, 180, 58, 0.6);
+        }
+        .timeline-dot.active {
+            background: #E7B43A;
+            box-shadow: 0 0 16px rgba(231, 180, 58, 0.8);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .timeline-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .timeline-card:active {
+            transform: scale(0.98);
+        }
+        .timeline-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .timeline-card.completed {
+            opacity: 0.7;
+            background: rgba(231,180,58,0.06);
+            border-color: rgba(231,180,58,0.25);
+        }
+        .timeline-card.completed .card-title {
+            text-decoration: line-through;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Icon Badge - matching profile */
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .icon-mindfulness {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.2));
+        }
+        .icon-fitness {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+        }
+        .icon-learning {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+        }
+        .icon-health {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2));
+        }
+        .icon-creativity {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2));
+        }
+
+        /* Card Content */
+        .card-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .card-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Completion Circle - matching profile */
+        .completion-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            border: 2px solid rgba(255,255,255,0.15);
+            background: transparent;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .timeline-card.completed .completion-circle {
+            background: #E7B43A;
+            border-color: #E7B43A;
+            position: relative;
+            box-shadow: 0 0 8px rgba(231, 180, 58, 0.4);
+        }
+        .timeline-card.completed .completion-circle::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Quick Stats Grid */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            background: rgba(255,255,255,0.06);
+            transform: translateY(-2px);
+        }
+        .stat-card-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 4px;
+        }
+        .stat-card-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Quick Action Buttons - iOS style */
+        .quick-actions-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .quick-action-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quick-action-btn:active {
+            transform: scale(0.96);
+        }
+        .quick-action-btn:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+        }
+        .quick-action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.2), rgba(255,215,0,0.15));
+            flex-shrink: 0;
+        }
+        .quick-action-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Period Headers - iOS style */
+        .period-header {
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .period-header::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+        }
+
+        /* Bottom spacing */
+        .section:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="daily">
+            <!-- Hero Header -->
+            <div class="daily-hero">
+                <div class="today-date">
+                    <div class="day-name">Wednesday</div>
+                    <div class="date-num">Nov 20</div>
+                </div>
+
+                <div class="daily-progress">
+                    <div class="progress-ring-wrapper">
+                        <div class="progress-ring-outer">
+                            <div class="progress-ring-inner">
+                                <div class="progress-percent">75%</div>
+                                <div class="progress-label">Done</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <span class="stat-label">Completed</span>
+                            <span class="stat-value">3 of 4</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="stat-label">Time invested</span>
+                            <span class="stat-value">2h 15m</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="stat-label">Remaining</span>
+                            <span class="stat-value">15 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Up -->
+            <div class="section">
+                <div class="next-up-card">
+                    <div class="next-label">Up Next</div>
+                    <div class="next-title">Evening Meditation</div>
+                    <div class="next-time">
+                        <span>In 45 minutes · 15 min session</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduled Actions -->
+            <div class="section">
+                <div class="section-header">Today's Schedule</div>
+
+                <!-- Morning -->
+                <div class="period-header">Morning</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">6:00</div>
+                        <div class="timeline-dot completed"></div>
+                        <div class="timeline-card completed">
+                            <div class="card-content">
+                                <div class="card-title">Morning Meditation</div>
+                                <div class="card-meta">
+                                    <span>15 min</span>
+                                    <span>•</span>
+                                    <span>75 HARD Challenge</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">7:30</div>
+                        <div class="timeline-dot completed"></div>
+                        <div class="timeline-card completed">
+                            <div class="card-content">
+                                <div class="card-title">Workout Session</div>
+                                <div class="card-meta">
+                                    <span>45 min</span>
+                                    <span>•</span>
+                                    <span>Marathon Goal</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Afternoon -->
+                <div class="period-header">Afternoon</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">1:00</div>
+                        <div class="timeline-dot completed"></div>
+                        <div class="timeline-card completed">
+                            <div class="card-content">
+                                <div class="card-title">Read Professional Book</div>
+                                <div class="card-meta">
+                                    <span>30 min</span>
+                                    <span>•</span>
+                                    <span>Read 52 Books</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">3:00</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="card-content">
+                                <div class="card-title">Hydration Check-in</div>
+                                <div class="card-meta">
+                                    <span>5 min</span>
+                                    <span>•</span>
+                                    <span>Daily Hydration Routine</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Evening -->
+                <div class="period-header">Evening</div>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">8:00</div>
+                        <div class="timeline-dot active"></div>
+                        <div class="timeline-card">
+                            <div class="card-content">
+                                <div class="card-title">Evening Meditation</div>
+                                <div class="card-meta">
+                                    <span>15 min</span>
+                                    <span>•</span>
+                                    <span>Morning Ritual</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-time">9:00</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card">
+                            <div class="card-content">
+                                <div class="card-title">Gratitude Journal</div>
+                                <div class="card-meta">
+                                    <span>10 min</span>
+                                    <span>•</span>
+                                    <span>Gratitude Challenge</span>
+                                </div>
+                            </div>
+                            <div class="completion-circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive completion toggle
+        document.querySelectorAll('.timeline-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const item = this.closest('.timeline-item');
+                const dot = item.querySelector('.timeline-dot');
+
+                if (!this.classList.contains('completed')) {
+                    this.classList.add('completed');
+                    dot.classList.add('completed');
+                    dot.classList.remove('active');
+
+                    // Update progress (demo only)
+                    const progressPercent = document.querySelector('.progress-percent');
+                    const currentPercent = parseInt(progressPercent.textContent);
+                    if (currentPercent < 100) {
+                        progressPercent.textContent = Math.min(currentPercent + 25, 100) + '%';
+                    }
+                }
+            });
+        });
+
+        // Add touch feedback for iOS
+        document.querySelectorAll('.timeline-card, .quick-action-btn, .stat-card').forEach(el => {
+            el.addEventListener('touchstart', function() {
+                this.style.opacity = '0.7';
+            });
+            el.addEventListener('touchend', function() {
+                this.style.opacity = '1';
+            });
+        });
+    </script>
+</body>
+</html>

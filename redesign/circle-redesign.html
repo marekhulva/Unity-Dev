@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity Circle — Redesigned</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #D4AF37;
+    --gold-light: #E7C455;
+    --gold-warm: #FFC84A;
+    --gold-dim: rgba(212, 175, 55, 0.15);
+    --gold-glow: rgba(212, 175, 55, 0.4);
+    --black-pure: #000000;
+    --black-soft: #0A0A0A;
+    --black-card: #111111;
+    --black-elevated: #1A1A1A;
+    --white: #FFFFFF;
+    --white-96: rgba(255,255,255,0.96);
+    --white-80: rgba(255,255,255,0.8);
+    --white-60: rgba(255,255,255,0.6);
+    --white-50: rgba(255,255,255,0.5);
+    --white-40: rgba(255,255,255,0.4);
+    --white-20: rgba(255,255,255,0.2);
+    --white-10: rgba(255,255,255,0.1);
+    --white-08: rgba(255,255,255,0.08);
+    --white-06: rgba(255,255,255,0.06);
+    --white-04: rgba(255,255,255,0.04);
+    --white-03: rgba(255,255,255,0.03);
+    --accent: var(--gold);
+    --accent-soft: var(--gold-dim);
+    --accent-border: rgba(212, 175, 55, 0.25);
+  }
+
+  body {
+    background: #000;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--white);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    gap: 40px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Phone Frame ===== */
+  .phone-frame {
+    width: 393px;
+    height: 852px;
+    background: var(--black-pure);
+    border-radius: 50px;
+    border: 3px solid #2A2A2A;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 25px 80px rgba(0,0,0,0.8),
+      0 0 120px rgba(212, 175, 55, 0.05);
+    flex-shrink: 0;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1A1A1A;
+    border-radius: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .dynamic-island .camera {
+    width: 12px;
+    height: 12px;
+    background: #0a0a0a;
+    border-radius: 50%;
+    border: 2px solid #1a1a1a;
+  }
+
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 59px;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ===== Phone Label ===== */
+  .phone-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .phone-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .phone-sublabel {
+    font-size: 11px;
+    color: var(--white-40);
+    margin-top: 4px;
+    text-align: center;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  /* ===== Sticky Header ===== */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--white-10);
+  }
+
+  .header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+  }
+
+  .circle-info-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+  }
+
+  .circle-icon-sm {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #E7B43A, #FFD700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .circle-title-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .circle-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .circle-member-count {
+    font-size: 12px;
+    color: var(--white-60);
+    margin-top: 2px;
+  }
+
+  .chevron-down {
+    color: var(--gold);
+    font-size: 12px;
+    margin-left: 4px;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .header-btn {
+    width: 36px;
+    height: 36px;
+    background: var(--white-06);
+    border: 1px solid var(--white-10);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--white-60);
+    font-size: 16px;
+  }
+  .header-btn:hover { background: var(--white-10); }
+  .header-btn.gold { color: var(--gold); }
+
+  /* ===== Tab Bar ===== */
+  .tab-bar {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 16px;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--white-04);
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white-50);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: rgba(231,180,58,0.2);
+    color: var(--gold);
+  }
+
+  /* ===== Circle Header / Hero ===== */
+  .circle-hero {
+    text-align: center;
+    padding: 24px 20px 28px;
+    background: linear-gradient(180deg, rgba(231,180,58,0.06) 0%, transparent 100%);
+    position: relative;
+  }
+
+  .circle-icon-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #E7B43A, #FFD700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 14px;
+    box-shadow: 0 8px 32px rgba(231,180,58,0.3);
+  }
+
+  .circle-description {
+    font-size: 13px;
+    color: var(--white-60);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .circle-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .circle-stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--white-50);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  /* ===== Momentum Banner ===== */
+  .momentum-banner {
+    margin: 0 20px 0;
+    padding: 14px 16px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .momentum-fire {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .momentum-text {
+    flex: 1;
+  }
+
+  .momentum-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  .momentum-subtitle {
+    font-size: 11px;
+    color: var(--white-60);
+    margin-top: 2px;
+  }
+
+  .momentum-avatars {
+    display: flex;
+    margin-left: auto;
+  }
+
+  .momentum-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.25);
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-left: -8px;
+  }
+  .momentum-avatar:first-child { margin-left: 0; }
+
+  /* ===== Sections ===== */
+  .section {
+    padding: 24px 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-link {
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  /* ===== Today's Check-in Strip ===== */
+  .checkin-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .checkin-strip::-webkit-scrollbar { display: none; }
+
+  .checkin-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 56px;
+  }
+
+  .checkin-ring {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    padding: 3px;
+    background: conic-gradient(var(--gold) var(--progress), var(--white-10) var(--progress));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .checkin-ring-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .checkin-ring.empty {
+    background: var(--white-10);
+  }
+
+  .checkin-ring.empty .checkin-ring-inner {
+    color: var(--white-40);
+  }
+
+  .checkin-name {
+    font-size: 10px;
+    color: var(--white-60);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 56px;
+  }
+
+  .checkin-badge {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-dim);
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-top: -2px;
+  }
+
+  /* ===== Recent Activity Timeline ===== */
+  .activity-timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--gold) 0%, rgba(231,180,58,0) 100%);
+  }
+
+  .timeline-event {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .timeline-event:last-child { margin-bottom: 0; }
+
+  .timeline-dot {
+    position: absolute;
+    left: -23px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  .timeline-dot.milestone {
+    width: 18px;
+    height: 18px;
+    left: -27px;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  .timeline-user-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .timeline-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(231,180,58,0.2);
+    border: 1px solid rgba(231,180,58,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .timeline-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .timeline-date {
+    font-size: 11px;
+    color: var(--white-40);
+  }
+
+  .timeline-photo {
+    width: 100%;
+    height: 160px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: var(--white-04);
+    border: 1px solid rgba(231,180,58,0.15);
+  }
+
+  .timeline-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .timeline-photo-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 14px 12px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  }
+
+  .timeline-photo-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--gold);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #000;
+  }
+
+  .timeline-photo-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .timeline-photo-goal {
+    font-size: 11px;
+    color: var(--white-60);
+    margin-top: 3px;
+  }
+
+  .timeline-text-card {
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+
+  .timeline-text-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .timeline-text-body {
+    font-size: 12px;
+    color: var(--white-60);
+    line-height: 1.4;
+  }
+
+  /* ===== Podium ===== */
+  .podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 16px 0 8px;
+  }
+
+  .podium-place {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 100px;
+  }
+
+  .podium-medal {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .podium-place.first .podium-medal {
+    font-size: 36px;
+  }
+
+  .podium-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(231,180,58,0.15);
+    border: 2px solid rgba(231,180,58,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .podium-place.first .podium-avatar {
+    width: 64px;
+    height: 64px;
+    border-color: var(--gold);
+    background: rgba(231,180,58,0.25);
+    font-size: 20px;
+    box-shadow: 0 0 24px rgba(231,180,58,0.3);
+  }
+
+  .podium-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+  }
+
+  .podium-points {
+    font-size: 12px;
+    color: var(--white-50);
+  }
+
+  .podium-place.first .podium-points {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .podium-bar {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    margin-top: 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .podium-place:nth-child(1) .podium-bar { /* 2nd place (left) */
+    height: 48px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-bottom: none;
+  }
+
+  .podium-place.first .podium-bar { /* 1st place (center) */
+    height: 64px;
+    background: linear-gradient(180deg, rgba(231,180,58,0.25), rgba(231,180,58,0.05));
+    border: 1px solid rgba(231,180,58,0.2);
+    border-bottom: none;
+  }
+
+  .podium-place:nth-child(3) .podium-bar { /* 3rd place (right) */
+    height: 36px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-bottom: none;
+  }
+
+  /* ===== Challenge Cards ===== */
+  .challenge-card-compact {
+    display: flex;
+    align-items: center;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .challenge-card-compact:hover {
+    background: var(--white-06);
+    border-color: rgba(231,180,58,0.2);
+  }
+
+  .challenge-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--gold), #FFD700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .challenge-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .challenge-title-compact {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .challenge-meta {
+    font-size: 10px;
+    color: var(--white-50);
+  }
+
+  .challenge-progress {
+    width: 100%;
+    height: 3px;
+    background: var(--white-06);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .challenge-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), #FFD700);
+  }
+
+  .challenge-day-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    background: var(--gold-dim);
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* ===== Members Grid ===== */
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .member-grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .member-grid-avatar {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: #000;
+    border: 2px solid rgba(231,180,58,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .member-grid-avatar.admin {
+    border-color: var(--gold);
+  }
+
+  .member-grid-avatar .admin-crown {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 10px;
+  }
+
+  .member-grid-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  .member-grid-role {
+    font-size: 9px;
+    color: var(--gold);
+    text-align: center;
+  }
+
+  /* ===== FAB ===== */
+  .fab {
+    position: absolute;
+    bottom: 40px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #E7B43A, #FFD700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #000;
+    font-weight: 300;
+    box-shadow: 0 8px 24px rgba(231,180,58,0.5);
+    cursor: pointer;
+    z-index: 60;
+  }
+
+  /* ===== Community Tab Styles ===== */
+
+  /* Leaderboard */
+  .ranking-item {
+    display: flex;
+    align-items: center;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ranking-item:hover { background: var(--white-06); }
+
+  .ranking-item.current-user {
+    background: rgba(231,180,58,0.08);
+    border-color: rgba(231,180,58,0.3);
+  }
+
+  .rank-number {
+    width: 32px;
+    height: 32px;
+    background: var(--white-06);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white-60);
+    flex-shrink: 0;
+  }
+
+  .ranking-item.current-user .rank-number {
+    background: var(--gold-dim);
+    color: var(--gold);
+  }
+
+  .ranking-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(231,180,58,0.15);
+    border: 1.5px solid rgba(231,180,58,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .ranking-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ranking-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .ranking-stats {
+    font-size: 10px;
+    color: var(--white-50);
+  }
+
+  .ranking-consistency {
+    width: 60px;
+    text-align: right;
+  }
+
+  .ranking-bar-container {
+    width: 100%;
+    height: 3px;
+    background: var(--white-06);
+    border-radius: 2px;
+    margin-bottom: 4px;
+  }
+
+  .ranking-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--gold), #FFD700);
+  }
+
+  .ranking-percentage {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: right;
+  }
+
+  .ranking-points {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* Search Bar */
+  .search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--white-06);
+    border: 1px solid var(--white-10);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+
+  .search-icon {
+    color: var(--white-40);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    font-size: 14px;
+    color: var(--white-40);
+  }
+
+  /* Filter Pills */
+  .filter-pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .filter-pill {
+    padding: 6px 14px;
+    border-radius: 12px;
+    background: var(--white-04);
+    border: 1px solid var(--white-10);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white-60);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-pill.active {
+    background: rgba(231,180,58,0.15);
+    border-color: rgba(231,180,58,0.3);
+    color: var(--gold);
+  }
+
+  /* Member List */
+  .member-item {
+    display: flex;
+    align-items: center;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .member-item:hover { background: var(--white-06); }
+
+  .member-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #000;
+    border: 2px solid rgba(231,180,58,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .member-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .member-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .member-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .admin-badge {
+    background: rgba(231,180,58,0.15);
+    border: 1px solid rgba(231,180,58,0.3);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .member-meta {
+    font-size: 10px;
+    color: var(--white-50);
+  }
+
+  .member-points-badge {
+    background: var(--gold-dim);
+    border: 1px solid rgba(231,180,58,0.3);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  /* ===== Circle Switcher Overlay ===== */
+  .overlay-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 70;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 110px;
+    left: 20px;
+    right: 20px;
+    background: rgba(20,20,20,0.98);
+    border: 1px solid rgba(231,180,58,0.3);
+    border-radius: 16px;
+    padding: 8px;
+    z-index: 80;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dropdown-item:hover { background: var(--white-06); }
+  .dropdown-item.active {
+    background: rgba(231,180,58,0.15);
+  }
+
+  .dropdown-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .dropdown-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dropdown-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .dropdown-meta {
+    font-size: 11px;
+    color: var(--white-60);
+  }
+
+  .dropdown-check {
+    font-size: 20px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .join-another-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px dashed rgba(255,215,0,0.3);
+    background: rgba(255,215,0,0.05);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFD700;
+    transition: all 0.15s;
+  }
+  .join-another-btn:hover {
+    background: rgba(255,215,0,0.1);
+  }
+
+  /* ===== Settings Modal ===== */
+  .settings-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 70;
+    display: flex;
+    justify-content: center;
+    padding: 80px 20px 40px;
+  }
+
+  .settings-modal {
+    width: 100%;
+    max-height: 100%;
+    background: #0A0A0A;
+    border-radius: 20px;
+    border: 1px solid var(--white-10);
+    overflow-y: auto;
+    z-index: 80;
+  }
+
+  .settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: sticky;
+    top: 0;
+    background: #0A0A0A;
+    z-index: 1;
+  }
+
+  .settings-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .settings-close {
+    width: 32px;
+    height: 32px;
+    background: var(--white-06);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+  }
+
+  .settings-body {
+    padding: 20px;
+  }
+
+  .settings-section {
+    margin-bottom: 24px;
+  }
+
+  .settings-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .setting-item {
+    display: flex;
+    align-items: center;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .setting-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--gold-dim);
+    border: 1px solid rgba(231,180,58,0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .setting-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .setting-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .setting-description {
+    font-size: 12px;
+    color: var(--white-50);
+  }
+
+  .setting-value {
+    font-size: 13px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .setting-arrow {
+    font-size: 18px;
+    color: var(--white-20);
+  }
+
+  .toggle-switch {
+    width: 44px;
+    height: 24px;
+    background: var(--white-10);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+
+  .toggle-switch.active {
+    background: var(--gold);
+  }
+
+  .toggle-knob {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 10px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: left 0.2s;
+  }
+
+  .toggle-switch.active .toggle-knob {
+    left: 22px;
+  }
+
+  .btn-danger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white-60);
+  }
+
+  /* ===== Empty State ===== */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    opacity: 0.6;
+  }
+
+  .empty-state-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .empty-state-subtitle {
+    font-size: 14px;
+    color: var(--white-50);
+    margin-bottom: 30px;
+    line-height: 1.5;
+  }
+
+  .btn-primary {
+    padding: 16px 32px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #E7B43A, #FFD700);
+    font-size: 17px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .btn-secondary {
+    padding: 14px 24px;
+    border-radius: 12px;
+    background: var(--white-06);
+    border: 1px solid var(--white-10);
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  /* ===== Design Notes ===== */
+  .design-notes {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 0;
+  }
+
+  .notes-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .note-group {
+    margin-bottom: 32px;
+  }
+
+  .note-group-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(231,180,58,0.2);
+  }
+
+  .note-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .note-bullet {
+    color: var(--gold);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .note-text {
+    font-size: 13px;
+    color: var(--white-80);
+    line-height: 1.6;
+  }
+
+  .note-text strong {
+    color: #fff;
+  }
+
+  .note-text code {
+    background: var(--white-06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--gold);
+  }
+
+  .note-comparison {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  .note-before, .note-after {
+    flex: 1;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .note-before {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .note-after {
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.2);
+  }
+
+  .note-before-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--white-50);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .note-after-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .note-comparison-text {
+    font-size: 12px;
+    color: var(--white-60);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     PHONE 1: OVERVIEW TAB
+     ========================================================= -->
+<div class="phone-wrapper">
+  <div class="phone-label">Overview Tab</div>
+  <div class="phone-sublabel">Primary circle view with momentum, activity, leaderboard, challenges, members</div>
+  <div class="phone-frame">
+    <div class="dynamic-island"><div class="camera"></div></div>
+    <div class="screen">
+
+      <!-- Sticky Header -->
+      <div class="sticky-header">
+        <div class="header-card">
+          <div class="circle-info-section">
+            <div class="circle-icon-sm">💪</div>
+            <div class="circle-title-info">
+              <div class="circle-name">Iron Discipline</div>
+              <div class="circle-member-count">12 members</div>
+            </div>
+            <span class="chevron-down">▾</span>
+          </div>
+          <div class="header-actions">
+            <div class="header-btn gold" title="Invite Members">👤+</div>
+            <div class="header-btn" title="Settings">⚙</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active">Overview</div>
+          <div class="tab">Community</div>
+        </div>
+      </div>
+
+      <!-- Circle Hero -->
+      <div class="circle-hero">
+        <div class="circle-icon-lg">💪</div>
+        <div class="circle-description">Building unshakeable discipline through daily accountability and shared challenges</div>
+        <div class="circle-stats">
+          <div class="circle-stat">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Members</div>
+          </div>
+          <div class="circle-stat">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Challenges</div>
+          </div>
+          <div class="circle-stat">
+            <div class="stat-value">47</div>
+            <div class="stat-label">Posts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Momentum Banner -->
+      <div class="section" style="border-top: none; padding-top: 0; padding-bottom: 16px;">
+        <div class="momentum-banner">
+          <div class="momentum-fire">🔥</div>
+          <div class="momentum-text">
+            <div class="momentum-title">Circle on fire today!</div>
+            <div class="momentum-subtitle">8 of 12 members checked in already</div>
+          </div>
+          <div class="momentum-avatars">
+            <div class="momentum-avatar">SC</div>
+            <div class="momentum-avatar">MW</div>
+            <div class="momentum-avatar">AK</div>
+            <div class="momentum-avatar">+5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Check-ins -->
+      <div class="section" style="padding-top: 8px;">
+        <div class="section-header">
+          <div class="section-title">Today's Check-ins</div>
+          <div class="section-link">8 of 12</div>
+        </div>
+        <div class="checkin-strip">
+          <div class="checkin-avatar">
+            <div class="checkin-ring" style="--progress: 100%;">
+              <div class="checkin-ring-inner">SC</div>
+            </div>
+            <div class="checkin-name">Sarah</div>
+            <div class="checkin-badge">5/5</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring" style="--progress: 100%;">
+              <div class="checkin-ring-inner">MW</div>
+            </div>
+            <div class="checkin-name">Marcus</div>
+            <div class="checkin-badge">4/4</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring" style="--progress: 75%;">
+              <div class="checkin-ring-inner">AK</div>
+            </div>
+            <div class="checkin-name">Alex</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring" style="--progress: 60%;">
+              <div class="checkin-ring-inner">JR</div>
+            </div>
+            <div class="checkin-name">Jordan</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring" style="--progress: 50%;">
+              <div class="checkin-ring-inner">TN</div>
+            </div>
+            <div class="checkin-name">Tina</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring empty">
+              <div class="checkin-ring-inner">DL</div>
+            </div>
+            <div class="checkin-name">David</div>
+          </div>
+          <div class="checkin-avatar">
+            <div class="checkin-ring empty">
+              <div class="checkin-ring-inner">KM</div>
+            </div>
+            <div class="checkin-name">Kim</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Recent Activity</div>
+        </div>
+        <div class="activity-timeline">
+          <div class="timeline-line"></div>
+
+          <!-- Photo post -->
+          <div class="timeline-event">
+            <div class="timeline-dot milestone">🏆</div>
+            <div class="timeline-user-header">
+              <div class="timeline-avatar">SC</div>
+              <div>
+                <div class="timeline-user-name">Sarah Chen</div>
+                <div class="timeline-date">Today, 7:42 AM</div>
+              </div>
+            </div>
+            <div class="timeline-photo">
+              <div style="width:100%;height:100%;background:linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);display:flex;align-items:center;justify-content:center;font-size:40px;">🏋️‍♀️</div>
+              <div class="timeline-photo-badge">Day 23 📸</div>
+              <div class="timeline-photo-overlay">
+                <div class="timeline-photo-title">Morning Workout — 45 min</div>
+                <div class="timeline-photo-goal">🎯 75 Hard Challenge</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Text post -->
+          <div class="timeline-event">
+            <div class="timeline-dot"></div>
+            <div class="timeline-user-header">
+              <div class="timeline-avatar">MW</div>
+              <div>
+                <div class="timeline-user-name">Marcus Webb</div>
+                <div class="timeline-date">Today, 6:15 AM</div>
+              </div>
+            </div>
+            <div class="timeline-text-card">
+              <div class="timeline-text-title">Read for 30 minutes</div>
+              <div class="timeline-text-body">"Atomic Habits chapter on identity-based habits. Game changer."</div>
+            </div>
+          </div>
+
+          <!-- Text post -->
+          <div class="timeline-event">
+            <div class="timeline-dot"></div>
+            <div class="timeline-user-header">
+              <div class="timeline-avatar">AK</div>
+              <div>
+                <div class="timeline-user-name">Alex Kim</div>
+                <div class="timeline-date">Yesterday, 9:30 PM</div>
+              </div>
+            </div>
+            <div class="timeline-text-card">
+              <div class="timeline-text-title">No Sugar — Day 15</div>
+              <div class="timeline-text-body">"Cravings are basically gone. This circle keeps me honest."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Contributors -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Top Contributors</div>
+          <div class="section-link">Full Leaderboard →</div>
+        </div>
+        <div class="podium">
+          <!-- 2nd place -->
+          <div class="podium-place">
+            <div class="podium-medal">🥈</div>
+            <div class="podium-avatar">MW</div>
+            <div class="podium-name">Marcus</div>
+            <div class="podium-points">1,240 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+          <!-- 1st place -->
+          <div class="podium-place first">
+            <div class="podium-medal">🥇</div>
+            <div class="podium-avatar">SC</div>
+            <div class="podium-name">Sarah</div>
+            <div class="podium-points">1,580 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+          <!-- 3rd place -->
+          <div class="podium-place">
+            <div class="podium-medal">🥉</div>
+            <div class="podium-avatar">AK</div>
+            <div class="podium-name">Alex</div>
+            <div class="podium-points">980 pts</div>
+            <div class="podium-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Challenges -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Active Challenges</div>
+          <div class="section-link">See All →</div>
+        </div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">💎</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">75 Hard</div>
+            <div class="challenge-meta">75 days · 8 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 31%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 23</div>
+        </div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">📚</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">Read Daily</div>
+            <div class="challenge-meta">30 days · 6 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 53%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 16</div>
+        </div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">🧘</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">Mindfulness Month</div>
+            <div class="challenge-meta">30 days · 4 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 27%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 8</div>
+        </div>
+      </div>
+
+      <!-- Members Grid -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Members</div>
+          <div class="section-link">View All (12) →</div>
+        </div>
+        <div class="members-grid">
+          <div class="member-grid-item">
+            <div class="member-grid-avatar admin">SC<span class="admin-crown">👑</span></div>
+            <div class="member-grid-name">Sarah</div>
+            <div class="member-grid-role">Admin</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">MW</div>
+            <div class="member-grid-name">Marcus</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">AK</div>
+            <div class="member-grid-name">Alex</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">JR</div>
+            <div class="member-grid-name">Jordan</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">TN</div>
+            <div class="member-grid-name">Tina</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">DL</div>
+            <div class="member-grid-name">David</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">KM</div>
+            <div class="member-grid-name">Kim</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+          <div class="member-grid-item">
+            <div class="member-grid-avatar">RP</div>
+            <div class="member-grid-name">Ryan</div>
+            <div class="member-grid-role">Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height: 100px;"></div>
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">+</div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     PHONE 2: COMMUNITY TAB
+     ========================================================= -->
+<div class="phone-wrapper">
+  <div class="phone-label">Community Tab</div>
+  <div class="phone-sublabel">Full leaderboard, all challenges, all members with search and filters</div>
+  <div class="phone-frame">
+    <div class="dynamic-island"><div class="camera"></div></div>
+    <div class="screen">
+
+      <!-- Sticky Header -->
+      <div class="sticky-header">
+        <div class="header-card">
+          <div class="circle-info-section">
+            <div class="circle-icon-sm">💪</div>
+            <div class="circle-title-info">
+              <div class="circle-name">Iron Discipline</div>
+              <div class="circle-member-count">12 members</div>
+            </div>
+            <span class="chevron-down">▾</span>
+          </div>
+          <div class="header-actions">
+            <div class="header-btn gold">👤+</div>
+            <div class="header-btn">⚙</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab">Overview</div>
+          <div class="tab active">Community</div>
+        </div>
+      </div>
+
+      <!-- Full Leaderboard -->
+      <div class="section">
+        <div class="section-title">Leaderboard</div>
+
+        <div class="ranking-item">
+          <div class="rank-number" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,215,0,0.05)); color: #FFD700;">1</div>
+          <div class="ranking-avatar" style="border-color: #FFD700;">SC</div>
+          <div class="ranking-info">
+            <div class="ranking-name">Sarah Chen</div>
+            <div class="ranking-stats">94% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:94%;"></div></div>
+            <div class="ranking-percentage">1,580</div>
+          </div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="rank-number" style="background: rgba(255,255,255,0.1); color: var(--white-80);">2</div>
+          <div class="ranking-avatar">MW</div>
+          <div class="ranking-info">
+            <div class="ranking-name">Marcus Webb</div>
+            <div class="ranking-stats">87% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:87%;"></div></div>
+            <div class="ranking-percentage">1,240</div>
+          </div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="rank-number" style="background: rgba(255,255,255,0.08); color: var(--white-60);">3</div>
+          <div class="ranking-avatar">AK</div>
+          <div class="ranking-info">
+            <div class="ranking-name">Alex Kim</div>
+            <div class="ranking-stats">82% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:82%;"></div></div>
+            <div class="ranking-percentage">980</div>
+          </div>
+        </div>
+
+        <div class="ranking-item current-user">
+          <div class="rank-number">4</div>
+          <div class="ranking-avatar">YO</div>
+          <div class="ranking-info">
+            <div class="ranking-name">You (Marek)</div>
+            <div class="ranking-stats">78% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:78%;"></div></div>
+            <div class="ranking-percentage">870</div>
+          </div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="rank-number">5</div>
+          <div class="ranking-avatar">JR</div>
+          <div class="ranking-info">
+            <div class="ranking-name">Jordan Rivera</div>
+            <div class="ranking-stats">71% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:71%;"></div></div>
+            <div class="ranking-percentage">720</div>
+          </div>
+        </div>
+
+        <div class="ranking-item">
+          <div class="rank-number">6</div>
+          <div class="ranking-avatar">TN</div>
+          <div class="ranking-info">
+            <div class="ranking-name">Tina Nguyen</div>
+            <div class="ranking-stats">65% consistency</div>
+          </div>
+          <div class="ranking-consistency">
+            <div class="ranking-bar-container"><div class="ranking-bar-fill" style="width:65%;"></div></div>
+            <div class="ranking-percentage">610</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Challenges -->
+      <div class="section">
+        <div class="section-title">All Challenges</div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">💎</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">75 Hard</div>
+            <div class="challenge-meta">75 days · 8 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 31%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 23</div>
+        </div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">📚</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">Read Daily</div>
+            <div class="challenge-meta">30 days · 6 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 53%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 16</div>
+        </div>
+
+        <div class="challenge-card-compact">
+          <div class="challenge-icon">🧘</div>
+          <div class="challenge-content">
+            <div class="challenge-title-compact">Mindfulness Month</div>
+            <div class="challenge-meta">30 days · 4 participants</div>
+            <div class="challenge-progress">
+              <div class="challenge-progress-fill" style="width: 27%;"></div>
+            </div>
+          </div>
+          <div class="challenge-day-badge">Day 8</div>
+        </div>
+      </div>
+
+      <!-- All Members -->
+      <div class="section">
+        <div class="section-title">Members (12)</div>
+
+        <div class="search-container">
+          <span class="search-icon">🔍</span>
+          <span class="search-input">Search members...</span>
+        </div>
+
+        <div class="filter-pills">
+          <div class="filter-pill active">All</div>
+          <div class="filter-pill">Admins</div>
+          <div class="filter-pill">Most Active</div>
+        </div>
+
+        <div class="member-item">
+          <div class="member-avatar">SC</div>
+          <div class="member-info">
+            <div class="member-name-row">
+              <div class="member-name">Sarah Chen</div>
+              <div class="admin-badge">Admin</div>
+            </div>
+            <div class="member-meta">Joined Jan 5, 2026 · 1,580 pts</div>
+          </div>
+          <div class="member-points-badge">1,580</div>
+        </div>
+
+        <div class="member-item">
+          <div class="member-avatar">MW</div>
+          <div class="member-info">
+            <div class="member-name-row">
+              <div class="member-name">Marcus Webb</div>
+            </div>
+            <div class="member-meta">Joined Jan 12, 2026 · 1,240 pts</div>
+          </div>
+          <div class="member-points-badge">1,240</div>
+        </div>
+
+        <div class="member-item">
+          <div class="member-avatar">AK</div>
+          <div class="member-info">
+            <div class="member-name-row">
+              <div class="member-name">Alex Kim</div>
+            </div>
+            <div class="member-meta">Joined Jan 15, 2026 · 980 pts</div>
+          </div>
+          <div class="member-points-badge">980</div>
+        </div>
+
+        <div class="member-item" style="background: rgba(231,180,58,0.06); border-color: rgba(231,180,58,0.2);">
+          <div class="member-avatar" style="border-color: var(--gold);">YO</div>
+          <div class="member-info">
+            <div class="member-name-row">
+              <div class="member-name">You (Marek)</div>
+            </div>
+            <div class="member-meta">Joined Jan 18, 2026 · 870 pts</div>
+          </div>
+          <div class="member-points-badge">870</div>
+        </div>
+
+        <div class="member-item">
+          <div class="member-avatar">JR</div>
+          <div class="member-info">
+            <div class="member-name-row">
+              <div class="member-name">Jordan Rivera</div>
+            </div>
+            <div class="member-meta">Joined Jan 20, 2026 · 720 pts</div>
+          </div>
+          <div class="member-points-badge">720</div>
+        </div>
+      </div>
+
+      <div style="height: 100px;"></div>
+    </div>
+
+    <!-- FAB -->
+    <div class="fab">+</div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     PHONE 3: CIRCLE SWITCHER OVERLAY
+     ========================================================= -->
+<div class="phone-wrapper">
+  <div class="phone-label">Circle Switcher</div>
+  <div class="phone-sublabel">Dropdown when user taps the header — switch between circles, join/create new ones</div>
+  <div class="phone-frame">
+    <div class="dynamic-island"><div class="camera"></div></div>
+    <div class="screen">
+
+      <!-- Sticky Header (behind overlay) -->
+      <div class="sticky-header" style="opacity: 0.3;">
+        <div class="header-card">
+          <div class="circle-info-section">
+            <div class="circle-icon-sm">💪</div>
+            <div class="circle-title-info">
+              <div class="circle-name">Iron Discipline</div>
+              <div class="circle-member-count">12 members</div>
+            </div>
+            <span class="chevron-down">▲</span>
+          </div>
+          <div class="header-actions">
+            <div class="header-btn gold">👤+</div>
+            <div class="header-btn">⚙</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab active">Overview</div>
+          <div class="tab">Community</div>
+        </div>
+      </div>
+
+      <!-- Dimmed content behind -->
+      <div style="padding: 20px; opacity: 0.15;">
+        <div style="height: 200px; background: var(--white-04); border-radius: 12px;"></div>
+      </div>
+
+      <!-- Overlay -->
+      <div class="overlay-bg"></div>
+
+      <!-- Dropdown Menu -->
+      <div class="dropdown-menu">
+        <div class="dropdown-item active">
+          <div class="dropdown-emoji">💪</div>
+          <div class="dropdown-info">
+            <div class="dropdown-name">Iron Discipline</div>
+            <div class="dropdown-meta">12 members · 3 challenges</div>
+          </div>
+          <div class="dropdown-check">✓</div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="dropdown-emoji">🧠</div>
+          <div class="dropdown-info">
+            <div class="dropdown-name">Mindset Masters</div>
+            <div class="dropdown-meta">8 members · 2 challenges</div>
+          </div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="dropdown-emoji">🏃</div>
+          <div class="dropdown-info">
+            <div class="dropdown-name">Run Club</div>
+            <div class="dropdown-meta">24 members · 1 challenge</div>
+          </div>
+        </div>
+
+        <div class="dropdown-item">
+          <div class="dropdown-emoji">📖</div>
+          <div class="dropdown-info">
+            <div class="dropdown-name">Book Worms</div>
+            <div class="dropdown-meta">6 members · 1 challenge</div>
+          </div>
+        </div>
+
+        <div class="join-another-btn">
+          + Join Another Circle
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     PHONE 4: SETTINGS MODAL
+     ========================================================= -->
+<div class="phone-wrapper">
+  <div class="phone-label">Settings Modal</div>
+  <div class="phone-sublabel">Circle settings, notifications, invite code, leave circle with confirmation</div>
+  <div class="phone-frame">
+    <div class="dynamic-island"><div class="camera"></div></div>
+    <div class="screen">
+
+      <!-- Dimmed header behind -->
+      <div class="sticky-header" style="opacity: 0.2;">
+        <div class="header-card">
+          <div class="circle-info-section">
+            <div class="circle-icon-sm">💪</div>
+            <div class="circle-title-info">
+              <div class="circle-name">Iron Discipline</div>
+              <div class="circle-member-count">12 members</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Overlay -->
+      <div class="settings-overlay">
+        <div class="settings-modal">
+          <div class="settings-header">
+            <div class="settings-title">⚙️ Settings</div>
+            <div class="settings-close">✕</div>
+          </div>
+          <div class="settings-body">
+
+            <!-- General -->
+            <div class="settings-section">
+              <div class="settings-section-title">General</div>
+
+              <div class="setting-item">
+                <div class="setting-icon">✏️</div>
+                <div class="setting-info">
+                  <div class="setting-label">Circle Name</div>
+                  <div class="setting-description">Iron Discipline</div>
+                </div>
+                <div class="setting-arrow">›</div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-icon">🌐</div>
+                <div class="setting-info">
+                  <div class="setting-label">Privacy</div>
+                  <div class="setting-value">Private</div>
+                </div>
+                <div class="setting-arrow">›</div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-icon">📋</div>
+                <div class="setting-info">
+                  <div class="setting-label">Invite Code</div>
+                  <div class="setting-value">IRON2026</div>
+                </div>
+                <div class="setting-arrow" style="font-size: 13px; color: var(--gold);">Copy</div>
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-section">
+              <div class="settings-section-title">Notifications</div>
+
+              <div class="setting-item">
+                <div class="setting-icon">🔔</div>
+                <div class="setting-info">
+                  <div class="setting-label">New posts</div>
+                  <div class="setting-description">Get notified when someone posts</div>
+                </div>
+                <div class="toggle-switch active">
+                  <div class="toggle-knob"></div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-icon">🎯</div>
+                <div class="setting-info">
+                  <div class="setting-label">Challenge updates</div>
+                  <div class="setting-description">New challenges and milestones</div>
+                </div>
+                <div class="toggle-switch active">
+                  <div class="toggle-knob"></div>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-icon">🔥</div>
+                <div class="setting-info">
+                  <div class="setting-label">Momentum alerts</div>
+                  <div class="setting-description">When circle hits check-in milestones</div>
+                </div>
+                <div class="toggle-switch">
+                  <div class="toggle-knob"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="settings-section">
+              <div class="btn-danger">
+                🚪 Leave Circle
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     PHONE 5: EMPTY STATE
+     ========================================================= -->
+<div class="phone-wrapper">
+  <div class="phone-label">Empty State</div>
+  <div class="phone-sublabel">First-time experience when user has no circles — strong CTA to join or create</div>
+  <div class="phone-frame">
+    <div class="dynamic-island"><div class="camera"></div></div>
+    <div class="screen">
+      <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
+        <div class="empty-state-title">Join a Circle</div>
+        <div class="empty-state-subtitle">Connect with others and build consistency together. Circles are groups that hold each other accountable.</div>
+        <div class="btn-primary">Join Circle</div>
+        <div class="btn-secondary">Create Circle</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- =========================================================
+     DESIGN NOTES
+     ========================================================= -->
+<div class="design-notes">
+  <div class="notes-title">Circle Page — Design Notes</div>
+
+  <div class="note-group">
+    <div class="note-group-title">Key Changes from Current Implementation</div>
+
+    <div class="note-comparison">
+      <div class="note-before">
+        <div class="note-before-label">Before</div>
+        <div class="note-comparison-text">
+          Challenge cards use cyan gradient <code>['#4facfe', '#00f2fe']</code> — inconsistent with black/gold theme. No progress bars on challenge cards. No day indicator badges.
+        </div>
+      </div>
+      <div class="note-after">
+        <div class="note-after-label">After</div>
+        <div class="note-comparison-text">
+          All challenge cards use <code>linear-gradient(135deg, #D4AF37, #FFD700)</code> gold gradient icons. Added thin progress bar showing challenge completion. Day badge pill on right side.
+        </div>
+      </div>
+    </div>
+
+    <div class="note-comparison" style="margin-top: 12px;">
+      <div class="note-before">
+        <div class="note-before-label">Before</div>
+        <div class="note-comparison-text">
+          No momentum/check-in visibility. Users can't see who checked in today without going to Social feed. No FOMO driver.
+        </div>
+      </div>
+      <div class="note-after">
+        <div class="note-after-label">After</div>
+        <div class="note-comparison-text">
+          Added <strong>Momentum Banner</strong> (gold tint, 🔥 when ≥50% checked in) + <strong>Today's Check-ins</strong> horizontal scroll strip with gold progress rings showing each member's daily completion. Fully monochrome — gold/black/white only.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">New Features</div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Momentum Banner</strong> — Only appears when ≥50% of circle members have checked in today. Shows fire emoji, count ("8 of 12"), and overlapping avatar faces of checked-in members. Drives FOMO for members who haven't checked in yet. Ties into the <code>MOMENTUM_SYSTEM_SPEC.md</code> logic.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Today's Check-ins Strip</strong> — Horizontal scrollable row of member avatars with conic-gradient gold progress rings. Gold ring = completed actions (proportional fill). Empty ring = hasn't checked in. Shows completion fraction badge ("5/5") for perfect days. Uses <code>conic-gradient(var(--gold) var(--progress), transparent var(--progress))</code> in React Native this would be an SVG circle with strokeDasharray.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Challenge Progress Bars</strong> — Thin 3px progress bars on compact challenge cards showing how far through the challenge the circle is. Day badge pill on the right replaces having to calculate mentally.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Leaderboard Consistency Bars</strong> — In the Community tab, each ranking row now has a mini progress bar + percentage showing consistency at a glance, not just raw points. Points shown to the right of the bar.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Invite Code in Settings</strong> — Added a dedicated "Invite Code" row in settings with a "Copy" action, making it easier to share than the current alert-based flow.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        <strong>Momentum Alerts toggle</strong> — New notification setting for momentum milestones (when circle hits 50% or 100% check-in thresholds).
+      </div>
+    </div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">Podium Improvements</div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        Added <strong>visual podium bars</strong> behind the top 3 contributors — gold for 1st (tallest), subtle white for 2nd and 3rd. The bars create a visual "stage" effect. 1st place avatar is larger (64px vs 50px) with a gold glow shadow. All monochrome — no silver/bronze colors.
+      </div>
+    </div>
+
+    <div class="note-item">
+      <span class="note-bullet">→</span>
+      <div class="note-text">
+        Top 3 rank numbers in the community leaderboard use <strong>tiered opacity</strong> — bright gold for #1, white-80 for #2, white-60 for #3 — staying fully monochrome.
+      </div>
+    </div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">Overview Tab — Section Order (Top to Bottom)</div>
+
+    <div class="note-item"><span class="note-bullet">1.</span><div class="note-text"><strong>Circle Hero</strong> — Large emoji icon, description, 3 stat values (members, challenges, posts)</div></div>
+    <div class="note-item"><span class="note-bullet">2.</span><div class="note-text"><strong>Momentum Banner</strong> — Conditional. Only shows when ≥50% checked in. Fire emoji + count + avatars.</div></div>
+    <div class="note-item"><span class="note-bullet">3.</span><div class="note-text"><strong>Today's Check-ins</strong> — Horizontal scroll of member progress rings. At-a-glance daily status.</div></div>
+    <div class="note-item"><span class="note-bullet">4.</span><div class="note-text"><strong>Recent Activity</strong> — Timeline with gold vertical line. Latest 3 posts (photo or text). Milestone dot for first.</div></div>
+    <div class="note-item"><span class="note-bullet">5.</span><div class="note-text"><strong>Top Contributors</strong> — Podium with bars. "Full Leaderboard →" link switches to Community tab.</div></div>
+    <div class="note-item"><span class="note-bullet">6.</span><div class="note-text"><strong>Active Challenges</strong> — Compact cards with gold icon, progress bar, day badge. "See All →" link.</div></div>
+    <div class="note-item"><span class="note-bullet">7.</span><div class="note-text"><strong>Members Grid</strong> — 4-column grid, 8 shown. Admin crown badge. "View All (12) →" link.</div></div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">Community Tab — Section Order</div>
+
+    <div class="note-item"><span class="note-bullet">1.</span><div class="note-text"><strong>Leaderboard</strong> — Full rankings with rank number, avatar, name, consistency bar + percentage, points. Current user row highlighted gold.</div></div>
+    <div class="note-item"><span class="note-bullet">2.</span><div class="note-text"><strong>All Challenges</strong> — Same cards as overview but full list.</div></div>
+    <div class="note-item"><span class="note-bullet">3.</span><div class="note-text"><strong>All Members</strong> — Search bar + filter pills (All / Admins / Most Active) + list view with avatar, name, admin badge, join date, points.</div></div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">Color Palette (Consistent Black/Gold Theme)</div>
+
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>STRICTLY MONOCHROME</strong> — Only three color families: gold, black, white. No green, no red, no blue, no orange.</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Gold primary:</strong> <code>#D4AF37</code>, <code>#E7B43A</code>, <code>#FFD700</code> — stats, accents, active states, badges, progress rings, momentum banner</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Gold dim:</strong> <code>rgba(231,180,58,0.15)</code> — active tab bg, filter pill bg, admin badge bg, podium glow, check-in badges</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Blacks:</strong> <code>#000</code> (pure), <code>#0A0A0A</code> (soft), <code>#111</code> (card), <code>#1A1A1A</code> (elevated/modal)</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>White layers:</strong> <code>rgba(255,255,255, 0.04/0.06/0.08/0.10)</code> — card bgs and borders at different elevation levels</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>NO other colors</strong> — No green, no cyan <code>['#4facfe', '#00f2fe']</code>, no orange/fire, no red. Everything is gold, black, or white at varying opacities.</div></div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">React Native Implementation Notes</div>
+
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Check-in progress rings:</strong> Use <code>react-native-svg</code> <code>&lt;Circle&gt;</code> with <code>strokeDasharray</code> and <code>strokeDashoffset</code>. Same approach as the daily page progress ring. Circumference = 2 * PI * radius. Offset = circumference * (1 - progress).</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Momentum banner:</strong> Conditional render. Query: <code>SELECT COUNT(*) FROM daily_reviews WHERE circle_id = X AND review_date = TODAY</code> or track via action completions. Show when count / total_members ≥ 0.5.</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Check-in strip:</strong> <code>ScrollView horizontal</code> with <code>showsHorizontalScrollIndicator={false}</code>. Each avatar is a Pressable that navigates to profile.</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Podium bars:</strong> Use <code>LinearGradient</code> with <code>height</code> varying per rank (64px / 48px / 36px). <code>borderRadius: [8, 8, 0, 0]</code> for top corners only.</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Challenge progress bar:</strong> Simple <code>View</code> with <code>width: `${percentage}%`</code> and gold gradient bg inside a 3px-height container.</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Current user highlight:</strong> Check <code>member.user_id === user?.id</code> and apply gold-tinted background + border for leaderboard row and member list item.</div></div>
+  </div>
+
+  <div class="note-group">
+    <div class="note-group-title">Interaction States</div>
+
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Header tap</strong> → Opens circle switcher dropdown (Phone 3)</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Invite btn tap</strong> → Shows invite code alert (current) or copies to clipboard (improved)</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Settings btn tap</strong> → Opens settings modal (Phone 4)</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Tab tap</strong> → Switches between Overview and Community with haptic feedback</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Check-in avatar tap</strong> → Opens member profile modal</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Timeline post tap</strong> → Opens full post view</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>"Full Leaderboard →" tap</strong> → Switches to Community tab</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Challenge card tap</strong> → Opens ChallengeDetailModal</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Member tap (grid or list)</strong> → Opens ProfileScreen modal</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>FAB (+) tap</strong> → Opens CreateChallengeModal</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>Circle switcher item tap</strong> → Switches active circle, dismisses dropdown</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>"Join Another Circle" tap</strong> → Dismisses switcher, opens JoinCircleModal</div></div>
+    <div class="note-item"><span class="note-bullet">→</span><div class="note-text"><strong>"Leave Circle" tap</strong> → Shows confirmation Alert dialog before executing</div></div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Leaderboard - Fitness Warriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .leaderboard-page {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .page-header {
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Time Period Selector */
+        .time-periods {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .time-periods::-webkit-scrollbar { display: none; }
+        .period-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .period-btn.active {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        /* Podium Section */
+        .podium-section {
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.03), transparent);
+        }
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .podium-place {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .podium-place:hover {
+            transform: scale(1.05);
+        }
+        .podium-place.first { order: 2; }
+        .podium-place.second { order: 1; }
+        .podium-place.third { order: 3; }
+
+        .podium-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            margin: 0 auto 10px;
+            position: relative;
+            border: 3px solid transparent;
+        }
+        .podium-place.first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            border-color: #FFD700;
+        }
+        .podium-place.second .podium-avatar { border-color: #C0C0C0; }
+        .podium-place.third .podium-avatar { border-color: #CD7F32; }
+
+        .crown {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+        }
+        .podium-rank {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .podium-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .podium-points {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .podium-base {
+            height: 60px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px 12px 0 0;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .podium-place.first .podium-base {
+            height: 80px;
+            background: rgba(231,180,58,0.1);
+            border-color: rgba(231,180,58,0.2);
+        }
+        .podium-place.second .podium-base { height: 70px; }
+        .podium-place.third .podium-base { height: 60px; }
+
+        /* Rankings List */
+        .section {
+            padding: 25px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .ranking-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ranking-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .ranking-item.current-user {
+            background: rgba(231,180,58,0.08);
+            border-color: rgba(231,180,58,0.3);
+        }
+
+        .rank-number {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            flex-shrink: 0;
+        }
+        .ranking-item.current-user .rank-number {
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        .ranking-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+        }
+
+        .ranking-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .ranking-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .ranking-stats {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .ranking-points {
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .points-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 2px;
+        }
+        .points-change {
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            justify-content: flex-end;
+        }
+        .points-change.up { color: #22c55e; }
+        .points-change.down { color: #ef4444; }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Achievements */
+        .achievements {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 15px 0;
+            scrollbar-width: none;
+        }
+        .achievements::-webkit-scrollbar { display: none; }
+        .achievement-badge {
+            width: 60px;
+            height: 60px;
+            background: rgba(231,180,58,0.15);
+            border: 2px solid rgba(231,180,58,0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .achievement-badge:hover {
+            transform: scale(1.1);
+            background: rgba(231,180,58,0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Leaderboard</h1>
+
+        <div class="leaderboard-page">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="header-subtitle">Fitness Warriors Rankings</div>
+
+                <div class="time-periods">
+                    <div class="period-btn">Today</div>
+                    <div class="period-btn active">This Week</div>
+                    <div class="period-btn">This Month</div>
+                    <div class="period-btn">All Time</div>
+                </div>
+            </div>
+
+            <!-- Podium -->
+            <div class="podium-section">
+                <div class="podium">
+                    <div class="podium-place first">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                            <div class="crown">👑</div>
+                        </div>
+                        <div class="podium-rank">🥇</div>
+                        <div class="podium-name">Sarah M.</div>
+                        <div class="podium-points">2,847 pts</div>
+                        <div class="podium-base">
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Rank #1</div>
+                        </div>
+                    </div>
+
+                    <div class="podium-place second">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                        <div class="podium-rank">🥈</div>
+                        <div class="podium-name">Mike T.</div>
+                        <div class="podium-points">2,341 pts</div>
+                        <div class="podium-base">
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Rank #2</div>
+                        </div>
+                    </div>
+
+                    <div class="podium-place third">
+                        <div class="podium-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                        <div class="podium-rank">🥉</div>
+                        <div class="podium-name">Alex R.</div>
+                        <div class="podium-points">1,982 pts</div>
+                        <div class="podium-base">
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.4);">Rank #3</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">#7</div>
+                        <div class="stat-label">Your Rank</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-label">Points</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+142</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Rankings -->
+            <div class="section">
+                <div class="section-title">Full Rankings</div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">4</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">Emma L.</div>
+                        <div class="ranking-stats">87 posts • 3 challenges</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">1,756</div>
+                        <div class="points-change up">↑ +45</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">5</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">James K.</div>
+                        <div class="ranking-stats">64 posts • 2 challenges</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">1,523</div>
+                        <div class="points-change down">↓ -12</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">6</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #30cfd0, #330867);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">Lisa P.</div>
+                        <div class="ranking-stats">52 posts • 4 challenges</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">1,387</div>
+                        <div class="points-change up">↑ +28</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item current-user">
+                    <div class="rank-number">7</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">You (Chris D.)</div>
+                        <div class="ranking-stats">48 posts • 2 challenges</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">1,234</div>
+                        <div class="points-change up">↑ +34</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">8</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">Anna B.</div>
+                        <div class="ranking-stats">41 posts • 1 challenge</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">1,089</div>
+                        <div class="points-change up">↑ +19</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">9</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">Tom R.</div>
+                        <div class="ranking-stats">35 posts • 2 challenges</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">956</div>
+                        <div class="points-change down">↓ -8</div>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="rank-number">10</div>
+                    <div class="ranking-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">Kelly S.</div>
+                        <div class="ranking-stats">29 posts • 1 challenge</div>
+                    </div>
+                    <div class="ranking-points">
+                        <div class="points-value">847</div>
+                        <div class="points-change up">↑ +22</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Section -->
+            <div class="section">
+                <div class="section-title">Top Achievements</div>
+                <div class="achievements">
+                    <div class="achievement-badge">🔥</div>
+                    <div class="achievement-badge">💪</div>
+                    <div class="achievement-badge">🎯</div>
+                    <div class="achievement-badge">⭐</div>
+                    <div class="achievement-badge">🏅</div>
+                    <div class="achievement-badge">👑</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

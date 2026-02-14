@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Check-in Styles - 3 Original Designs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .option-wrapper {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 14px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feed-container {
+            background: #0B0F12;
+            border-radius: 20px;
+            padding: 20px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        /* STYLE 1: Completion Badge/Card */
+        .badge-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .badge-checkin {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .badge-checkin::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(231,180,58,0.4), transparent);
+        }
+
+        .badge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-name-small {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .time-stamp {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            font-weight: 500;
+        }
+
+        .challenge-ribbon {
+            background: linear-gradient(135deg, rgba(192,192,192,0.3), rgba(128,128,128,0.2));
+            border: 1px solid rgba(192,192,192,0.4);
+            color: #C0C0C0;
+            padding: 4px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .action-display {
+            padding: 24px 18px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .action-icon-large {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: inline-block;
+            filter: drop-shadow(0 2px 8px rgba(231,180,58,0.3));
+        }
+
+        .action-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .action-goal {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metrics-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 18px;
+            gap: 12px;
+        }
+
+        .metric-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .reactions-compact {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .reaction-btn:hover {
+            color: #E7B43A;
+            background: rgba(231,180,58,0.1);
+            transform: translateY(-1px);
+        }
+
+        .reaction-btn.active {
+            color: #E7B43A;
+            background: rgba(231,180,58,0.15);
+        }
+
+        /* STYLE 2: Dashboard Metric Card */
+        .dashboard-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dashboard-checkin {
+            background: linear-gradient(135deg, rgba(231,180,58,0.12) 0%, rgba(255,215,0,0.05) 100%);
+            border: 1px solid rgba(231,180,58,0.25);
+            border-radius: 14px;
+            padding: 14px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+            position: relative;
+        }
+
+        .dashboard-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            border: 2px solid rgba(231,180,58,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+        }
+
+        .dashboard-icon::after {
+            content: '✓';
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: #E7B43A;
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #0B0F12;
+        }
+
+        .dashboard-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dashboard-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .dashboard-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 6px;
+        }
+
+        .dashboard-user {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .mini-avatar {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .progress-bar-small {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E7B43A, #FFD700);
+            border-radius: 2px;
+            width: 65%;
+        }
+
+        .dashboard-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .stat-large {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            line-height: 1;
+        }
+
+        .stat-small {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .challenge-tag-small {
+            background: rgba(192,192,192,0.2);
+            border: 1px solid rgba(192,192,192,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #C0C0C0;
+            text-transform: uppercase;
+        }
+
+        /* STYLE 3: Stamp/Receipt Style */
+        .stamp-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stamp-checkin {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
+            border: 2px dashed rgba(231,180,58,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .stamp-checkin::before,
+        .stamp-checkin::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #0B0F12;
+            border-radius: 50%;
+        }
+
+        .stamp-checkin::before {
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stamp-checkin::after {
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .stamp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        .receipt-number {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            font-family: 'Courier New', monospace;
+        }
+
+        .stamp-mark {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            border: 3px solid rgba(231,180,58,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            position: absolute;
+            right: 16px;
+            top: 16px;
+            background: rgba(231,180,58,0.1);
+        }
+
+        .stamp-check {
+            font-size: 28px;
+            color: #E7B43A;
+            line-height: 1;
+        }
+
+        .stamp-text {
+            font-size: 8px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+        }
+
+        .receipt-content {
+            padding-right: 70px;
+        }
+
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .receipt-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+        }
+
+        .receipt-value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .receipt-action {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 12px;
+        }
+
+        .receipt-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        .receipt-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .receipt-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .receipt-username {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .receipt-time {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Celebration card styling */
+        .celebration-checkin {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(231, 180, 58, 0.1));
+            border: 2px solid rgba(231, 180, 58, 0.4);
+        }
+
+        .celebration-checkin::before {
+            content: '💯';
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Check-in Styles - Original Designs</div>
+
+    <div class="options-container">
+        <!-- STYLE 1: Completion Badge/Card -->
+        <div class="option-wrapper">
+            <div class="option-label">Style 1: Achievement Badge</div>
+            <div class="feed-container">
+                <div class="badge-feed">
+                    <!-- Check-in 1 -->
+                    <div class="badge-checkin">
+                        <div class="challenge-ribbon">75 HARD</div>
+                        <div class="badge-header">
+                            <div class="user-badge">
+                                <div class="user-avatar-small">🏃</div>
+                                <div class="user-name-small">Alex Chen</div>
+                            </div>
+                            <div class="time-stamp">2h ago</div>
+                        </div>
+
+                        <div class="action-display">
+                            <div class="action-icon-large">✓</div>
+                            <div class="action-name">Morning Run</div>
+                            <div class="action-goal">Marathon Training</div>
+                        </div>
+
+                        <div class="metrics-row">
+                            <div class="metric-item">
+                                <span class="metric-value">45</span>
+                                <span class="metric-label">Minutes</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">5.2</span>
+                                <span class="metric-label">Miles</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">26</span>
+                                <span class="metric-label">Day Streak</span>
+                            </div>
+                        </div>
+
+                        <div class="reactions-compact">
+                            <div class="reaction-btn">
+                                <span>🔥</span>
+                                <span>12</span>
+                            </div>
+                            <div class="reaction-btn">
+                                <span>💬</span>
+                                <span>3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="badge-checkin celebration-checkin">
+                        <div class="badge-header">
+                            <div class="user-badge">
+                                <div class="user-avatar-small">💪</div>
+                                <div class="user-name-small">Sarah Johnson</div>
+                            </div>
+                            <div class="time-stamp">4h ago</div>
+                        </div>
+
+                        <div class="action-display">
+                            <div class="action-icon-large">💯</div>
+                            <div class="action-name">100% Daily Complete</div>
+                        </div>
+
+                        <div class="metrics-row">
+                            <div class="metric-item">
+                                <span class="metric-value">4/4</span>
+                                <span class="metric-label">Actions</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">87%</span>
+                                <span class="metric-label">This Week</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">12</span>
+                                <span class="metric-label">Best Streak</span>
+                            </div>
+                        </div>
+
+                        <div class="reactions-compact">
+                            <div class="reaction-btn">
+                                <span>🎉</span>
+                                <span>24</span>
+                            </div>
+                            <div class="reaction-btn">
+                                <span>💬</span>
+                                <span>8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="badge-checkin">
+                        <div class="badge-header">
+                            <div class="user-badge">
+                                <div class="user-avatar-small">🧘</div>
+                                <div class="user-name-small">Mike Torres</div>
+                            </div>
+                            <div class="time-stamp">6h ago</div>
+                        </div>
+
+                        <div class="action-display">
+                            <div class="action-icon-large">✓</div>
+                            <div class="action-name">Morning Meditation</div>
+                            <div class="action-goal">Mindfulness Goal</div>
+                        </div>
+
+                        <div class="metrics-row">
+                            <div class="metric-item">
+                                <span class="metric-value">15</span>
+                                <span class="metric-label">Minutes</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">26</span>
+                                <span class="metric-label">Day Streak</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">92%</span>
+                                <span class="metric-label">Consistency</span>
+                            </div>
+                        </div>
+
+                        <div class="reactions-compact">
+                            <div class="reaction-btn">
+                                <span>🔥</span>
+                                <span>18</span>
+                            </div>
+                            <div class="reaction-btn">
+                                <span>💬</span>
+                                <span>5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STYLE 2: Dashboard Metric Card -->
+        <div class="option-wrapper">
+            <div class="option-label">Style 2: Compact Dashboard</div>
+            <div class="feed-container">
+                <div class="dashboard-feed">
+                    <!-- Check-in 1 -->
+                    <div class="dashboard-checkin">
+                        <div class="dashboard-icon">🏃</div>
+                        <div class="dashboard-content">
+                            <div class="dashboard-title">Morning Run</div>
+                            <div class="dashboard-meta">
+                                <div class="dashboard-user">
+                                    <div class="mini-avatar"></div>
+                                    <span>Alex Chen</span>
+                                </div>
+                                <span>•</span>
+                                <span>2h ago</span>
+                                <span>•</span>
+                                <span class="challenge-tag-small">75 HARD</span>
+                            </div>
+                            <div class="progress-bar-small">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-large">45</div>
+                            <div class="stat-small">Minutes</div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="dashboard-checkin" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(231, 180, 58, 0.08));">
+                        <div class="dashboard-icon" style="font-size: 32px;">💯</div>
+                        <div class="dashboard-content">
+                            <div class="dashboard-title">100% Daily Complete</div>
+                            <div class="dashboard-meta">
+                                <div class="dashboard-user">
+                                    <div class="mini-avatar"></div>
+                                    <span>Sarah Johnson</span>
+                                </div>
+                                <span>•</span>
+                                <span>4h ago</span>
+                            </div>
+                            <div class="progress-bar-small">
+                                <div class="progress-fill" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-large">4/4</div>
+                            <div class="stat-small">Actions</div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="dashboard-checkin">
+                        <div class="dashboard-icon">🧘</div>
+                        <div class="dashboard-content">
+                            <div class="dashboard-title">Morning Meditation</div>
+                            <div class="dashboard-meta">
+                                <div class="dashboard-user">
+                                    <div class="mini-avatar"></div>
+                                    <span>Mike Torres</span>
+                                </div>
+                                <span>•</span>
+                                <span>6h ago</span>
+                            </div>
+                            <div class="progress-bar-small">
+                                <div class="progress-fill" style="width: 92%;"></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-large">26</div>
+                            <div class="stat-small">Day Streak</div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 3 -->
+                    <div class="dashboard-checkin">
+                        <div class="dashboard-icon">📚</div>
+                        <div class="dashboard-content">
+                            <div class="dashboard-title">Read Book</div>
+                            <div class="dashboard-meta">
+                                <div class="dashboard-user">
+                                    <div class="mini-avatar"></div>
+                                    <span>Emma Rodriguez</span>
+                                </div>
+                                <span>•</span>
+                                <span>8h ago</span>
+                            </div>
+                            <div class="progress-bar-small">
+                                <div class="progress-fill" style="width: 78%;"></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-stats">
+                            <div class="stat-large">30</div>
+                            <div class="stat-small">Minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STYLE 3: Stamp/Receipt Style -->
+        <div class="option-wrapper">
+            <div class="option-label">Style 3: Activity Receipt</div>
+            <div class="feed-container">
+                <div class="stamp-feed">
+                    <!-- Check-in 1 -->
+                    <div class="stamp-checkin">
+                        <div class="stamp-mark">
+                            <div class="stamp-check">✓</div>
+                            <div class="stamp-text">Done</div>
+                        </div>
+
+                        <div class="stamp-header">
+                            <div class="receipt-number">#ACT-2847</div>
+                            <div class="receipt-time">2h ago</div>
+                        </div>
+
+                        <div class="receipt-content">
+                            <div class="receipt-action">Morning Run</div>
+
+                            <div class="receipt-line">
+                                <span class="receipt-label">Duration</span>
+                                <span class="receipt-value">45 min</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Distance</span>
+                                <span class="receipt-value">5.2 mi</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Challenge</span>
+                                <span class="receipt-value">75 HARD</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Goal</span>
+                                <span class="receipt-value">Marathon Training</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer">
+                            <div class="receipt-user">
+                                <div class="receipt-avatar">🏃</div>
+                                <div class="receipt-username">Alex Chen</div>
+                            </div>
+                            <div class="reactions-compact">
+                                <div class="reaction-btn">
+                                    <span>🔥</span>
+                                    <span>12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="stamp-checkin" style="border-color: rgba(231,180,58,0.5); background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(231, 180, 58, 0.06));">
+                        <div class="stamp-mark" style="border-color: rgba(231,180,58,0.6);">
+                            <div class="stamp-check">💯</div>
+                            <div class="stamp-text">Perfect</div>
+                        </div>
+
+                        <div class="stamp-header">
+                            <div class="receipt-number">#CEL-0924</div>
+                            <div class="receipt-time">4h ago</div>
+                        </div>
+
+                        <div class="receipt-content">
+                            <div class="receipt-action">100% Daily Complete</div>
+
+                            <div class="receipt-line">
+                                <span class="receipt-label">Actions</span>
+                                <span class="receipt-value">4 of 4</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Week Rate</span>
+                                <span class="receipt-value">87%</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Best Streak</span>
+                                <span class="receipt-value">12 days</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer">
+                            <div class="receipt-user">
+                                <div class="receipt-avatar">💪</div>
+                                <div class="receipt-username">Sarah Johnson</div>
+                            </div>
+                            <div class="reactions-compact">
+                                <div class="reaction-btn">
+                                    <span>🎉</span>
+                                    <span>24</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="stamp-checkin">
+                        <div class="stamp-mark">
+                            <div class="stamp-check">✓</div>
+                            <div class="stamp-text">Done</div>
+                        </div>
+
+                        <div class="stamp-header">
+                            <div class="receipt-number">#ACT-2846</div>
+                            <div class="receipt-time">6h ago</div>
+                        </div>
+
+                        <div class="receipt-content">
+                            <div class="receipt-action">Morning Meditation</div>
+
+                            <div class="receipt-line">
+                                <span class="receipt-label">Duration</span>
+                                <span class="receipt-value">15 min</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Streak</span>
+                                <span class="receipt-value">26 days</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="receipt-label">Goal</span>
+                                <span class="receipt-value">Mindfulness</span>
+                            </div>
+                        </div>
+
+                        <div class="receipt-footer">
+                            <div class="receipt-user">
+                                <div class="receipt-avatar">🧘</div>
+                                <div class="receipt-username">Mike Torres</div>
+                            </div>
+                            <div class="reactions-compact">
+                                <div class="reaction-btn">
+                                    <span>🔥</span>
+                                    <span>18</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

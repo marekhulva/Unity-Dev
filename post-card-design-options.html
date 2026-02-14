@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Card Design Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(to bottom, #0E0E10, #151518);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .option-wrapper {
+            background: rgba(255,255,255,0.02);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .option-title {
+            color: #FFD700;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .option-description {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* CURRENT DESIGN (Reference) */
+        .card-current {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(15,15,15,0.95) 100%);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .card-current.challenge::before {
+            content: '';
+            position: absolute;
+            top: -1.5px;
+            left: -1.5px;
+            right: -1.5px;
+            bottom: -1.5px;
+            background: linear-gradient(135deg, #C0C0C0, #808080, #C0C0C0);
+            border-radius: 21px;
+            opacity: 0.4;
+            z-index: -1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 16px;
+        }
+
+        .user-info .name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-info .time {
+            color: rgba(255,255,255,0.62);
+            font-size: 11px;
+            margin-top: 1px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 10px;
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .card-body {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checkmark {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            color: rgba(255,255,255,0.62);
+            font-size: 13px;
+        }
+
+        .points {
+            color: #FFE3B0;
+            font-size: 12px;
+            font-weight: 600;
+            align-self: flex-end;
+        }
+
+        .card-footer {
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 8px 16px;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* OPTION 1: COMPACT MINIMAL */
+        .card-compact {
+            background: linear-gradient(135deg, rgba(20,20,25,0.95), rgba(10,10,12,0.98));
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .compact-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .compact-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .compact-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            background: rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .compact-info .name {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .compact-info .time {
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+        }
+
+        .compact-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .compact-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .compact-text {
+            flex: 1;
+        }
+
+        .compact-title {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .compact-goal {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+        }
+
+        .compact-stats {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .compact-stat {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* OPTION 2: VISUAL FIRST */
+        .card-visual {
+            background: rgba(10,10,12,0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .visual-header {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .visual-header::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            color: rgba(0,0,0,0.15);
+            font-weight: bold;
+        }
+
+        .visual-badge {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px;
+            border-radius: 100px;
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .visual-action {
+            color: #000;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .visual-content {
+            padding: 16px 20px;
+        }
+
+        .visual-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .visual-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: rgba(255,215,0,0.15);
+            border: 2px solid rgba(255,215,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .visual-user-info .name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .visual-user-info .details {
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .visual-goal {
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 12px;
+        }
+
+        .visual-goal-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .visual-goal-text {
+            color: #fff;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .visual-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .visual-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .visual-btn:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .visual-btn-icon {
+            font-size: 16px;
+        }
+
+        .visual-btn-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        /* OPTION 3: STATS FOCUSED */
+        .card-stats {
+            background: linear-gradient(135deg, rgba(15,15,20,0.98), rgba(10,10,15,0.98));
+            border-radius: 18px;
+            padding: 18px;
+            border: 1px solid rgba(255,215,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .stats-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .stats-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        }
+
+        .stats-user-info .name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stats-user-info .time {
+            color: rgba(255,255,255,0.5);
+            font-size: 11px;
+        }
+
+        .stats-points {
+            background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,165,0,0.15));
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stats-points-value {
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .stats-points-label {
+            color: rgba(255,215,0,0.7);
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-main {
+            margin-bottom: 12px;
+        }
+
+        .stats-action {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .stats-goal {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+        }
+
+        .stats-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .metric {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .metric-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stats-footer {
+            display: flex;
+            gap: 8px;
+        }
+
+        .stats-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stats-btn:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,215,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Post Card Design Options</h1>
+        <p class="subtitle">Compare three alternative designs for the social feed post cards</p>
+
+        <div class="grid">
+            <!-- OPTION 1: COMPACT MINIMAL -->
+            <div class="option-wrapper">
+                <div class="option-title">Option 1: Compact Minimal</div>
+                <div class="option-description">
+                    Space-efficient design with condensed layout. Perfect for viewing more posts at once.
+                    Emphasizes action completion with inline stats.
+                </div>
+
+                <div class="card-compact">
+                    <div class="compact-top">
+                        <div class="compact-user">
+                            <div class="compact-avatar">🏀</div>
+                            <div class="compact-info">
+                                <div class="name">Alex Johnson</div>
+                                <div class="time">Today · 2:30 PM</div>
+                            </div>
+                        </div>
+                        <div class="badge">🏆 30-DAY</div>
+                    </div>
+
+                    <div class="compact-main">
+                        <svg class="compact-icon" viewBox="0 0 96 96">
+                            <defs>
+                                <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFD700"/>
+                                    <stop offset="100%" style="stop-color:#FFA500"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 30 48 L 42 60 L 66 36" stroke="url(#g1)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        <div class="compact-text">
+                            <div class="compact-title">Morning meditation practice</div>
+                            <div class="compact-goal">Goal: Better focus & clarity</div>
+                        </div>
+                        <div class="points">+5</div>
+                    </div>
+
+                    <div class="compact-stats">
+                        <div class="compact-stat">🔥 12</div>
+                        <div class="compact-stat">💬 3</div>
+                        <div class="compact-stat">⚡ 7-day streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 2: VISUAL FIRST -->
+            <div class="option-wrapper">
+                <div class="option-title">Option 2: Visual First</div>
+                <div class="option-description">
+                    Bold, eye-catching design with prominent achievement display.
+                    Large visual header creates celebration feeling and draws attention.
+                </div>
+
+                <div class="card-visual">
+                    <div class="visual-header">
+                        <div class="visual-badge">🏆 CHALLENGE ACTIVITY</div>
+                        <div class="visual-action">Morning meditation practice</div>
+                    </div>
+
+                    <div class="visual-content">
+                        <div class="visual-user">
+                            <div class="visual-avatar">🏀</div>
+                            <div class="visual-user-info">
+                                <div class="name">Alex Johnson</div>
+                                <div class="details">Today · 2:30 PM · +5 points</div>
+                            </div>
+                        </div>
+
+                        <div class="visual-goal">
+                            <div class="visual-goal-label">Contributing to goal</div>
+                            <div class="visual-goal-text">Better focus & clarity</div>
+                        </div>
+
+                        <div class="visual-actions">
+                            <div class="visual-btn">
+                                <div class="visual-btn-icon">🔥</div>
+                                <div class="visual-btn-text">12</div>
+                            </div>
+                            <div class="visual-btn">
+                                <div class="visual-btn-icon">💬</div>
+                                <div class="visual-btn-text">3</div>
+                            </div>
+                            <div class="visual-btn">
+                                <div class="visual-btn-icon">⚡</div>
+                                <div class="visual-btn-text">7-day</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTION 3: STATS FOCUSED -->
+            <div class="option-wrapper">
+                <div class="option-title">Option 3: Stats & Metrics</div>
+                <div class="option-description">
+                    Data-driven design showcasing streaks, reactions, and achievement metrics.
+                    Perfect for competitive users who love tracking progress.
+                </div>
+
+                <div class="card-stats">
+                    <div class="stats-header">
+                        <div class="stats-user">
+                            <div class="stats-avatar">🏀</div>
+                            <div class="stats-user-info">
+                                <div class="name">Alex Johnson</div>
+                                <div class="time">Today · 2:30 PM</div>
+                            </div>
+                        </div>
+                        <div class="stats-points">
+                            <div class="stats-points-value">+5</div>
+                            <div class="stats-points-label">Points</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-main">
+                        <div class="stats-action">Morning meditation practice</div>
+                        <div class="stats-goal">🎯 Goal: Better focus & clarity</div>
+                    </div>
+
+                    <div class="stats-metrics">
+                        <div class="metric">
+                            <div class="metric-value">7</div>
+                            <div class="metric-label">Day Streak</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">12</div>
+                            <div class="metric-label">Reactions</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value">3</div>
+                            <div class="metric-label">Comments</div>
+                        </div>
+                    </div>
+
+                    <div class="stats-footer">
+                        <div class="stats-btn">🔥 React</div>
+                        <div class="stats-btn">💬 Comment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Design for Reference -->
+        <div style="margin-top: 40px; padding-top: 40px; border-top: 2px solid rgba(255,255,255,0.1);">
+            <h2 style="color: rgba(255,255,255,0.5); text-align: center; margin-bottom: 30px; font-size: 18px;">
+                Current Design (For Reference)
+            </h2>
+
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="card-current challenge">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <div class="avatar">🏀</div>
+                            <div class="user-info">
+                                <div class="name">Alex Johnson</div>
+                                <div class="time">Today · 2:30 PM</div>
+                            </div>
+                        </div>
+                        <div class="badge">🏆 30-DAY</div>
+                    </div>
+
+                    <div class="card-body">
+                        <svg class="checkmark" viewBox="0 0 96 96">
+                            <defs>
+                                <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FFD700"/>
+                                    <stop offset="100%" style="stop-color:#FFA500"/>
+                                </linearGradient>
+                            </defs>
+                            <path d="M 30 48 L 42 60 L 66 36" stroke="url(#g2)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        </svg>
+                        <div class="card-content">
+                            <div class="card-title">Morning meditation practice</div>
+                            <div class="card-subtitle">Goal: Better focus & clarity</div>
+                        </div>
+                        <div class="points">+5</div>
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="action-btn">🔥 <span>12</span></div>
+                        <div class="action-btn">💬 <span>3</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

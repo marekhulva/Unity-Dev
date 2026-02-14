@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Check-in Styles - Horizontal Variations</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .option-wrapper {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 14px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feed-container {
+            background: #0B0F12;
+            border-radius: 20px;
+            padding: 20px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        /* VARIATION 1: Icon Left, Content Center, Metrics Right */
+        .horizontal-v1-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .horizontal-v1-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 2px solid rgba(231,180,58,0.3);
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 14px;
+            align-items: center;
+            position: relative;
+        }
+
+        .v1-icon-section {
+            position: relative;
+        }
+
+        .v1-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            border: 2px solid rgba(231,180,58,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+        }
+
+        .v1-checkmark {
+            position: absolute;
+            bottom: -6px;
+            right: -6px;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: #E7B43A;
+            border: 2px solid #0B0F12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .v1-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .v1-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .v1-user {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .v1-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .v1-username {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .v1-time {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .v1-challenge {
+            background: rgba(192,192,192,0.2);
+            border: 1px solid rgba(192,192,192,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #C0C0C0;
+            text-transform: uppercase;
+        }
+
+        .v1-action {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 2px;
+        }
+
+        .v1-goal {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v1-metrics {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .v1-metric-main {
+            text-align: right;
+        }
+
+        .v1-metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            line-height: 1;
+        }
+
+        .v1-metric-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .v1-metrics-secondary {
+            display: flex;
+            gap: 12px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v1-reactions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .reaction-mini {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* VARIATION 2: Split Card (Left/Right) */
+        .horizontal-v2-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .horizontal-v2-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 2px solid rgba(231,180,58,0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+        }
+
+        .v2-left {
+            background: linear-gradient(135deg, rgba(231,180,58,0.25), rgba(255,215,0,0.15));
+            border-right: 2px solid rgba(231,180,58,0.4);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            gap: 8px;
+        }
+
+        .v2-checkmark-large {
+            font-size: 40px;
+            color: #E7B43A;
+            text-shadow: 0 0 20px rgba(231,180,58,0.5);
+        }
+
+        .v2-time {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            text-align: center;
+        }
+
+        .v2-right {
+            flex: 1;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .v2-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .v2-user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .v2-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .v2-username {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .v2-challenge {
+            background: rgba(192,192,192,0.2);
+            border: 1px solid rgba(192,192,192,0.3);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #C0C0C0;
+            text-transform: uppercase;
+        }
+
+        .v2-action {
+            font-size: 17px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        .v2-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .v2-goal {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v2-metrics {
+            display: flex;
+            gap: 16px;
+        }
+
+        .v2-metric {
+            text-align: center;
+        }
+
+        .v2-metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+            display: block;
+            line-height: 1;
+        }
+
+        .v2-metric-label {
+            font-size: 8px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        /* VARIATION 3: Compact Grid */
+        .horizontal-v3-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .horizontal-v3-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 2px solid rgba(231,180,58,0.3);
+            border-radius: 14px;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto auto;
+            gap: 10px 12px;
+            position: relative;
+        }
+
+        .v3-icon {
+            grid-row: 1 / 3;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            border: 2px solid rgba(231,180,58,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+        }
+
+        .v3-checkmark {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: #E7B43A;
+            border: 2px solid #0B0F12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .v3-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .v3-title-section {
+            flex: 1;
+        }
+
+        .v3-action {
+            font-size: 15px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 2px;
+        }
+
+        .v3-user-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v3-avatar {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .v3-badges {
+            display: flex;
+            gap: 6px;
+        }
+
+        .v3-challenge {
+            background: rgba(192,192,192,0.2);
+            border: 1px solid rgba(192,192,192,0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #C0C0C0;
+            text-transform: uppercase;
+        }
+
+        .v3-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .v3-goal {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v3-metrics {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .v3-metric {
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+        }
+
+        .v3-metric-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        .v3-metric-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Celebration styling */
+        .celebration {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(231, 180, 58, 0.1));
+            border-color: rgba(231, 180, 58, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Achievement Badge - Horizontal Variations</div>
+
+    <div class="options-container">
+        <!-- VARIATION 1: Icon Left, Content Center, Metrics Right -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 1: Three-Column Layout</div>
+            <div class="feed-container">
+                <div class="horizontal-v1-feed">
+                    <!-- Check-in 1 -->
+                    <div class="horizontal-v1-card">
+                        <div class="v1-icon-section">
+                            <div class="v1-icon">🏃</div>
+                            <div class="v1-checkmark">✓</div>
+                        </div>
+
+                        <div class="v1-content">
+                            <div class="v1-header">
+                                <div class="v1-user">
+                                    <div class="v1-avatar"></div>
+                                    <span class="v1-username">Alex Chen</span>
+                                </div>
+                                <span class="v1-time">• 2h ago</span>
+                                <div class="v1-challenge">75 HARD</div>
+                            </div>
+                            <div class="v1-action">Morning Run</div>
+                            <div class="v1-goal">🎯 Marathon Training</div>
+                        </div>
+
+                        <div class="v1-metrics">
+                            <div class="v1-metric-main">
+                                <div class="v1-metric-value">45</div>
+                                <div class="v1-metric-label">Minutes</div>
+                            </div>
+                            <div class="v1-metrics-secondary">
+                                <span>5.2 mi</span>
+                                <span>•</span>
+                                <span>26 🔥</span>
+                            </div>
+                            <div class="v1-reactions">
+                                <div class="reaction-mini">
+                                    <span>🔥</span>
+                                    <span>12</span>
+                                </div>
+                                <div class="reaction-mini">
+                                    <span>💬</span>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="horizontal-v1-card celebration">
+                        <div class="v1-icon-section">
+                            <div class="v1-icon" style="font-size: 36px;">💯</div>
+                            <div class="v1-checkmark">✓</div>
+                        </div>
+
+                        <div class="v1-content">
+                            <div class="v1-header">
+                                <div class="v1-user">
+                                    <div class="v1-avatar"></div>
+                                    <span class="v1-username">Sarah Johnson</span>
+                                </div>
+                                <span class="v1-time">• 4h ago</span>
+                            </div>
+                            <div class="v1-action">100% Daily Complete</div>
+                            <div class="v1-goal">All actions completed</div>
+                        </div>
+
+                        <div class="v1-metrics">
+                            <div class="v1-metric-main">
+                                <div class="v1-metric-value">4/4</div>
+                                <div class="v1-metric-label">Actions</div>
+                            </div>
+                            <div class="v1-metrics-secondary">
+                                <span>87% week</span>
+                            </div>
+                            <div class="v1-reactions">
+                                <div class="reaction-mini">
+                                    <span>🎉</span>
+                                    <span>24</span>
+                                </div>
+                                <div class="reaction-mini">
+                                    <span>💬</span>
+                                    <span>8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="horizontal-v1-card">
+                        <div class="v1-icon-section">
+                            <div class="v1-icon">🧘</div>
+                            <div class="v1-checkmark">✓</div>
+                        </div>
+
+                        <div class="v1-content">
+                            <div class="v1-header">
+                                <div class="v1-user">
+                                    <div class="v1-avatar"></div>
+                                    <span class="v1-username">Mike Torres</span>
+                                </div>
+                                <span class="v1-time">• 6h ago</span>
+                            </div>
+                            <div class="v1-action">Morning Meditation</div>
+                            <div class="v1-goal">🎯 Mindfulness Goal</div>
+                        </div>
+
+                        <div class="v1-metrics">
+                            <div class="v1-metric-main">
+                                <div class="v1-metric-value">15</div>
+                                <div class="v1-metric-label">Minutes</div>
+                            </div>
+                            <div class="v1-metrics-secondary">
+                                <span>26 🔥</span>
+                                <span>•</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="v1-reactions">
+                                <div class="reaction-mini">
+                                    <span>🔥</span>
+                                    <span>18</span>
+                                </div>
+                                <div class="reaction-mini">
+                                    <span>💬</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 2: Split Card (Left/Right) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 2: Split Accent Panel</div>
+            <div class="feed-container">
+                <div class="horizontal-v2-feed">
+                    <!-- Check-in 1 -->
+                    <div class="horizontal-v2-card">
+                        <div class="v2-left">
+                            <div class="v2-checkmark-large">✓</div>
+                            <div class="v2-time">2h ago</div>
+                        </div>
+
+                        <div class="v2-right">
+                            <div class="v2-top">
+                                <div class="v2-user-info">
+                                    <div class="v2-avatar">🏃</div>
+                                    <span class="v2-username">Alex Chen</span>
+                                </div>
+                                <div class="v2-challenge">75 HARD</div>
+                            </div>
+
+                            <div class="v2-action">Morning Run</div>
+
+                            <div class="v2-bottom">
+                                <div class="v2-goal">🎯 Marathon Training</div>
+                                <div class="v2-metrics">
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">45</span>
+                                        <span class="v2-metric-label">min</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">5.2</span>
+                                        <span class="v2-metric-label">mi</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">26</span>
+                                        <span class="v2-metric-label">streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="horizontal-v2-card celebration">
+                        <div class="v2-left" style="background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(231,180,58,0.2));">
+                            <div class="v2-checkmark-large">💯</div>
+                            <div class="v2-time">4h ago</div>
+                        </div>
+
+                        <div class="v2-right">
+                            <div class="v2-top">
+                                <div class="v2-user-info">
+                                    <div class="v2-avatar">💪</div>
+                                    <span class="v2-username">Sarah Johnson</span>
+                                </div>
+                            </div>
+
+                            <div class="v2-action">100% Daily Complete</div>
+
+                            <div class="v2-bottom">
+                                <div class="v2-goal">All actions completed</div>
+                                <div class="v2-metrics">
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">4/4</span>
+                                        <span class="v2-metric-label">done</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">87%</span>
+                                        <span class="v2-metric-label">week</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">12</span>
+                                        <span class="v2-metric-label">best</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="horizontal-v2-card">
+                        <div class="v2-left">
+                            <div class="v2-checkmark-large">✓</div>
+                            <div class="v2-time">6h ago</div>
+                        </div>
+
+                        <div class="v2-right">
+                            <div class="v2-top">
+                                <div class="v2-user-info">
+                                    <div class="v2-avatar">🧘</div>
+                                    <span class="v2-username">Mike Torres</span>
+                                </div>
+                            </div>
+
+                            <div class="v2-action">Morning Meditation</div>
+
+                            <div class="v2-bottom">
+                                <div class="v2-goal">🎯 Mindfulness Goal</div>
+                                <div class="v2-metrics">
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">15</span>
+                                        <span class="v2-metric-label">min</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">26</span>
+                                        <span class="v2-metric-label">streak</span>
+                                    </div>
+                                    <div class="v2-metric">
+                                        <span class="v2-metric-value">92%</span>
+                                        <span class="v2-metric-label">rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 3: Compact Grid -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 3: Compact Grid</div>
+            <div class="feed-container">
+                <div class="horizontal-v3-feed">
+                    <!-- Check-in 1 -->
+                    <div class="horizontal-v3-card">
+                        <div class="v3-icon">🏃
+                            <div class="v3-checkmark">✓</div>
+                        </div>
+
+                        <div class="v3-header">
+                            <div class="v3-title-section">
+                                <div class="v3-action">Morning Run</div>
+                                <div class="v3-user-row">
+                                    <div class="v3-avatar"></div>
+                                    <span>Alex Chen</span>
+                                    <span>• 2h ago</span>
+                                </div>
+                            </div>
+                            <div class="v3-badges">
+                                <div class="v3-challenge">75 HARD</div>
+                            </div>
+                        </div>
+
+                        <div class="v3-footer">
+                            <div class="v3-goal">🎯 Marathon Training</div>
+                            <div class="v3-metrics">
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">45</span>
+                                    <span class="v3-metric-label">min</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">5.2</span>
+                                    <span class="v3-metric-label">mi</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">26</span>
+                                    <span class="v3-metric-label">🔥</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Celebration -->
+                    <div class="horizontal-v3-card celebration">
+                        <div class="v3-icon" style="font-size: 32px;">💯
+                            <div class="v3-checkmark">✓</div>
+                        </div>
+
+                        <div class="v3-header">
+                            <div class="v3-title-section">
+                                <div class="v3-action">100% Daily Complete</div>
+                                <div class="v3-user-row">
+                                    <div class="v3-avatar"></div>
+                                    <span>Sarah Johnson</span>
+                                    <span>• 4h ago</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="v3-footer">
+                            <div class="v3-goal">All actions completed</div>
+                            <div class="v3-metrics">
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">4/4</span>
+                                    <span class="v3-metric-label">done</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">87%</span>
+                                    <span class="v3-metric-label">week</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">12</span>
+                                    <span class="v3-metric-label">best</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Check-in 2 -->
+                    <div class="horizontal-v3-card">
+                        <div class="v3-icon">🧘
+                            <div class="v3-checkmark">✓</div>
+                        </div>
+
+                        <div class="v3-header">
+                            <div class="v3-title-section">
+                                <div class="v3-action">Morning Meditation</div>
+                                <div class="v3-user-row">
+                                    <div class="v3-avatar"></div>
+                                    <span>Mike Torres</span>
+                                    <span>• 6h ago</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="v3-footer">
+                            <div class="v3-goal">🎯 Mindfulness Goal</div>
+                            <div class="v3-metrics">
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">15</span>
+                                    <span class="v3-metric-label">min</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">26</span>
+                                    <span class="v3-metric-label">🔥</span>
+                                </div>
+                                <div class="v3-metric">
+                                    <span class="v3-metric-value">92%</span>
+                                    <span class="v3-metric-label">rate</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

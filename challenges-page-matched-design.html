@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenges - Complete Design</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #ffffff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .phones-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 390px;
+      background: #000;
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border: 8px solid #1a1a1a;
+    }
+
+    .phone-label {
+      text-align: center;
+      padding: 10px;
+      background: #1a1a1a;
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFD700;
+      letter-spacing: 0.5px;
+    }
+
+    .screen {
+      height: 750px;
+      overflow-y: auto;
+      background: linear-gradient(to bottom, #0E0E10, #151518);
+      position: relative;
+    }
+
+    .status-bar {
+      height: 44px;
+      background: #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .header {
+      padding: 16px 20px;
+      background: linear-gradient(180deg, #0E0E10 0%, #151518 100%);
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      color: #FFD700;
+      cursor: pointer;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* Main Tabs - Always visible */
+    .main-tabs {
+      display: flex;
+      padding: 0 20px;
+      gap: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: #0E0E10;
+      position: sticky;
+      top: 44px;
+      z-index: 10;
+    }
+
+    .main-tab {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: color 0.2s;
+      position: relative;
+      padding: 16px 0;
+    }
+
+    .main-tab.active {
+      color: #FFFFFF;
+    }
+
+    .main-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        to right,
+        #D4AF37 0%,
+        #C9A050 20%,
+        #B8860B 35%,
+        #A0790A 50%,
+        #B8860B 65%,
+        #C9A050 80%,
+        #D4AF37 100%
+      );
+    }
+
+    /* Detail Tabs - Appear below when challenge selected */
+    .detail-tabs {
+      display: flex;
+      padding: 0 20px;
+      gap: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255, 215, 0, 0.03);
+      position: sticky;
+      top: 98px;
+      z-index: 9;
+    }
+
+    .detail-tab {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: color 0.2s;
+      position: relative;
+      padding: 12px 0;
+    }
+
+    .detail-tab.active {
+      color: #FFFFFF;
+    }
+
+    .detail-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        to right,
+        #D4AF37 0%,
+        #C9A050 20%,
+        #B8860B 35%,
+        #A0790A 50%,
+        #B8860B 65%,
+        #C9A050 80%,
+        #D4AF37 100%
+      );
+    }
+
+    .content {
+      padding: 16px 20px 100px;
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 12px;
+    }
+
+    .section-emoji {
+      font-size: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFD700;
+    }
+
+    /* Challenge Card - Matches LuxuryPostCardPremium */
+    .challenge-card {
+      position: relative;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .silver-overlay {
+      position: absolute;
+      top: -1.5px;
+      left: -1.5px;
+      right: -1.5px;
+      bottom: -1.5px;
+      background: linear-gradient(135deg, #C0C0C0, #808080, #C0C0C0);
+      border-radius: 21px;
+      opacity: 0.4;
+      z-index: 1;
+    }
+
+    .card-content {
+      position: relative;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(15,15,15,0.95));
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+      z-index: 2;
+    }
+
+    .challenge-card.with-overlay .card-content {
+      border-color: transparent;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .challenge-icon {
+      font-size: 36px;
+    }
+
+    .challenge-info {
+      flex: 1;
+    }
+
+    .challenge-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 4px;
+    }
+
+    .challenge-meta {
+      font-size: 12px;
+      color: rgba(255,255,255,0.62);
+    }
+
+    .challenge-badge {
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.90);
+    }
+
+    .card-stats {
+      display: flex;
+      gap: 20px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+      color: rgba(255,255,255,0.62);
+    }
+
+    .stat-item {
+      display: flex;
+      gap: 4px;
+    }
+
+    .stat-item strong {
+      color: #FFD700;
+      font-weight: 600;
+    }
+
+    .card-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Progress bar */
+    .progress-container {
+      margin-top: 12px;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.62);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        #D4AF37 0%,
+        #C9A050 20%,
+        #B8860B 35%,
+        #A0790A 50%,
+        #B8860B 65%,
+        #C9A050 80%,
+        #D4AF37 100%
+      );
+      transition: width 0.3s ease;
+    }
+
+    /* Detail View Specific */
+    .detail-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .detail-hero-icon {
+      font-size: 56px;
+    }
+
+    .detail-hero-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .detail-hero-meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Info Sections */
+    .info-section {
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(15,15,15,0.95));
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 12px;
+    }
+
+    .info-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #FFD700;
+      margin-bottom: 12px;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      line-height: 1.6;
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .info-list li {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      padding: 6px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .info-list li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #FFD700;
+      font-weight: bold;
+    }
+
+    /* Leaderboard */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .chip {
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.6);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      background: rgba(255,215,0,0.2);
+      border-color: rgba(255,215,0,0.4);
+      color: #FFD700;
+    }
+
+    .leaderboard-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #FFD700;
+      margin: 12px 0 8px;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .leaderboard-item.you {
+      background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.3);
+    }
+
+    .rank {
+      font-size: 16px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.62);
+      min-width: 40px;
+    }
+
+    .rank.medal {
+      font-size: 24px;
+    }
+
+    .username {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .user-stats {
+      font-size: 12px;
+      color: rgba(255,255,255,0.62);
+      margin-top: 2px;
+    }
+
+    /* Activity Badge */
+    .activity-badge {
+      background: rgba(255,215,0,0.1);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .activity-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #FFD700;
+      margin-bottom: 4px;
+    }
+
+    .activity-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 8px;
+      right: 8px;
+      height: 85px;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,215,0,0.2);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 0 20px;
+      border-radius: 0 0 32px 32px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      opacity: 0.5;
+    }
+
+    .nav-item.active {
+      opacity: 1;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+      padding: 8px;
+      border-radius: 12px;
+    }
+
+    .nav-item.active .nav-icon {
+      background: rgba(255,215,0,0.15);
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 20px 0;
+    }
+
+    /* Hidden by default */
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="phones-container">
+      <!-- PHONE 1: LIST VIEW -->
+      <div class="phone">
+        <div class="phone-label">1. List View - Discover Tab</div>
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span>🔋</span>
+          </div>
+
+          <div class="header">
+            <div class="header-title">Challenges</div>
+          </div>
+
+          <!-- Main Tabs - Always Visible -->
+          <div class="main-tabs">
+            <div class="main-tab active">Discover</div>
+            <div class="main-tab">Active</div>
+            <div class="main-tab">Completed</div>
+          </div>
+
+          <div class="content">
+            <!-- Section Header -->
+            <div class="section-header">
+              <span class="section-emoji">🌍</span>
+              <span class="section-title">Global Challenges</span>
+            </div>
+
+            <!-- Challenge Card 1 -->
+            <div class="challenge-card with-overlay">
+              <div class="silver-overlay"></div>
+              <div class="card-content">
+                <div class="card-header">
+                  <div class="challenge-icon">❄️</div>
+                  <div class="challenge-info">
+                    <div class="challenge-title">30 Day Cold Shower</div>
+                    <div class="challenge-meta">Global • 30 Days</div>
+                  </div>
+                </div>
+                <div class="card-stats">
+                  <div class="stat-item"><strong>1,234</strong> participants</div>
+                  <div class="stat-item">Starts Dec 1</div>
+                </div>
+                <div class="card-stats" style="padding-top: 0; border: none; margin-top: 4px;">
+                  <div class="stat-item">Success: <strong>80%</strong></div>
+                  <div class="stat-item">Badge: <strong>🏆 Ice Warrior</strong></div>
+                </div>
+                <div class="card-buttons">
+                  <button class="btn btn-secondary">View Details</button>
+                  <button class="btn btn-primary">Join</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge Card 2 -->
+            <div class="challenge-card with-overlay">
+              <div class="silver-overlay"></div>
+              <div class="card-content">
+                <div class="card-header">
+                  <div class="challenge-icon">🧘</div>
+                  <div class="challenge-info">
+                    <div class="challenge-title">Daily Meditation</div>
+                    <div class="challenge-meta">Global • 21 Days</div>
+                  </div>
+                </div>
+                <div class="card-stats">
+                  <div class="stat-item"><strong>1,567</strong> participants</div>
+                  <div class="stat-item">Starts Dec 28</div>
+                </div>
+                <div class="card-stats" style="padding-top: 0; border: none; margin-top: 4px;">
+                  <div class="stat-item">Success: <strong>75%</strong></div>
+                  <div class="stat-item">Badge: <strong>🏆 Zen Master</strong></div>
+                </div>
+                <div class="card-buttons">
+                  <button class="btn btn-secondary">View Details</button>
+                  <button class="btn btn-primary">Join</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Challenge Card 3 -->
+            <div class="challenge-card with-overlay">
+              <div class="silver-overlay"></div>
+              <div class="card-content">
+                <div class="card-header">
+                  <div class="challenge-icon">📚</div>
+                  <div class="challenge-info">
+                    <div class="challenge-title">Read 30 Min Daily</div>
+                    <div class="challenge-meta">Global • 21 Days</div>
+                  </div>
+                </div>
+                <div class="card-stats">
+                  <div class="stat-item"><strong>890</strong> participants</div>
+                  <div class="stat-item">Starts Jan 5</div>
+                </div>
+                <div class="card-buttons">
+                  <button class="btn btn-secondary">View Details</button>
+                  <button class="btn btn-primary">Join</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Social</div></div>
+            <div class="nav-item"><div class="nav-icon">✅</div><div class="nav-label">Daily</div></div>
+            <div class="nav-item"><div class="nav-icon">👥</div><div class="nav-label">Circle</div></div>
+            <div class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Challenges</div></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHONE 2: DETAIL VIEW -->
+      <div class="phone">
+        <div class="phone-label">2. Detail View - Overview Tab (Inline, not modal)</div>
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span>🔋</span>
+          </div>
+
+          <div class="header">
+            <div class="header-back">← Back to list</div>
+            <div class="header-title">Challenges</div>
+          </div>
+
+          <!-- Main Tabs - Still Visible! -->
+          <div class="main-tabs">
+            <div class="main-tab active">Discover</div>
+            <div class="main-tab">Active</div>
+            <div class="main-tab">Completed</div>
+          </div>
+
+          <!-- Detail Tabs - Appear Below -->
+          <div class="detail-tabs">
+            <div class="detail-tab active">Overview</div>
+            <div class="detail-tab">Feed</div>
+            <div class="detail-tab">Forum</div>
+          </div>
+
+          <div class="content">
+            <!-- Hero -->
+            <div class="detail-hero">
+              <div class="detail-hero-icon">❄️</div>
+              <div>
+                <div class="detail-hero-title">30 Day Cold Shower</div>
+                <div class="detail-hero-meta">Global Challenge • 30 Days</div>
+              </div>
+            </div>
+
+            <!-- Quick Stats Card -->
+            <div class="challenge-card">
+              <div class="card-content">
+                <div class="info-text">
+                  🗓️ Dec 1 - Dec 30, 2025<br>
+                  👥 1,234 participants<br>
+                  🎯 80% completion required
+                </div>
+              </div>
+            </div>
+
+            <!-- Your Progress -->
+            <div class="info-section">
+              <div class="info-title">Your Progress</div>
+              <div class="progress-container">
+                <div class="progress-text">Day 12/30</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 40%"></div>
+                </div>
+              </div>
+              <div class="card-stats">
+                <div class="stat-item">Rank <strong>#127</strong></div>
+                <div class="stat-item"><strong>Top 5%</strong></div>
+                <div class="stat-item">Streak <strong>12 🔥</strong></div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">✅ Check In Now</button>
+
+            <div class="section-divider"></div>
+
+            <!-- Leaderboard -->
+            <div class="info-section">
+              <div class="info-title">🏆 Leaderboard</div>
+              <div class="filter-chips">
+                <div class="chip active">Rank</div>
+                <div class="chip">Streak</div>
+                <div class="chip">Progress %</div>
+              </div>
+
+              <div class="leaderboard-label">🏆 TOP 3</div>
+
+              <div class="leaderboard-item">
+                <div class="rank medal">🥇</div>
+                <div style="flex: 1;">
+                  <div class="username">@sarah_runs</div>
+                  <div class="user-stats">30/30 • Streak: 30 🔥</div>
+                </div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div class="rank medal">🥈</div>
+                <div style="flex: 1;">
+                  <div class="username">@mike_fitness</div>
+                  <div class="user-stats">30/30 • Streak: 30 🔥</div>
+                </div>
+              </div>
+
+              <div class="leaderboard-item">
+                <div class="rank medal">🥉</div>
+                <div style="flex: 1;">
+                  <div class="username">@jenny_strong</div>
+                  <div class="user-stats">29/30 • Streak: 25 🔥</div>
+                </div>
+              </div>
+
+              <div style="height: 10px"></div>
+
+              <div class="leaderboard-item you">
+                <div class="rank">#127</div>
+                <div style="flex: 1;">
+                  <div class="username">YOU ⭐</div>
+                  <div class="user-stats">12/30 • Streak: 12 🔥 • Top 5%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Challenge Details -->
+            <div class="info-section">
+              <div class="info-title">Challenge Details</div>
+              <div class="info-text">
+                📅 Duration: 30 days<br>
+                🗓️ Dec 1 - Dec 30, 2025<br>
+                🎯 Success: 24/30 days (80%)<br>
+                🏆 Badge: ❄️ Ice Warrior (Gold)<br>
+                🎮 Type: Streak Challenge
+              </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- Description -->
+            <div class="info-section">
+              <div class="info-title">Description</div>
+              <div class="info-text">
+                Take a cold shower every day for 30 days to build mental toughness and improve health. Cold exposure has been shown to boost mood, energy, and immune function.
+              </div>
+            </div>
+
+            <!-- Rules -->
+            <div class="info-section">
+              <div class="info-title">Rules</div>
+              <ul class="info-list">
+                <li>Shower must be at least 2 minutes long</li>
+                <li>Water must be cold (no warm start)</li>
+                <li>Complete check-in daily</li>
+                <li>Earn badge by completing 24/30 days</li>
+              </ul>
+            </div>
+
+            <!-- Activities -->
+            <div class="info-section">
+              <div class="info-title">Activities Included</div>
+              <div class="activity-badge">
+                <div class="activity-title">❄️ Cold Shower</div>
+                <div class="activity-desc">Daily • 2 min minimum<br>Auto-added to your Daily page</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="nav-item"><div class="nav-icon">🏠</div><div class="nav-label">Social</div></div>
+            <div class="nav-item"><div class="nav-icon">✅</div><div class="nav-label">Daily</div></div>
+            <div class="nav-item"><div class="nav-icon">👥</div><div class="nav-label">Circle</div></div>
+            <div class="nav-item active"><div class="nav-icon">🏆</div><div class="nav-label">Challenges</div></div>
+            <div class="nav-item"><div class="nav-icon">👤</div><div class="nav-label">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

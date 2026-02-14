@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstinence Modal - Flow Design</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .page-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 16px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .flow-explainer {
+    max-width: 700px;
+    margin: 0 auto 50px;
+    padding: 20px 24px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .flow-explainer h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #D4AF37;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .flow-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+  }
+  .flow-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background: rgba(212,175,55,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #D4AF37;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .flow-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+  .flow-text strong {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 6px;
+  }
+  .option-rec {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.5);
+    margin-bottom: 20px;
+  }
+
+  .phone {
+    width: 360px;
+    height: 740px;
+    background: #000;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overlay-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  .modal {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .modal-inner {
+    padding: 28px 24px 24px;
+  }
+
+  .shield-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+  }
+
+  .action-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .action-subtitle {
+    font-size: 13px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .question {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+
+  .fake-cards {
+    padding: 20px;
+    opacity: 0.15;
+  }
+  .fake-card {
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .option-desc {
+    max-width: 360px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.7;
+  }
+  .option-desc strong {
+    color: rgba(255,255,255,0.6);
+  }
+  .pro { color: rgba(0,200,100,0.7); }
+  .con { color: rgba(255,100,100,0.6); }
+
+  /* ============================================ */
+  /* FLOW A: MEDIA ABOVE CONFIRM                  */
+  /* Eyes scan: Question → Media → Confirm        */
+  /* ============================================ */
+
+  .fa-media {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0 16px;
+  }
+
+  .fa-media-btn {
+    flex: 1;
+    padding: 14px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .fa-media-btn:hover {
+    background: rgba(212,175,55,0.06);
+    border-color: rgba(212,175,55,0.12);
+  }
+
+  .fa-media-emoji { font-size: 18px; }
+
+  .fa-media-info { display: flex; flex-direction: column; }
+  .fa-media-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+  .fa-media-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 1px;
+  }
+
+  .fa-privacy {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .fa-privacy-chip {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    cursor: pointer;
+  }
+  .fa-privacy-active {
+    background: rgba(212,175,55,0.1);
+    border-color: rgba(212,175,55,0.2);
+    color: #D4AF37;
+  }
+
+  .fa-btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .fa-btn-no {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ============================================ */
+  /* FLOW B: QUESTION FIRST, THEN SHARE SECTION   */
+  /* Clean separation                             */
+  /* ============================================ */
+
+  .fb-btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    cursor: pointer;
+    margin: 20px 0 10px;
+  }
+
+  .fb-btn-no {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .fb-share-section {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .fb-share-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .fb-share-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .fb-share-privacy {
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.15);
+    font-size: 11px;
+    font-weight: 500;
+    color: #D4AF37;
+    cursor: pointer;
+  }
+
+  .fb-composer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+  }
+
+  .fb-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .fb-placeholder {
+    flex: 1;
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .fb-cam {
+    font-size: 16px;
+    opacity: 0.4;
+  }
+
+  /* ============================================ */
+  /* FLOW C: EVERYTHING UNIFIED                   */
+  /* One smooth scroll, no sections               */
+  /* ============================================ */
+
+  .fc-composer-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0 12px;
+  }
+
+  .fc-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 17px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .fc-textarea {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    min-height: 60px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+    line-height: 1.5;
+  }
+
+  .fc-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 0 44px;
+  }
+
+  .fc-tool-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .fc-tool-spacer {
+    flex: 1;
+  }
+
+  .fc-privacy-mini {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.12);
+    font-size: 11px;
+    color: #D4AF37;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .fc-btn-confirm {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+
+  .fc-btn-skip {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 4px;
+  }
+
+  .fc-btn-no {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    color: rgba(255,255,255,0.15);
+    text-align: center;
+    cursor: pointer;
+  }
+
+</style>
+</head>
+<body>
+
+<h1>ABSTINENCE MODAL &mdash; FLOW</h1>
+<p class="page-subtitle">
+  "Yes" should NOT auto-post. Users need to see what they're sharing before confirming.
+</p>
+
+<div class="flow-explainer">
+  <h3>The Principle</h3>
+  <div class="flow-step">
+    <div class="flow-num">1</div>
+    <div class="flow-text">User sees question + optional media <strong>on one screen</strong></div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">2</div>
+    <div class="flow-text">They can add photo/note <strong>before confirming</strong> (or skip it)</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">3</div>
+    <div class="flow-text">One button logs the answer + posts whatever they attached</div>
+  </div>
+  <div class="flow-step">
+    <div class="flow-num">4</div>
+    <div class="flow-text"><strong>No auto-posting.</strong> Nothing goes out until they tap confirm.</div>
+  </div>
+</div>
+
+<div class="options-grid">
+
+  <!-- FLOW A: MEDIA ABOVE CONFIRM -->
+  <div class="option-wrapper">
+    <div class="option-label">FLOW A &mdash; MEDIA ABOVE CONFIRM</div>
+    <div class="option-rec">RECOMMENDED</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <!-- Media BEFORE confirm — eyes hit these on the way down -->
+          <div class="fa-media">
+            <div class="fa-media-btn">
+              <span class="fa-media-emoji">📷</span>
+              <span class="fa-media-info">
+                <span class="fa-media-title">Add photo</span>
+                <span class="fa-media-hint">Share the moment</span>
+              </span>
+            </div>
+            <div class="fa-media-btn">
+              <span class="fa-media-emoji">✏️</span>
+              <span class="fa-media-info">
+                <span class="fa-media-title">Add note</span>
+                <span class="fa-media-hint">How did it go?</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Privacy -->
+          <div class="fa-privacy">
+            <div class="fa-privacy-chip">🔒 Private</div>
+            <div class="fa-privacy-chip fa-privacy-active">👥 Circle</div>
+            <div class="fa-privacy-chip">🌐 Public</div>
+          </div>
+
+          <!-- CONFIRM = logs answer + posts attachments -->
+          <button class="fa-btn-yes">✦ Yes, stayed on track</button>
+          <button class="fa-btn-no">I didn't stay on track</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Top-to-bottom flow.</strong> Question → optional media → privacy → confirm. Eyes naturally pass through media options on the way to the button. Nothing posts until they tap confirm.<br><br>
+      <span class="pro">+ Single screen, no transitions</span><br>
+      <span class="pro">+ Media is visible but optional</span><br>
+      <span class="pro">+ Privacy control before posting</span><br>
+      <span class="pro">+ Confirm button is clear about what it does</span>
+    </div>
+  </div>
+
+  <!-- FLOW B: QUESTION + SHARE SECTION -->
+  <div class="option-wrapper">
+    <div class="option-label">FLOW B &mdash; SEPARATED SECTIONS</div>
+    <div class="option-rec">CLEAREST HIERARCHY</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <!-- Answer buttons -->
+          <button class="fb-btn-yes">✦ Yes</button>
+          <button class="fb-btn-no">I didn't stay on track</button>
+
+          <!-- Share section — visually separated -->
+          <div class="fb-share-section">
+            <div class="fb-share-header">
+              <span class="fb-share-title">Share with your circle</span>
+              <span class="fb-share-privacy">👥 Circle ▾</span>
+            </div>
+            <div class="fb-composer">
+              <div class="fb-avatar">🧔</div>
+              <span class="fb-placeholder">How did it go today?</span>
+              <span class="fb-cam">📷</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Two clear sections.</strong> Top = answer the question. Bottom = share (optional). The divider separates concerns. Instagram-style composer row feels familiar. Privacy dropdown on the right.<br><br>
+      <span class="pro">+ Very clear what's the answer vs what's sharing</span><br>
+      <span class="pro">+ Familiar composer pattern</span><br>
+      <span class="con">- "Yes" and share feel disconnected</span><br>
+      <span class="con">- User might tap Yes and ignore share</span>
+    </div>
+  </div>
+
+  <!-- FLOW C: UNIFIED COMPOSER -->
+  <div class="option-wrapper">
+    <div class="option-label">FLOW C &mdash; UNIFIED COMPOSER</div>
+    <div class="option-rec">MOST SOCIAL</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <!-- Inline composer — feels like writing a post -->
+          <div class="fc-composer-row">
+            <div class="fc-avatar">🧔</div>
+            <div class="fc-textarea">How did today go? (optional)</div>
+          </div>
+
+          <!-- Toolbar -->
+          <div class="fc-toolbar">
+            <div class="fc-tool-btn">📷</div>
+            <div class="fc-tool-btn">🎤</div>
+            <div class="fc-tool-spacer"></div>
+            <div class="fc-privacy-mini">👥 Circle ▾</div>
+          </div>
+
+          <!-- Actions -->
+          <button class="fc-btn-confirm">✦ Yes, stayed on track</button>
+          <button class="fc-btn-skip">Just log it privately</button>
+          <button class="fc-btn-no">I didn't stay on track</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Feels like posting.</strong> The modal IS a composer. Text area invites writing, toolbar has camera + mic + privacy. Confirming = posting. "Just log it privately" skips the social part entirely.<br><br>
+      <span class="pro">+ Most engagement-driving</span><br>
+      <span class="pro">+ Feels natural to write something</span><br>
+      <span class="pro">+ Three clear paths: post, log private, or didn't make it</span><br>
+      <span class="con">- Busier than the others</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

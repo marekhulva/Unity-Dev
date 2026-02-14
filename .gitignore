@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+best-backend/node_modules/
+
+# Expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Backend
+best-backend/.env
+best-backend/dev.db
+best-backend/dev.db-journal
+best-backend/prisma/dev.db
+best-backend/prisma/dev.db-journal
+best-backend/logs/
+best-backend/uploads/
+
+# macOS
+.DS_Store
+
+# local env files
+.env
+.env*.local
+.env.staging
+.env.production
+
+# Testing
+coverage/
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Backups
+backup_*/
+app_backup/
+*.patch
+
+# Temporary
+*.tmp
+.cache/

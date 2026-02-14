@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Unity - Timeline Feed</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: radial-gradient(circle at 30% 50%, #0a0a0a, #000);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(231,180,58,0.15), transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102,126,234,0.1), transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: float 10s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-label {
+            text-align: center;
+            font-size: 16px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: linear-gradient(135deg, rgba(10,10,10,0.95), rgba(0,0,0,0.98));
+            border-radius: 50px;
+            border: 1px solid rgba(231,180,58,0.2);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.9),
+                        0 0 60px rgba(231,180,58,0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(40px);
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 25px 25px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            padding: 20px 20px 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: linear-gradient(180deg, rgba(0,0,0,0.95), rgba(0,0,0,0.8));
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .header-title {
+            font-size: 38px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #E7B43A 0%, #FFD700 25%, #E7B43A 50%, #FFD700 75%, #E7B43A 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+            animation: shimmer 4s ease infinite;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.02);
+            padding: 6px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 24px;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            color: #E7B43A;
+            box-shadow: 0 4px 20px rgba(231,180,58,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .feed {
+            padding: 20px 20px 20px 20px;
+            position: relative;
+            padding-left: 76px;
+        }
+
+        .feed::before {
+            content: '';
+            position: absolute;
+            left: 42px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A 0%, rgba(231,180,58,0.3) 80%, rgba(231,180,58,0.1) 100%);
+        }
+
+        .post {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        .timeline-avatar {
+            position: absolute;
+            left: -56px;
+            top: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 2;
+            box-shadow: 0 0 16px rgba(231,180,58,0.4);
+        }
+
+        .timeline-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0.2;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .timeline-avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 0 16px rgba(240,147,251,0.4);
+        }
+
+        .timeline-avatar.alt1::after {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .timeline-avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 0 16px rgba(79,172,254,0.4);
+        }
+
+        .timeline-avatar.alt2::after {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .timeline-avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            box-shadow: 0 0 16px rgba(67,233,123,0.4);
+        }
+
+        .timeline-avatar.alt3::after {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .post-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .post-card:hover {
+            transform: translateX(8px);
+            border-color: rgba(231,180,58,0.3);
+            box-shadow: 0 8px 32px rgba(231,180,58,0.15);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .username {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .post-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .circle-badge {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            border: 1px solid rgba(231,180,58,0.35);
+            color: #E7B43A;
+        }
+
+        .post-body {
+            margin-bottom: 10px;
+        }
+
+        .activity-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .activity-context {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.4;
+        }
+
+        .metrics {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .metric {
+            flex: 1;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .post-footer {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .reaction {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .reaction:hover {
+            color: rgba(255,255,255,0.7);
+            transform: scale(1.05);
+        }
+
+        .reaction.active {
+            color: #E7B43A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-label">Unity - Timeline Feed</div>
+        <div class="phone-mockup">
+            <div class="notch"></div>
+            <div class="status-bar">
+                <div class="time">9:41</div>
+                <div class="status-icons">📶 📶 🔋</div>
+            </div>
+            <div class="screen-content">
+                <div class="header">
+                    <div class="header-title">Unity</div>
+                    <div class="tabs">
+                        <div class="tab active">My Circles</div>
+                        <div class="tab">Following</div>
+                    </div>
+                </div>
+                <div class="feed">
+                    <div class="post">
+                        <div class="timeline-avatar">👤</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Alex Chen</div>
+                                    <div class="post-meta">
+                                        <span>2h ago</span>
+                                        <span>•</span>
+                                        <span class="circle-badge">Unity Circle</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Morning Run</div>
+                                <div class="activity-context">Marathon Training</div>
+                                <div class="metrics">
+                                    <div class="metric">
+                                        <span class="metric-value">45</span>
+                                        <span class="metric-label">Minutes</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">6.2</span>
+                                        <span class="metric-label">Miles</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">12</span>
+                                        <span class="metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reaction active">🔥 24</div>
+                                <div class="reaction">💪 18</div>
+                                <div class="reaction">💬 3</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="timeline-avatar alt1">👩</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Sarah Miller</div>
+                                    <div class="post-meta">
+                                        <span>4h ago</span>
+                                        <span>•</span>
+                                        <span class="circle-badge">75 HARD</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Woke Up Before 6am</div>
+                                <div class="activity-context">Morning Routine • Day 28 streak</div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reaction">🔥 31</div>
+                                <div class="reaction">💪 12</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="timeline-avatar alt2">🧑</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Mike Johnson</div>
+                                    <div class="post-meta">
+                                        <span>5h ago</span>
+                                        <span>•</span>
+                                        <span class="circle-badge">Unity Circle</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Strength Training</div>
+                                <div class="activity-context">Get Stronger</div>
+                                <div class="metrics">
+                                    <div class="metric">
+                                        <span class="metric-value">60</span>
+                                        <span class="metric-label">Minutes</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">8</span>
+                                        <span class="metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reaction">🔥 19</div>
+                                <div class="reaction active">💪 24</div>
+                                <div class="reaction">💬 1</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="timeline-avatar alt3">👨</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">James Lee</div>
+                                    <div class="post-meta">
+                                        <span>6h ago</span>
+                                        <span>•</span>
+                                        <span class="circle-badge">Marathon</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Read 20 Pages</div>
+                                <div class="activity-context">Personal Growth • "Atomic Habits"</div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reaction">🔥 15</div>
+                                <div class="reaction">💪 8</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="timeline-avatar alt1">👩</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Emma Davis</div>
+                                    <div class="post-meta">
+                                        <span>7h ago</span>
+                                        <span>•</span>
+                                        <span class="circle-badge">Unity Circle</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Meditation</div>
+                                <div class="activity-context">Mindfulness Practice</div>
+                                <div class="metrics">
+                                    <div class="metric">
+                                        <span class="metric-value">20</span>
+                                        <span class="metric-label">Minutes</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">45</span>
+                                        <span class="metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reaction">🔥 28</div>
+                                <div class="reaction">💪 15</div>
+                                <div class="reaction">💬 2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

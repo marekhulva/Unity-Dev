@@ -1,0 +1,161 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  goals         Goal[]
+  actions       Action[]
+  posts         Post[]
+  reactions     Reaction[]
+  streaks       Streak[]
+  circles       CircleMember[]
+  following     Follow[] @relation("Following")
+  followers     Follow[] @relation("Followers")
+}
+
+model Goal {
+  id            String   @id @default(cuid())
+  userId        String
+  title         String
+  metric        String
+  deadline      DateTime
+  category      String?
+  color         String   @default("#FFD700")
+  consistency   Float    @default(0)
+  status        String   @default("On Track")
+  why           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  milestones    Milestone[]
+  actions       Action[]
+}
+
+model Milestone {
+  id            String   @id @default(cuid())
+  goalId        String
+  title         String
+  targetDate    DateTime
+  targetValue   Float?
+  unit          String?
+  completed     Boolean  @default(false)
+  order         Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  goal          Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+}
+
+model Action {
+  id            String   @id @default(cuid())
+  userId        String
+  goalId        String?
+  title         String
+  frequency     String?  // e.g., "Daily", "3x/week", "Weekly"
+  time          String?
+  done          Boolean  @default(false)
+  date          DateTime @default(now())
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal          Goal?    @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  streaks       Streak[]
+}
+
+model Post {
+  id            String   @id @default(cuid())
+  userId        String
+  type          String   // 'checkin', 'status', 'photo', 'audio'
+  visibility    String   // 'circle', 'follow', 'public'
+  content       String
+  mediaUrl      String?
+  actionTitle   String?
+  goalTitle     String?
+  goalColor     String?
+  streak        Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reactions     Reaction[]
+}
+
+model Reaction {
+  id            String   @id @default(cuid())
+  postId        String
+  userId        String
+  emoji         String
+  createdAt     DateTime @default(now())
+  
+  post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([postId, userId, emoji])
+}
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String
+  actionId      String
+  currentStreak Int      @default(0)
+  bestStreak    Int      @default(0)
+  lastCompleted DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action        Action   @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, actionId])
+}
+
+model Circle {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  members       CircleMember[]
+}
+
+model CircleMember {
+  id            String   @id @default(cuid())
+  circleId      String
+  userId        String
+  role          String   @default("member") // "owner", "moderator", "member"
+  joinedAt      DateTime @default(now())
+  
+  circle        Circle   @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([circleId, userId])
+}
+
+model Follow {
+  id            String   @id @default(cuid())
+  followerId    String
+  followingId   String
+  createdAt     DateTime @default(now())
+  
+  follower      User     @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following     User     @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  @@unique([followerId, followingId])
+}

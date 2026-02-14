@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Card Stack</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .container { max-width: 420px; margin: 0 auto; height: 90vh; display: flex; flex-direction: column; }
+
+        /* Top Stats */
+        .top-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Card Stack */
+        .card-stack {
+            flex: 1;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .action-card:active {
+            cursor: grabbing;
+        }
+
+        /* Stack effect */
+        .action-card:nth-child(1) {
+            z-index: 3;
+            transform: translateY(0) scale(1);
+        }
+        .action-card:nth-child(2) {
+            z-index: 2;
+            transform: translateY(10px) scale(0.95);
+            opacity: 0.8;
+        }
+        .action-card:nth-child(3) {
+            z-index: 1;
+            transform: translateY(20px) scale(0.9);
+            opacity: 0.6;
+        }
+
+        .card-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+        .card-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        .card-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .card-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .meta-item {
+            background: #f5f5f5;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Swipe Actions */
+        .swipe-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 0 20px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 20px;
+            border-radius: 25px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-skip {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        .btn-skip:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        .btn-complete {
+            background: white;
+            color: #667eea;
+        }
+        .btn-complete:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        /* Swipe hint */
+        .swipe-hint {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* Progress indicator */
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.3);
+        }
+        .dot.active {
+            background: white;
+            width: 24px;
+        }
+
+        /* Completion */
+        .completion-screen {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .completion-screen.active {
+            display: block;
+        }
+        .completion-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+        }
+        .completion-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .completion-message {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        .completion-stats {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        .completion-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .completion-stat:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Top Stats -->
+        <div class="top-stats">
+            <div class="stat">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Remaining</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Streak</div>
+            </div>
+        </div>
+
+        <!-- Card Stack -->
+        <div class="card-stack">
+            <div class="action-card" style="background: linear-gradient(135deg, #fff, #f0f0f0);">
+                <div class="card-icon">🧘</div>
+                <div class="card-title">Morning Meditation</div>
+                <div class="card-description">Start your day with 10 minutes of mindful meditation</div>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 10 min</div>
+                    <div class="meta-item">🏅 +25 pts</div>
+                </div>
+            </div>
+
+            <div class="action-card" style="background: linear-gradient(135deg, #fff, #e8f5e9);">
+                <div class="card-icon">💧</div>
+                <div class="card-title">Hydration Goal</div>
+                <div class="card-description">Drink 8 glasses of water throughout the day</div>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ All day</div>
+                    <div class="meta-item">🏅 +15 pts</div>
+                </div>
+            </div>
+
+            <div class="action-card" style="background: linear-gradient(135deg, #fff, #e3f2fd);">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Daily Reading</div>
+                <div class="card-description">Read for 20 minutes to expand your knowledge</div>
+                <div class="card-meta">
+                    <div class="meta-item">⏱️ 20 min</div>
+                    <div class="meta-item">🏅 +30 pts</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Swipe Actions -->
+        <div class="swipe-actions">
+            <button class="action-btn btn-skip">
+                <span>⏭️</span>
+                <span>Skip</span>
+            </button>
+            <button class="action-btn btn-complete">
+                <span>✅</span>
+                <span>Complete</span>
+            </button>
+        </div>
+
+        <!-- Progress Dots -->
+        <div class="progress-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        <!-- Swipe Hint -->
+        <div class="swipe-hint">
+            Swipe cards to navigate
+        </div>
+
+        <!-- Completion Screen -->
+        <div class="completion-screen">
+            <div class="completion-icon">🎉</div>
+            <div class="completion-title">All Done!</div>
+            <div class="completion-message">You've completed all your daily actions</div>
+            <div class="completion-stats">
+                <div class="completion-stat">
+                    <span>Actions Completed</span>
+                    <span style="font-weight: 700;">4 of 4</span>
+                </div>
+                <div class="completion-stat">
+                    <span>Points Earned</span>
+                    <span style="font-weight: 700; color: #ffd700;">+100 pts</span>
+                </div>
+                <div class="completion-stat">
+                    <span>Streak</span>
+                    <span style="font-weight: 700; color: #4CAF50;">8 days 🔥</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = 0;
+        const cards = document.querySelectorAll('.action-card');
+        const dots = document.querySelectorAll('.dot');
+
+        document.querySelector('.btn-complete').addEventListener('click', () => {
+            nextCard();
+        });
+
+        document.querySelector('.btn-skip').addEventListener('click', () => {
+            nextCard();
+        });
+
+        function nextCard() {
+            if (currentCard < cards.length) {
+                cards[currentCard].style.transform = 'translateX(150%) rotate(20deg)';
+                cards[currentCard].style.opacity = '0';
+                currentCard++;
+
+                if (currentCard < dots.length) {
+                    dots[currentCard].classList.add('active');
+                    dots[currentCard - 1].classList.remove('active');
+                }
+
+                if (currentCard >= cards.length) {
+                    setTimeout(() => {
+                        document.querySelector('.completion-screen').classList.add('active');
+                        document.querySelector('.card-stack').style.display = 'none';
+                        document.querySelector('.swipe-actions').style.display = 'none';
+                        document.querySelector('.progress-dots').style.display = 'none';
+                        document.querySelector('.swipe-hint').style.display = 'none';
+                    }, 300);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

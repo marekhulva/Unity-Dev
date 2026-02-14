@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress + Profile Merge Options - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: #000000;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .nav-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: rgba(255, 215, 0, 0.8);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+
+        .option-container {
+            display: none;
+        }
+
+        .option-container.active {
+            display: block;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 140px);
+            border: none;
+            background: #000;
+        }
+
+        .description {
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .description h2 {
+            font-size: 18px;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .description p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .pros h3 {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .cons h3 {
+            color: #FF6B6B;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .pros ul, .cons ul {
+            font-size: 13px;
+            line-height: 1.8;
+            margin-left: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .key-features {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .key-features h3 {
+            font-size: 14px;
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+
+        .key-features ul {
+            font-size: 13px;
+            line-height: 1.8;
+            margin-left: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-title">👤 Progress + Profile Merge Options</div>
+        <div class="nav-subtitle">How to combine Progress and Profile tabs while handling private goals</div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showOption('8a')">Option 8A: My/Public Toggle</div>
+            <div class="nav-tab" onclick="showOption('8b')">Option 8B: Separate Tabs</div>
+            <div class="nav-tab" onclick="showOption('8c')">Option 8C: Filter Dropdown</div>
+        </div>
+    </div>
+
+    <!-- Option 8A -->
+    <div class="option-container active" id="option-8a">
+        <div class="description">
+            <h2>Option 8A: "You" Tab with My View / Public View Toggle</h2>
+            <p>
+                Merge Progress + Profile into "You" tab. Add toggle at top to switch between "My View" (all goals) and "Public View" (what others see).
+            </p>
+
+            <div class="key-features">
+                <h3>🔑 Key Features</h3>
+                <ul>
+                    <li><strong>My View:</strong> Shows ALL your goals (public + private)</li>
+                    <li><strong>Public View:</strong> Preview what others see (private goals hidden)</li>
+                    <li><strong>Privacy badges:</strong> Goals tagged as "Public" or "Private"</li>
+                    <li><strong>Tabs:</strong> Goals, Posts, Stats</li>
+                    <li><strong>Hero section:</strong> Avatar, name, bio, quick stats at top</li>
+                </ul>
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs (frees up space for Challenges)</li>
+                        <li>Clear privacy control with toggle</li>
+                        <li>User can preview public view anytime</li>
+                        <li>All "You" content in one place</li>
+                        <li>Progress stats + identity unified</li>
+                        <li>Simple implementation</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Toggle might be confusing at first</li>
+                        <li>Merges introspective + social content</li>
+                        <li>Loses dedicated Progress visualization</li>
+                        <li>Users need to remember to set privacy per goal</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-8a-you-tab-basic.html"></iframe>
+    </div>
+
+    <!-- Option 8B -->
+    <div class="option-container" id="option-8b">
+        <div class="description">
+            <h2>Option 8B: "You" Tab with Separate Public/Private Tabs</h2>
+            <p>
+                Merge Progress + Profile into "You" tab. Instead of a toggle, use separate tabs: "Public", "Private", and "Stats".
+            </p>
+
+            <div class="key-features">
+                <h3>🔑 Key Features</h3>
+                <ul>
+                    <li><strong>Public Tab:</strong> Shows all public goals (what others see)</li>
+                    <li><strong>Private Tab:</strong> Shows all private goals (only you see)</li>
+                    <li><strong>Stats Tab:</strong> Shows consistency metrics, badges, weekly breakdown</li>
+                    <li><strong>Color coding:</strong> Public goals have green border, private have red border</li>
+                    <li><strong>Clear separation:</strong> Public vs private content in distinct tabs</li>
+                </ul>
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs (frees up space for Challenges)</li>
+                        <li>Very clear mental model (Public vs Private vs Stats)</li>
+                        <li>No confusion about what's visible to others</li>
+                        <li>Easy to manage privacy (just change tabs)</li>
+                        <li>Clear visual separation of content</li>
+                        <li>No need to filter/toggle</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Can't see all goals at once</li>
+                        <li>Need to switch tabs to see different goals</li>
+                        <li>Extra navigation layer (tab within tab)</li>
+                        <li>Might feel fragmented for users with many goals</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-8b-you-tab-separate-tabs.html"></iframe>
+    </div>
+
+    <!-- Option 8C -->
+    <div class="option-container" id="option-8c">
+        <div class="description">
+            <h2>Option 8C: "You" Tab with Privacy Filter Dropdown</h2>
+            <p>
+                Merge Progress + Profile into "You" tab. Use single filter dropdown to show "All Goals", "Public Only", or "Private Only". All goals displayed in one list with privacy badges.
+            </p>
+
+            <div class="key-features">
+                <h3>🔑 Key Features</h3>
+                <ul>
+                    <li><strong>Filter dropdown:</strong> Select "All Goals", "Public Only", or "Private Only"</li>
+                    <li><strong>Privacy badges:</strong> Each goal has visible 🌍 Public or 🔒 Private badge</li>
+                    <li><strong>Color-coded borders:</strong> Green left border for public, red for private</li>
+                    <li><strong>Single unified list:</strong> All goals, challenges, and stats in one scrollable view</li>
+                    <li><strong>Filter persists:</strong> Selected filter stays active as you browse</li>
+                </ul>
+            </div>
+
+            <div class="pros-cons">
+                <div class="pros">
+                    <h3>✅ Pros</h3>
+                    <ul>
+                        <li>Keeps 5 tabs (frees up space for Challenges)</li>
+                        <li>See all goals at once (when filter = "All")</li>
+                        <li>Easy to filter by privacy level</li>
+                        <li>Privacy badges always visible</li>
+                        <li>Simple, familiar dropdown pattern</li>
+                        <li>Less clicking than separate tabs</li>
+                    </ul>
+                </div>
+                <div class="cons">
+                    <h3>❌ Cons</h3>
+                    <ul>
+                        <li>Dropdown might not be immediately discoverable</li>
+                        <li>Privacy badges could clutter UI</li>
+                        <li>Mixing public/private in one list might confuse some users</li>
+                        <li>Harder to preview "what others see" mode</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <iframe src="navigation-option-8c-you-tab-filter.html"></iframe>
+    </div>
+
+    <script>
+        function showOption(option) {
+            // Hide all containers
+            document.querySelectorAll('.option-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            // Deactivate all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected container
+            document.getElementById('option-' + option).classList.add('active');
+
+            // Activate selected tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

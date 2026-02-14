@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Timeline</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(231, 180, 58, 0.08) 0%, rgba(255, 215, 0, 0.04) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(231, 180, 58, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        .date-container {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+        .day-name {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .date-large {
+            font-size: 28px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: -0.3px;
+        }
+        .full-date {
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.3px;
+        }
+
+        /* Progress Ring */
+        .progress-ring {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 30px;
+        }
+        .ring {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+        .ring-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 8;
+        }
+        .ring-progress {
+            fill: none;
+            stroke: #E7B43A;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 70;
+        }
+        .ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .ring-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .ring-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+        .ring-stats {
+            text-align: left;
+        }
+        .stat-item {
+            margin-bottom: 15px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 70px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .time-block {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .time-label {
+            position: absolute;
+            left: -70px;
+            top: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            width: 50px;
+            text-align: right;
+        }
+        .time-dot {
+            position: absolute;
+            left: -56px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 6px;
+            background: #E7B43A;
+            border: 2px solid #000;
+            z-index: 2;
+            box-shadow: 0 0 8px rgba(231, 180, 58, 0.4);
+        }
+        .time-dot.pending {
+            background: rgba(255,255,255,0.2);
+            box-shadow: none;
+        }
+        .time-dot.completed {
+            background: #E7B43A;
+            box-shadow: 0 0 12px rgba(231, 180, 58, 0.6);
+        }
+
+        .action-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px 20px 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .action-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(231,180,58,0.5);
+            transform: translateX(10px);
+        }
+        .action-card.completed {
+            opacity: 0.5;
+        }
+        .action-card.completed .action-title {
+            text-decoration: line-through;
+        }
+        .action-content {
+            flex: 1;
+        }
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .action-meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .action-duration {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-category {
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Attribution Tags */
+        .tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .tag {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: 1px solid;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+        }
+        .tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .tag.challenge-tag {
+            background: rgba(147, 51, 234, 0.08);
+            border-color: rgba(147, 51, 234, 0.2);
+            color: rgba(192, 132, 252, 0.9);
+        }
+        .tag.challenge-tag:hover {
+            background: rgba(147, 51, 234, 0.12);
+            border-color: rgba(147, 51, 234, 0.3);
+        }
+        .tag.goal-tag {
+            background: rgba(231, 180, 58, 0.08);
+            border-color: rgba(231, 180, 58, 0.2);
+            color: rgba(231, 180, 58, 0.95);
+        }
+        .tag.goal-tag:hover {
+            background: rgba(231, 180, 58, 0.12);
+            border-color: rgba(231, 180, 58, 0.3);
+        }
+        .tag.routine-tag {
+            background: rgba(100, 149, 237, 0.08);
+            border-color: rgba(100, 149, 237, 0.2);
+            color: rgba(135, 206, 250, 0.9);
+        }
+        .tag.routine-tag:hover {
+            background: rgba(100, 149, 237, 0.12);
+            border-color: rgba(100, 149, 237, 0.3);
+        }
+        .tag-icon {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Period Headers */
+        .period-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 40px 0 20px 0;
+            padding-left: 70px;
+        }
+
+        /* Evening Reflection */
+        .reflection {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .reflection-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .reflection-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .reflection-desc {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="date-container">
+                <div class="day-name">Wednesday</div>
+                <div class="date-large">November 20</div>
+            </div>
+            <div class="full-date">November 20, 2024</div>
+        </div>
+
+        <!-- Progress Ring -->
+        <div class="progress-ring">
+            <div class="ring">
+                <svg width="120" height="120">
+                    <circle class="ring-bg" cx="60" cy="60" r="45"></circle>
+                    <circle class="ring-progress" cx="60" cy="60" r="45"></circle>
+                </svg>
+                <div class="ring-text">
+                    <div class="ring-value">75%</div>
+                    <div class="ring-label">Complete</div>
+                </div>
+            </div>
+            <div class="ring-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value">3 of 4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Time Spent</div>
+                    <div class="stat-value">2h 15m</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Morning -->
+        <div class="period-header">Morning</div>
+        <div class="timeline">
+            <div class="time-block">
+                <div class="time-label">06:00</div>
+                <div class="time-dot completed"></div>
+                <div class="action-card completed">
+                    <div class="action-content">
+                        <div class="action-title">Morning Meditation</div>
+                        <div class="action-meta">
+                            <div class="action-duration">⏱️ 15 min</div>
+                            <div class="action-category">Mindfulness</div>
+                        </div>
+                    </div>
+                    <div class="tags-row">
+                        <div class="tag challenge-tag">
+                            <span class="tag-icon">⚡</span>
+                            30-Day Mindfulness
+                        </div>
+                        <div class="tag routine-tag">
+                            <span class="tag-icon">🔄</span>
+                            Morning Ritual
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="time-block">
+                <div class="time-label">07:30</div>
+                <div class="time-dot completed"></div>
+                <div class="action-card completed">
+                    <div class="action-content">
+                        <div class="action-title">Workout Session</div>
+                        <div class="action-meta">
+                            <div class="action-duration">⏱️ 45 min</div>
+                            <div class="action-category">Fitness</div>
+                        </div>
+                    </div>
+                    <div class="tags-row">
+                        <div class="tag challenge-tag">
+                            <span class="tag-icon">⚡</span>
+                            Summer Shred Challenge
+                        </div>
+                        <div class="tag goal-tag">
+                            <span class="tag-icon">🎯</span>
+                            Fitness 2025
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Afternoon -->
+        <div class="period-header">Afternoon</div>
+        <div class="timeline">
+            <div class="time-block">
+                <div class="time-label">13:00</div>
+                <div class="time-dot completed"></div>
+                <div class="action-card completed">
+                    <div class="action-content">
+                        <div class="action-title">Read Professional Book</div>
+                        <div class="action-meta">
+                            <div class="action-duration">⏱️ 30 min</div>
+                            <div class="action-category">Learning</div>
+                        </div>
+                    </div>
+                    <div class="tags-row">
+                        <div class="tag goal-tag">
+                            <span class="tag-icon">🎯</span>
+                            Read 52 Books This Year
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="time-block">
+                <div class="time-label">15:00</div>
+                <div class="time-dot"></div>
+                <div class="action-card">
+                    <div class="action-content">
+                        <div class="action-title">Hydration Check-in</div>
+                        <div class="action-meta">
+                            <div class="action-duration">⏱️ 5 min</div>
+                            <div class="action-category">Health</div>
+                        </div>
+                    </div>
+                    <div class="tags-row">
+                        <div class="tag routine-tag">
+                            <span class="tag-icon">🔄</span>
+                            Daily Hydration
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evening -->
+        <div class="period-header">Evening</div>
+        <div class="timeline">
+            <div class="time-block">
+                <div class="time-label">20:00</div>
+                <div class="time-dot pending"></div>
+                <div class="action-card">
+                    <div class="action-content">
+                        <div class="action-title">Gratitude Journal</div>
+                        <div class="action-meta">
+                            <div class="action-duration">⏱️ 10 min</div>
+                            <div class="action-category">Reflection</div>
+                        </div>
+                    </div>
+                    <div class="tags-row">
+                        <div class="tag challenge-tag">
+                            <span class="tag-icon">⚡</span>
+                            Gratitude Challenge
+                        </div>
+                        <div class="tag goal-tag">
+                            <span class="tag-icon">🎯</span>
+                            Mindfulness Mastery
+                        </div>
+                        <div class="tag routine-tag">
+                            <span class="tag-icon">🔄</span>
+                            Evening Ritual
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evening Reflection -->
+        <div class="reflection">
+            <div class="reflection-icon">🌙</div>
+            <div class="reflection-title">Evening Reflection</div>
+            <div class="reflection-desc">Take a moment to review your day</div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('completed');
+                const dot = this.closest('.time-block').querySelector('.time-dot');
+                dot.classList.toggle('completed');
+            });
+        });
+    </script>
+</body>
+</html>

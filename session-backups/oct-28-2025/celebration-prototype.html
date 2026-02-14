@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celebration Design Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #000;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+        }
+
+        h3 {
+            color: #666;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Version 1: Ultra Minimal One-liner */
+        .celebration-v1 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-v1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 215, 0, 0.3) 50%, 
+                transparent 100%);
+        }
+
+        .celebration-v1 .line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .celebration-v1 .trophy {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .celebration-v1 .username {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* Version 2: With Goal Badge */
+        .celebration-v2 {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .celebration-v2 .main-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 12px;
+        }
+
+        .celebration-v2 .badge-100 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .celebration-v2 .goal-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .celebration-v2 .goal-dot {
+            width: 6px;
+            height: 6px;
+            background: #22C55E;
+            border-radius: 50%;
+        }
+
+        /* Version 3: Inline Minimal */
+        .celebration-v3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 30px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            border-left: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .celebration-v3 .icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .celebration-v3 strong {
+            color: #FFD700;
+        }
+
+        /* Version 4: Subtle Card with Goals */
+        .celebration-v4 {
+            background: linear-gradient(180deg, 
+                rgba(255, 215, 0, 0.02) 0%, 
+                rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 30px;
+        }
+
+        .celebration-v4 .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .celebration-v4 .text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .celebration-v4 .text .name {
+            color: rgba(255, 215, 0, 0.9);
+            font-weight: 600;
+        }
+
+        .celebration-v4 .percent {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .celebration-v4 .goals {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .celebration-v4 .goal-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .celebration-v4 .goal-color {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+        }
+
+        /* Version 5: Twitter-style minimal */
+        .celebration-v5 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 0;
+            margin-bottom: 30px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .celebration-v5 .checkmark {
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #FFD700;
+        }
+
+        .celebration-v5 .name {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .celebration-v5 .badge {
+            margin-left: auto;
+            font-size: 11px;
+            color: rgba(255, 215, 0, 0.7);
+        }
+
+        /* Version 6: Pinned style like Social V6 */
+        .celebration-v6 {
+            background: rgba(5, 5, 5, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .celebration-v6::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0) 0%,
+                rgba(212, 175, 55, 0.4) 20%,
+                rgba(201, 160, 80, 0.4) 35%,
+                rgba(184, 134, 11, 0.4) 50%,
+                rgba(160, 121, 10, 0.4) 65%,
+                rgba(184, 134, 11, 0.4) 80%,
+                rgba(212, 175, 55, 0) 100%);
+        }
+
+        .celebration-v6 .content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .celebration-v6 .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .celebration-v6 .streak-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .celebration-v6 .text-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .celebration-v6 .main-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .celebration-v6 .user-highlight {
+            color: rgba(255, 215, 0, 0.9);
+            font-weight: 600;
+        }
+
+        .celebration-v6 .sub-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .celebration-v6 .right {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Version 1: Ultra Minimal One-liner</h3>
+        <div class="celebration-v1">
+            <div class="line">
+                <div class="trophy">🏆</div>
+                <span><span class="username">Sarah</span> completed 100% of today</span>
+            </div>
+        </div>
+
+        <h3>Version 2: With Goal Badge</h3>
+        <div class="celebration-v2">
+            <div class="main-line">
+                <span class="badge-100">100%</span>
+                <span><strong style="color: #FFD700;">Mike</strong> crushed all daily actions</span>
+            </div>
+            <div class="goal-tag">
+                <span class="goal-dot"></span>
+                <span>75 HARD Challenge</span>
+            </div>
+        </div>
+
+        <h3>Version 3: Inline Minimal</h3>
+        <div class="celebration-v3">
+            <div class="icon">✓</div>
+            <span><strong>Emma</strong> completed 100% • Perfect day</span>
+        </div>
+
+        <h3>Version 4: Subtle Card with Multiple Goals</h3>
+        <div class="celebration-v4">
+            <div class="header">
+                <span class="text"><span class="name">Alex</span> completed all daily actions</span>
+                <span class="percent">100%</span>
+            </div>
+            <div class="goals">
+                <div class="goal-chip">
+                    <span class="goal-color" style="background: #22C55E;"></span>
+                    <span>75 HARD</span>
+                </div>
+                <div class="goal-chip">
+                    <span class="goal-color" style="background: #60A5FA;"></span>
+                    <span>Morning Routine</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>Version 5: Twitter-style Minimal</h3>
+        <div class="celebration-v5">
+            <div class="checkmark">✓</div>
+            <span><span class="name">Jordan</span> completed today's actions</span>
+            <span class="badge">100%</span>
+        </div>
+
+        <h3>Version 6: Luxury Pinned Style (Like Social V6)</h3>
+        <div class="celebration-v6">
+            <div class="content">
+                <div class="left">
+                    <div class="streak-icon">💯</div>
+                    <div class="text-content">
+                        <div class="main-text">
+                            <span class="user-highlight">Chris</span> achieved perfect completion
+                        </div>
+                        <div class="sub-text">All daily actions complete</div>
+                    </div>
+                </div>
+                <div class="right">2m ago</div>
+            </div>
+        </div>
+
+        <h3>Version 7: Multiple Users Batch</h3>
+        <div class="celebration-v6">
+            <div class="content">
+                <div class="left">
+                    <div class="streak-icon">🎯</div>
+                    <div class="text-content">
+                        <div class="main-text">
+                            <span class="user-highlight">3 members</span> completed 100% today
+                        </div>
+                        <div class="sub-text">Sarah, Mike, Emma • Perfect day</div>
+                    </div>
+                </div>
+                <div class="right">now</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

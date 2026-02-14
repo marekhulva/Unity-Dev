@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Pages - All Designs</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+        }
+
+        /* Style Selector */
+        .style-selector {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .selector-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .selector-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+        }
+        .style-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex: 1;
+        }
+        .style-tabs::-webkit-scrollbar { display: none; }
+        .style-tab {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .style-tab:hover {
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.8);
+        }
+        .style-tab.active {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+            border-color: transparent;
+        }
+
+        /* View Container */
+        .view-container {
+            margin-top: 70px;
+        }
+        .daily-view {
+            display: none;
+        }
+        .daily-view.active {
+            display: block;
+        }
+
+        /* Import all styles from individual pages */
+        iframe {
+            width: 100%;
+            height: calc(100vh - 70px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Style Selector -->
+    <div class="style-selector">
+        <div class="selector-content">
+            <div class="selector-label">Style:</div>
+            <div class="style-tabs">
+                <div class="style-tab active" data-style="zen">Zen</div>
+                <div class="style-tab" data-style="rpg">RPG Quest</div>
+                <div class="style-tab" data-style="timeline">Timeline</div>
+                <div class="style-tab" data-style="cards">Card Stack</div>
+                <div class="style-tab" data-style="dashboard">Dashboard</div>
+                <div class="style-tab" data-style="sunrise">Sunrise</div>
+                <div class="style-tab" data-style="circles">Circles</div>
+                <div class="style-tab" data-style="checklist">Checklist</div>
+                <div class="style-tab" data-style="energy">Energy</div>
+                <div class="style-tab" data-style="sticky">Sticky Notes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Container -->
+    <div class="view-container">
+        <div id="view-zen" class="daily-view active">
+            <iframe src="daily-01-zen.html"></iframe>
+        </div>
+        <div id="view-rpg" class="daily-view">
+            <iframe src="daily-02-rpg.html"></iframe>
+        </div>
+        <div id="view-timeline" class="daily-view">
+            <iframe src="daily-03-timeline.html"></iframe>
+        </div>
+        <div id="view-cards" class="daily-view">
+            <iframe src="daily-04-cards.html"></iframe>
+        </div>
+        <div id="view-dashboard" class="daily-view">
+            <iframe src="daily-05-dashboard.html"></iframe>
+        </div>
+        <div id="view-sunrise" class="daily-view">
+            <iframe src="daily-06-sunrise.html"></iframe>
+        </div>
+        <div id="view-circles" class="daily-view">
+            <iframe src="daily-07-circles.html"></iframe>
+        </div>
+        <div id="view-checklist" class="daily-view">
+            <iframe src="daily-08-checklist.html"></iframe>
+        </div>
+        <div id="view-energy" class="daily-view">
+            <iframe src="daily-09-energy.html"></iframe>
+        </div>
+        <div id="view-sticky" class="daily-view">
+            <iframe src="daily-10-sticky.html"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.style-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const style = this.getAttribute('data-style');
+
+                // Update tabs
+                document.querySelectorAll('.style-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update views
+                document.querySelectorAll('.daily-view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + style).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

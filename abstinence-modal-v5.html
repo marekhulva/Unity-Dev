@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstinence Modal - Final Flow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .page-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 50px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 6px;
+  }
+  .option-rec {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.5);
+    margin-bottom: 20px;
+  }
+
+  .phone {
+    width: 360px;
+    height: 740px;
+    background: #000;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overlay-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  .modal {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .modal-inner {
+    padding: 28px 24px 24px;
+  }
+
+  .shield-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+  }
+
+  .action-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .action-subtitle {
+    font-size: 13px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+  }
+
+  .question {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 20px;
+  }
+
+  /* Yes/No toggle */
+  .toggle-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-yes {
+    background: rgba(212,175,55,0.12);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: #D4AF37;
+  }
+
+  .toggle-yes-inactive {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.4);
+  }
+
+  .toggle-no {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.3);
+  }
+
+  .toggle-no-active {
+    background: rgba(255,80,80,0.1);
+    border: 1px solid rgba(255,80,80,0.2);
+    color: rgba(255,120,120,0.9);
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin-bottom: 16px;
+  }
+
+  /* Comment input with camera inside */
+  .comment-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .comment-input {
+    width: 100%;
+    padding: 14px 48px 14px 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+    min-height: 48px;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+  }
+
+  .comment-camera {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  /* Photo preview */
+  .photo-preview {
+    width: 100%;
+    height: 140px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .photo-preview-img {
+    font-size: 13px;
+    color: rgba(255,255,255,0.2);
+  }
+
+  .photo-preview-remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+  }
+
+  /* Fake photo content */
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(100,60,20,0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-placeholder-text {
+    font-size: 32px;
+    opacity: 0.5;
+  }
+
+  /* Post button */
+  .btn-post {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-post-outline {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .btn-post-subtle {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .fake-cards {
+    padding: 20px;
+    opacity: 0.15;
+  }
+  .fake-card {
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .option-desc {
+    max-width: 360px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.7;
+  }
+  .option-desc strong {
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* Flow arrows between states */
+  .state-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.15);
+    text-align: center;
+    margin: 30px 0 15px;
+    text-transform: uppercase;
+  }
+
+  /* Comment with text typed */
+  .comment-typed {
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Privacy inline */
+  .privacy-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .privacy-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+  }
+  .privacy-selector {
+    display: flex;
+    gap: 6px;
+  }
+  .privacy-pill {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .privacy-pill-active {
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.2);
+    color: #D4AF37;
+  }
+  .privacy-pill-inactive {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.25);
+  }
+</style>
+</head>
+<body>
+
+<h1>FINAL FLOW</h1>
+<p class="page-subtitle">Question → Yes/No → Comment (with camera inside) → Post</p>
+
+<div class="options-grid">
+
+  <!-- STATE 1: INITIAL - CLEAN -->
+  <div class="option-wrapper">
+    <div class="option-label">INITIAL STATE</div>
+    <div class="option-rec">USER JUST TAPPED THE ACTION</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <div class="toggle-row">
+            <div class="toggle-btn toggle-yes-inactive">Yes</div>
+            <div class="toggle-btn toggle-no">No</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Comment with camera icon inside -->
+          <div class="comment-wrapper">
+            <div class="comment-input">Add a comment...</div>
+            <div class="comment-camera">📷</div>
+          </div>
+
+          <!-- Privacy -->
+          <div class="privacy-inline">
+            <span class="privacy-label">Share to</span>
+            <div class="privacy-selector">
+              <div class="privacy-pill privacy-pill-inactive">Private</div>
+              <div class="privacy-pill privacy-pill-active">Circle</div>
+              <div class="privacy-pill privacy-pill-inactive">Public</div>
+            </div>
+          </div>
+
+          <button class="btn-post-outline">Post</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Clean initial state.</strong> Nothing selected yet. Comment input has camera icon built in. Privacy defaults to Circle. Post button is outline (not filled) until they select Yes/No.
+    </div>
+  </div>
+
+  <!-- STATE 2: YES SELECTED + TYPING -->
+  <div class="option-wrapper">
+    <div class="option-label">YES SELECTED + COMMENT</div>
+    <div class="option-rec">USER IS ENGAGING</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <div class="toggle-row">
+            <div class="toggle-btn toggle-yes">✓ Yes</div>
+            <div class="toggle-btn toggle-no">No</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="comment-wrapper">
+            <div class="comment-input comment-typed">Replaced my scroll time with reading. 3 chapters done.</div>
+            <div class="comment-camera">📷</div>
+          </div>
+
+          <div class="privacy-inline">
+            <span class="privacy-label">Share to</span>
+            <div class="privacy-selector">
+              <div class="privacy-pill privacy-pill-inactive">Private</div>
+              <div class="privacy-pill privacy-pill-active">Circle</div>
+              <div class="privacy-pill privacy-pill-inactive">Public</div>
+            </div>
+          </div>
+
+          <!-- Gold filled = ready to post -->
+          <button class="btn-post">Post</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Yes selected, comment typed.</strong> Yes button gets checkmark + gold fill. Comment has real text. Post button fills gold — ready to go. Camera still accessible inside the input.
+    </div>
+  </div>
+
+  <!-- STATE 3: YES + PHOTO ATTACHED -->
+  <div class="option-wrapper">
+    <div class="option-label">YES + PHOTO ATTACHED</div>
+    <div class="option-rec">FULL ENGAGEMENT</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <div class="toggle-row">
+            <div class="toggle-btn toggle-yes">✓ Yes</div>
+            <div class="toggle-btn toggle-no">No</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Photo preview -->
+          <div class="photo-preview">
+            <div class="photo-placeholder">
+              <span class="photo-placeholder-text">📚</span>
+            </div>
+            <div class="photo-preview-remove">✕</div>
+          </div>
+
+          <div class="comment-wrapper">
+            <div class="comment-input comment-typed">3 chapters instead of scrolling</div>
+            <div class="comment-camera">📷</div>
+          </div>
+
+          <div class="privacy-inline">
+            <span class="privacy-label">Share to</span>
+            <div class="privacy-selector">
+              <div class="privacy-pill privacy-pill-inactive">Private</div>
+              <div class="privacy-pill privacy-pill-active">Circle</div>
+              <div class="privacy-pill privacy-pill-inactive">Public</div>
+            </div>
+          </div>
+
+          <button class="btn-post">Post</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Photo attached.</strong> Preview appears above the comment. ✕ to remove. Comment + photo + privacy all visible before posting. User sees exactly what goes out.
+    </div>
+  </div>
+
+</div>
+
+<div class="state-label" style="margin-top:60px;margin-bottom:30px;">── AND WHEN THEY DIDN'T MAKE IT ──</div>
+
+<div class="options-grid" style="max-width:400px;">
+  <!-- STATE 4: NO SELECTED -->
+  <div class="option-wrapper">
+    <div class="option-label">DIDN'T STAY ON TRACK</div>
+    <div class="option-rec">HONEST LOGGING</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <div class="toggle-row">
+            <div class="toggle-btn toggle-yes-inactive">Yes</div>
+            <div class="toggle-btn toggle-no-active">✕ No</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="comment-wrapper">
+            <div class="comment-input">What happened? (optional)</div>
+            <div class="comment-camera">📷</div>
+          </div>
+
+          <div class="privacy-inline">
+            <span class="privacy-label">Share to</span>
+            <div class="privacy-selector">
+              <div class="privacy-pill privacy-pill-active" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1); color:rgba(255,255,255,0.5);">Private</div>
+              <div class="privacy-pill privacy-pill-inactive">Circle</div>
+              <div class="privacy-pill privacy-pill-inactive">Public</div>
+            </div>
+          </div>
+
+          <button class="btn-post-subtle">Log it</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>No shame.</strong> "No" gets subtle red tint. Placeholder changes to "What happened?" Privacy defaults to Private. Button is muted "Log it" instead of gold "Post". Same structure, different tone.
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

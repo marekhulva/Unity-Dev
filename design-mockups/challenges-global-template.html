@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Challenges - Discover & Conquer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 25px;
+        }
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .page-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            font-weight: 400;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        .search-bar {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 14px 45px 14px 45px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-bar:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(231,180,58,0.4);
+            box-shadow: 0 0 0 3px rgba(231,180,58,0.1);
+        }
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: rgba(255,255,255,0.4);
+        }
+        .filter-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: rgba(231,180,58,0.8);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-icon:hover {
+            color: #E7B43A;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Filter Pills */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
+        .filter-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-pill:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(231,180,58,0.3);
+        }
+        .filter-pill.active {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.5);
+            color: #E7B43A;
+        }
+
+        /* Section Headers */
+        .section {
+            margin-bottom: 35px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .section-link {
+            font-size: 13px;
+            color: #E7B43A;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .section-link:hover {
+            color: #FFA500;
+        }
+
+        /* Featured Challenge - Hero Card */
+        .hero-challenge {
+            background: linear-gradient(135deg, rgba(231,180,58,0.15), rgba(255,165,0,0.05));
+            border: 2px solid rgba(231,180,58,0.3);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hero-challenge:hover {
+            transform: translateY(-4px);
+            border-color: rgba(231,180,58,0.5);
+            box-shadow: 0 20px 60px rgba(231,180,58,0.2);
+        }
+        .hero-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(231,180,58,0.4);
+            z-index: 2;
+        }
+        .hero-image {
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.95) 100%);
+            padding: 60px 20px 20px;
+        }
+        .hero-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        .hero-description {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .hero-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .hero-stat-icon {
+            font-size: 16px;
+        }
+        .hero-stat-value {
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .hero-content {
+            padding: 16px 20px 20px;
+        }
+        .difficulty-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .difficulty-tag {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .difficulty-hard {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+        .join-button {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(231,180,58,0.3);
+        }
+        .join-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(231,180,58,0.4);
+        }
+
+        /* Challenge Cards - Compact Grid */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        .challenge-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .challenge-card:hover {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(231,180,58,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+        }
+        .challenge-card.active {
+            border-color: rgba(231,180,58,0.5);
+            background: rgba(231,180,58,0.05);
+        }
+        .challenge-thumbnail {
+            height: 140px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            position: relative;
+            overflow: hidden;
+        }
+        .challenge-thumbnail.fitness {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        .challenge-thumbnail.mindfulness {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+        .challenge-thumbnail.productivity {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+        }
+        .challenge-thumbnail.reading {
+            background: linear-gradient(135deg, #30cfd0, #330867);
+        }
+        .challenge-thumbnail.nutrition {
+            background: linear-gradient(135deg, #a8edea, #fed6e3);
+        }
+        .active-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(231,180,58,0.95);
+            color: #000;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .challenge-progress-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(0,0,0,0.3);
+        }
+        .challenge-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 12px rgba(231,180,58,0.6);
+        }
+        .challenge-info {
+            padding: 14px;
+        }
+        .challenge-category {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .challenge-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        .challenge-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+        .challenge-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .participants-avatars {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .avatar-stack {
+            display: flex;
+            margin-right: 6px;
+        }
+        .mini-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            border: 2px solid #0B0F12;
+            margin-left: -8px;
+        }
+        .mini-avatar:first-child {
+            margin-left: 0;
+        }
+        .avatar-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .avatar-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .avatar-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .avatar-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .participants-count {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Active Challenge Status Card */
+        .active-challenge-status {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.05));
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .status-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .status-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .status-subtitle {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+        .status-progress {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: conic-gradient(#22c55e 0deg calc(var(--percent) * 3.6deg), rgba(255,255,255,0.08) calc(var(--percent) * 3.6deg) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .status-progress-inner {
+            width: 38px;
+            height: 38px;
+            border-radius: 19px;
+            background: #0B0F12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.8);
+        }
+        .empty-subtitle {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Bottom CTA */
+        .bottom-cta {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 380px;
+            width: calc(100% - 40px);
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            border: 1px solid rgba(231,180,58,0.3);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.5), 0 0 40px rgba(231,180,58,0.15);
+            backdrop-filter: blur(10px);
+        }
+        .cta-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .cta-button {
+            width: 100%;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231,180,58,0.4);
+        }
+
+        /* Category Icons */
+        .category-icon {
+            display: inline-block;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="page-title">🏆 Global Challenges</div>
+            <div class="page-subtitle">Join thousands pushing their limits</div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-bar" placeholder="Search challenges...">
+            <span class="filter-icon">⚡</span>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="filter-pills">
+            <div class="filter-pill active">All</div>
+            <div class="filter-pill">💪 Fitness</div>
+            <div class="filter-pill">🧠 Mindfulness</div>
+            <div class="filter-pill">📚 Learning</div>
+            <div class="filter-pill">🍎 Nutrition</div>
+            <div class="filter-pill">⚡ Productivity</div>
+        </div>
+
+        <!-- My Active Challenges -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">My Active Challenges</div>
+                <div class="section-link">View All →</div>
+            </div>
+
+            <div class="active-challenge-status">
+                <div class="status-icon">🔥</div>
+                <div class="status-content">
+                    <div class="status-title">75 HARD Challenge</div>
+                    <div class="status-subtitle">Day 26 of 75 • On fire! 🔥</div>
+                </div>
+                <div class="status-progress" style="--percent: 87">
+                    <div class="status-progress-inner">87%</div>
+                </div>
+            </div>
+
+            <div class="active-challenge-status">
+                <div class="status-icon">📚</div>
+                <div class="status-content">
+                    <div class="status-title">Read 52 Books in a Year</div>
+                    <div class="status-subtitle">7 of 52 books • 45 weeks left</div>
+                </div>
+                <div class="status-progress" style="--percent: 13">
+                    <div class="status-progress-inner">13%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Challenge -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Featured This Week</div>
+            </div>
+
+            <div class="hero-challenge">
+                <div class="hero-badge">✨ Trending</div>
+                <div class="hero-image">
+                    <div class="hero-overlay">
+                        <div class="hero-title">30-Day Meditation Journey</div>
+                        <div class="hero-description">
+                            Build a daily meditation practice that sticks. Start with just 5 minutes and gradually increase.
+                        </div>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <span class="hero-stat-icon">👥</span>
+                                <span class="hero-stat-value">12,847</span>
+                                <span>joined</span>
+                            </div>
+                            <div class="hero-stat">
+                                <span class="hero-stat-icon">⏱</span>
+                                <span class="hero-stat-value">30</span>
+                                <span>days</span>
+                            </div>
+                            <div class="hero-stat">
+                                <span class="hero-stat-icon">📊</span>
+                                <span class="hero-stat-value">78%</span>
+                                <span>complete</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-content">
+                    <div class="difficulty-tags">
+                        <div class="difficulty-tag">🧘 Mindfulness</div>
+                        <div class="difficulty-tag" style="background: rgba(34, 197, 94, 0.15); border-color: rgba(34, 197, 94, 0.3); color: #22c55e;">Beginner Friendly</div>
+                        <div class="difficulty-tag">30 Days</div>
+                    </div>
+                    <button class="join-button">Join Challenge →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popular Challenges -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Most Popular</div>
+                <div class="section-link">See All →</div>
+            </div>
+
+            <div class="challenges-grid">
+                <div class="challenge-card active">
+                    <div class="challenge-thumbnail fitness">
+                        <div class="active-badge">Active</div>
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">💪</span> Fitness</div>
+                        <div class="challenge-name">75 HARD Challenge</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>75 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>🔥</span>
+                                <span>Extreme</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-1"></div>
+                                <div class="mini-avatar avatar-2"></div>
+                                <div class="mini-avatar avatar-3"></div>
+                                <div class="mini-avatar avatar-4"></div>
+                            </div>
+                            <div class="participants-count">+45,892 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail mindfulness">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">🧘</span> Mindfulness</div>
+                        <div class="challenge-name">Daily Meditation Streak</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>Ongoing</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>💚</span>
+                                <span>Easy</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-2"></div>
+                                <div class="mini-avatar avatar-3"></div>
+                                <div class="mini-avatar avatar-1"></div>
+                            </div>
+                            <div class="participants-count">+28,341 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card active">
+                    <div class="challenge-thumbnail reading">
+                        <div class="active-badge">Active</div>
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 13%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">📚</span> Learning</div>
+                        <div class="challenge-name">52 Books in a Year</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>365 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>⚡</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-4"></div>
+                                <div class="mini-avatar avatar-1"></div>
+                                <div class="mini-avatar avatar-2"></div>
+                            </div>
+                            <div class="participants-count">+19,234 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail productivity">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">⚡</span> Productivity</div>
+                        <div class="challenge-name">5 AM Club - 30 Days</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>30 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>🔥</span>
+                                <span>Hard</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-3"></div>
+                                <div class="mini-avatar avatar-4"></div>
+                                <div class="mini-avatar avatar-1"></div>
+                            </div>
+                            <div class="participants-count">+34,567 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail nutrition">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">🍎</span> Nutrition</div>
+                        <div class="challenge-name">30-Day Clean Eating</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>30 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>⚡</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-2"></div>
+                                <div class="mini-avatar avatar-1"></div>
+                                <div class="mini-avatar avatar-4"></div>
+                            </div>
+                            <div class="participants-count">+22,891 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail fitness">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">💪</span> Fitness</div>
+                        <div class="challenge-name">100 Push-ups a Day</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>30 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>🔥</span>
+                                <span>Hard</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-1"></div>
+                                <div class="mini-avatar avatar-3"></div>
+                                <div class="mini-avatar avatar-2"></div>
+                            </div>
+                            <div class="participants-count">+41,203 participants</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New & Upcoming -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">New & Upcoming</div>
+                <div class="section-link">Explore More →</div>
+            </div>
+
+            <div class="challenges-grid">
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail mindfulness">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">🧘</span> Mindfulness</div>
+                        <div class="challenge-name">Gratitude Journal - 21 Days</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>21 days</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>💚</span>
+                                <span>Easy</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-4"></div>
+                                <div class="mini-avatar avatar-2"></div>
+                            </div>
+                            <div class="participants-count">+3,421 participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-thumbnail productivity">
+                        <div class="challenge-progress-overlay">
+                            <div class="challenge-progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-category"><span class="category-icon">⚡</span> Productivity</div>
+                        <div class="challenge-name">No Social Media Sundays</div>
+                        <div class="challenge-meta">
+                            <div class="challenge-meta-item">
+                                <span>⏱</span>
+                                <span>12 weeks</span>
+                            </div>
+                            <div class="challenge-meta-item">
+                                <span>⚡</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+                        <div class="participants-avatars">
+                            <div class="avatar-stack">
+                                <div class="mini-avatar avatar-1"></div>
+                                <div class="mini-avatar avatar-3"></div>
+                                <div class="mini-avatar avatar-4"></div>
+                            </div>
+                            <div class="participants-count">+8,912 participants</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="bottom-cta">
+        <div class="cta-text">Can't find the perfect challenge?</div>
+        <button class="cta-button">Create Your Own Challenge ✨</button>
+    </div>
+</body>
+</html>

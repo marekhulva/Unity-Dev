@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unity Onboarding Flow Prototype</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: #000;
+      border-radius: 40px;
+      border: 8px solid #1a1a1a;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      padding: 60px 30px 30px;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .screen-indicator {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #666;
+      background: #1a1a1a;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #999;
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    input:focus {
+      border-color: #FFD700;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #999;
+      border: 1px solid #333;
+    }
+
+    .btn-secondary:hover {
+      border-color: #666;
+      color: #fff;
+    }
+
+    .btn-skip {
+      background: transparent;
+      color: #666;
+      text-decoration: underline;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .main-app {
+      padding: 0;
+    }
+
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: #0a0a0a;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: 20px;
+    }
+
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .tab.active {
+      color: #FFD700;
+    }
+
+    .tab-icon {
+      width: 24px;
+      height: 24px;
+      background: #333;
+      border-radius: 8px;
+    }
+
+    .tab.active .tab-icon {
+      background: #FFD700;
+    }
+
+    .header {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .welcome-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .feature-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+    }
+
+    .circle-code-input {
+      font-size: 24px;
+      text-align: center;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .example-text {
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #333;
+      border-radius: 50%;
+    }
+
+    .dot.active {
+      background: #FFD700;
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 60px;
+      left: 30px;
+      color: #FFD700;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .mock-post {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .post-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: #FFD700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .post-user {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .post-time {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .post-content {
+      color: #ccc;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <!-- Screen 1: Welcome -->
+    <div class="screen active" id="welcome">
+      <div class="screen-indicator">Screen 1 of 3</div>
+      <div class="spacer"></div>
+      <h1 class="center">Unity</h1>
+      <p class="center">Build better habits with friends</p>
+
+      <div class="welcome-grid">
+        <div class="feature-card">
+          <div class="feature-icon">✓</div>
+          <div class="feature-title">Daily Actions</div>
+          <div class="feature-desc">Track your progress</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👥</div>
+          <div class="feature-title">Circles</div>
+          <div class="feature-desc">Share with friends</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <div class="feature-title">Challenges</div>
+          <div class="feature-desc">Stay accountable</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Goals</div>
+          <div class="feature-desc">Achieve more</div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="btn btn-primary" onclick="goTo('auth')">Get Started</button>
+      <button class="btn btn-secondary" onclick="goTo('auth')">I Have an Account</button>
+    </div>
+
+    <!-- Screen 2: Auth (Simplified) -->
+    <div class="screen" id="auth">
+      <div class="screen-indicator">Screen 2 of 3</div>
+      <a href="#" class="back-btn" onclick="goTo('welcome'); return false;">← Back</a>
+
+      <h2>Create Account</h2>
+      <p>Quick setup to get started</p>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com" id="email">
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" id="password">
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="btn btn-primary" onclick="goTo('profile')">Continue</button>
+      <button class="btn btn-skip" onclick="goTo('circle')">Skip to Circle Join →</button>
+    </div>
+
+    <!-- Screen 3: Quick Profile (Skippable) -->
+    <div class="screen" id="profile">
+      <div class="screen-indicator">Screen 3 of 3 (Optional)</div>
+      <a href="#" class="back-btn" onclick="goTo('auth'); return false;">← Back</a>
+
+      <h2>Your Profile</h2>
+      <p>Help your circle recognize you</p>
+
+      <div class="progress-dots">
+        <div class="dot"></div>
+        <div class="dot active"></div>
+        <div class="dot"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Display Name</label>
+        <input type="text" placeholder="John Smith" id="displayName">
+      </div>
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" placeholder="johnsmith" id="username">
+      </div>
+
+      <p class="example-text">Avatar can be added later in settings</p>
+
+      <div class="spacer"></div>
+
+      <button class="btn btn-primary" onclick="goTo('circle')">Continue</button>
+      <button class="btn btn-skip" onclick="skipProfile()">Skip for Now</button>
+    </div>
+
+    <!-- Screen 4: Join Circle -->
+    <div class="screen" id="circle">
+      <div class="screen-indicator">Almost Done!</div>
+      <a href="#" class="back-btn" onclick="goTo('profile'); return false;">← Back</a>
+
+      <h2>Join Your Circle</h2>
+      <p>Circles are where you share progress with friends</p>
+
+      <div class="progress-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot active"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Enter Circle Code</label>
+        <input type="text" class="circle-code-input" placeholder="ABC123" maxlength="6" id="circleCode">
+        <p class="example-text">Get this code from your circle admin</p>
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="btn btn-primary" onclick="joinCircle()">Join Circle</button>
+      <button class="btn btn-secondary" onclick="goTo('app')">Browse Public Circles</button>
+      <button class="btn btn-skip" onclick="goTo('app')">Skip, I'll Join Later</button>
+    </div>
+
+    <!-- Screen 5: Main App -->
+    <div class="screen main-app" id="app">
+      <div class="header">
+        <h2 style="margin: 0; font-size: 20px;">Social</h2>
+        <div style="color: #666;">👤</div>
+      </div>
+
+      <div class="content">
+        <div class="mock-post">
+          <div class="post-header">
+            <div class="avatar">SM</div>
+            <div>
+              <div class="post-user">Sarah M.</div>
+              <div class="post-time">2 hours ago</div>
+            </div>
+          </div>
+          <div class="post-content">
+            Completed morning meditation! Feeling centered and ready for the day 🧘‍♀️
+          </div>
+        </div>
+
+        <div class="mock-post">
+          <div class="post-header">
+            <div class="avatar" style="background: #FFA500;">JD</div>
+            <div>
+              <div class="post-user">John D.</div>
+              <div class="post-time">5 hours ago</div>
+            </div>
+          </div>
+          <div class="post-content">
+            Day 7 of the Mental Detox challenge! 🎉 This was harder than I thought but so worth it.
+          </div>
+        </div>
+
+        <div class="mock-post">
+          <div class="post-header">
+            <div class="avatar" style="background: #FF6347;">AL</div>
+            <div>
+              <div class="post-user">Alex L.</div>
+              <div class="post-time">Yesterday</div>
+            </div>
+          </div>
+          <div class="post-content">
+            30-day workout streak! 💪 Thanks for keeping me accountable, team!
+          </div>
+        </div>
+
+        <div style="text-align: center; padding: 40px 20px; color: #666;">
+          <p style="margin-bottom: 20px;">🎉 You've completed the onboarding!</p>
+          <button class="btn btn-primary" onclick="goTo('welcome')" style="max-width: 200px; margin: 0 auto;">Restart Demo</button>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab">
+          <div class="tab-icon"></div>
+          <span>Daily</span>
+        </div>
+        <div class="tab active">
+          <div class="tab-icon"></div>
+          <span>Social</span>
+        </div>
+        <div class="tab">
+          <div class="tab-icon"></div>
+          <span>Circles</span>
+        </div>
+        <div class="tab">
+          <div class="tab-icon"></div>
+          <span>Profile</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function goTo(screenId) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+
+      // Show target screen
+      document.getElementById(screenId).classList.add('active');
+
+      // Log navigation for tracking
+      console.log('Navigated to:', screenId);
+    }
+
+    function skipProfile() {
+      console.log('User skipped profile setup');
+      goTo('circle');
+    }
+
+    function joinCircle() {
+      const code = document.getElementById('circleCode').value;
+      if (code.trim()) {
+        console.log('Joining circle with code:', code);
+        alert('✓ Joined circle: ' + code.toUpperCase());
+      }
+      goTo('app');
+    }
+
+    // Track input focus for analytics
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('focus', (e) => {
+        console.log('Field focused:', e.target.placeholder);
+      });
+    });
+
+    // Log demo start
+    console.log('=== Unity Onboarding Demo Started ===');
+    console.log('This prototype demonstrates the streamlined 3-screen onboarding flow.');
+    console.log('Key features:');
+    console.log('- Profile setup is skippable');
+    console.log('- Circle join is skippable');
+    console.log('- Users can jump straight to challenges if invited');
+    console.log('- Total time to app: ~30 seconds');
+  </script>
+</body>
+</html>

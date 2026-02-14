@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 2: Dedicated Challenges Tab - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            height: 844px;
+            position: relative;
+            border: 8px solid #1a1a1a;
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+
+        .header {
+            padding: 60px 20px 20px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .tabs {
+            display: flex;
+            padding: 15px 20px 0;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0a0a0a;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .search-bar {
+            margin: 15px 20px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            width: calc(100% - 40px);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 15px;
+            overflow-x: auto;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            padding: 20px 20px 10px;
+        }
+
+        .challenge-card {
+            margin: 10px 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            font-size: 32px;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-badge {
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .challenge-badge.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .challenge-stat {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .challenge-stat strong {
+            color: #FFD700;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: #0a0a0a;
+            margin: 20px auto;
+            max-width: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            cursor: pointer;
+        }
+
+        .feed-tabs {
+            display: flex;
+            gap: 10px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+        }
+
+        .feed-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+
+        .feed-tab.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .leaderboard {
+            padding: 0 20px 20px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .rank {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            width: 30px;
+        }
+
+        .rank.gold { color: #FFD700; }
+        .rank.silver { color: #C0C0C0; }
+        .rank.bronze { color: #CD7F32; }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .member-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .member-score {
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .post-card {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .active-challenges-widget {
+            margin: 15px 20px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.08) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+        }
+
+        .widget-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 12px;
+        }
+
+        .mini-challenge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .mini-challenge:last-child {
+            margin-bottom: 0;
+        }
+
+        .progress-ring {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-top-color: #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <div class="header">
+                <div class="header-title">Challenges</div>
+                <div class="header-subtitle">Compete, track, and achieve together</div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('active')">Active</div>
+                <div class="tab" onclick="showTab('discover')">Discover</div>
+                <div class="tab" onclick="showTab('completed')">Completed</div>
+            </div>
+
+            <div class="content">
+                <!-- Active Tab -->
+                <div id="tab-active">
+                    <div class="active-challenges-widget">
+                        <div class="widget-title">Your Active Challenges (4)</div>
+
+                        <div class="mini-challenge">
+                            <div class="progress-ring">23/30</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px;">Cold Shower Challenge</div>
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Rank #142 • 7 days left</div>
+                            </div>
+                        </div>
+
+                        <div class="mini-challenge">
+                            <div class="progress-ring">12/12</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px;">SF Reading Sprint</div>
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Rank #2 • 23 days left</div>
+                            </div>
+                        </div>
+
+                        <div class="mini-challenge">
+                            <div class="progress-ring">45/100</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px;">100 Hours of Meditation</div>
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Rank #87 • 67 days left</div>
+                            </div>
+                        </div>
+
+                        <div class="mini-challenge">
+                            <div class="progress-ring">8/10</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 13px;">Morning Workout</div>
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.5);">Rank #5 • 15 days left</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Challenge Details</div>
+
+                    <div class="challenge-card" onclick="openChallengeDetail('Cold Shower Challenge')">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🥶</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">30 Day Cold Shower Challenge</div>
+                                <div class="challenge-meta">Global • 2,847 participants</div>
+                            </div>
+                            <div class="challenge-badge active">Active</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Your rank: <strong>#142</strong></div>
+                            <div class="challenge-stat">Progress: <strong>23/30 days</strong></div>
+                            <div class="challenge-stat">Streak: <strong>23 days</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); openChallengeDetail('Cold Shower Challenge')">View Leaderboard & Feed</button>
+                    </div>
+
+                    <div class="challenge-card" onclick="openChallengeDetail('SF Reading Sprint')">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">📚</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">SF Reading Sprint</div>
+                                <div class="challenge-meta">Circle Challenge • 8 participants</div>
+                            </div>
+                            <div class="challenge-badge active">Active</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Your rank: <strong>#2</strong></div>
+                            <div class="challenge-stat">Books read: <strong>12/12</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); openChallengeDetail('SF Reading Sprint')">View Leaderboard & Feed</button>
+                    </div>
+
+                    <div class="challenge-card" onclick="openChallengeDetail('100 Hours Meditation')">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🧘</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">100 Hours of Meditation</div>
+                                <div class="challenge-meta">Global • 1,523 participants</div>
+                            </div>
+                            <div class="challenge-badge active">Active</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Your rank: <strong>#87</strong></div>
+                            <div class="challenge-stat">Hours: <strong>45/100</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); openChallengeDetail('100 Hours Meditation')">View Leaderboard & Feed</button>
+                    </div>
+                </div>
+
+                <!-- Discover Tab -->
+                <div id="tab-discover" style="display: none;">
+                    <input type="text" class="search-bar" placeholder="Search challenges...">
+
+                    <div class="filter-chips">
+                        <div class="chip active">All</div>
+                        <div class="chip">Global</div>
+                        <div class="chip">Circle</div>
+                        <div class="chip">Fitness</div>
+                        <div class="chip">Mindfulness</div>
+                        <div class="chip">Learning</div>
+                    </div>
+
+                    <div class="section-title">Trending Challenges</div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🥶</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">30 Day Cold Shower Challenge</div>
+                                <div class="challenge-meta">Global • 2,847 participants</div>
+                            </div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Duration: <strong>30 days</strong></div>
+                            <div class="challenge-stat">Difficulty: <strong>Hard</strong></div>
+                        </div>
+                        <button class="btn">Join Challenge</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🧘</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">100 Hours of Meditation</div>
+                                <div class="challenge-meta">Global • 1,523 participants</div>
+                            </div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Duration: <strong>90 days</strong></div>
+                            <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                        </div>
+                        <button class="btn">Join Challenge</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">📖</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">Read 12 Books This Year</div>
+                                <div class="challenge-meta">Global • 5,234 participants</div>
+                            </div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Duration: <strong>365 days</strong></div>
+                            <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                        </div>
+                        <button class="btn">Join Challenge</button>
+                    </div>
+
+                    <div class="section-title">Your Circle Challenges</div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">💪</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">Morning Workout Challenge</div>
+                                <div class="challenge-meta">SF Circle • 10 participants</div>
+                            </div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Duration: <strong>30 days</strong></div>
+                            <div class="challenge-stat">Difficulty: <strong>Medium</strong></div>
+                        </div>
+                        <button class="btn">Join Challenge</button>
+                    </div>
+                </div>
+
+                <!-- Completed Tab -->
+                <div id="tab-completed" style="display: none;">
+                    <div class="section-title">Recently Completed</div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">✅</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">21 Day Meditation</div>
+                                <div class="challenge-meta">Completed 3 days ago</div>
+                            </div>
+                            <div class="challenge-badge" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50;">Completed</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Final rank: <strong>#12</strong></div>
+                            <div class="challenge-stat">Completion: <strong>21/21 days</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="openChallengeDetail('21 Day Meditation')">View Results</button>
+                    </div>
+
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">✅</div>
+                            <div class="challenge-info">
+                                <div class="challenge-title">30 Day Pushup Challenge</div>
+                                <div class="challenge-meta">Completed 2 weeks ago</div>
+                            </div>
+                            <div class="challenge-badge" style="background: rgba(76, 175, 80, 0.2); color: #4CAF50;">Completed</div>
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="challenge-stat">Final rank: <strong>#8</strong></div>
+                            <div class="challenge-stat">Completion: <strong>30/30 days</strong></div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="openChallengeDetail('30 Day Pushup')">View Results</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">Social</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">✓</div>
+                    <div class="nav-label">Daily</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👥</div>
+                    <div class="nav-label">Circle</div>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon">🏆</div>
+                    <div class="nav-label">Challenges</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">📊</div>
+                    <div class="nav-label">Progress</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenge Detail Modal -->
+    <div class="modal" id="challengeModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Challenge Name</div>
+            </div>
+
+            <div class="feed-tabs">
+                <div class="feed-tab active" onclick="showFeedTab('leaderboard')">Leaderboard</div>
+                <div class="feed-tab" onclick="showFeedTab('feed')">Feed</div>
+                <div class="feed-tab" onclick="showFeedTab('about')">About</div>
+            </div>
+
+            <div id="modal-content-area">
+                <!-- Leaderboard -->
+                <div id="modal-leaderboard">
+                    <div class="leaderboard">
+                        <div class="leaderboard-item">
+                            <div class="rank gold">1</div>
+                            <div class="avatar">AM</div>
+                            <div class="member-name">Alex Martinez</div>
+                            <div class="member-score">30/30</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank silver">2</div>
+                            <div class="avatar">JS</div>
+                            <div class="member-name">John Smith</div>
+                            <div class="member-score">28/30</div>
+                        </div>
+                        <div class="leaderboard-item">
+                            <div class="rank bronze">3</div>
+                            <div class="avatar">SK</div>
+                            <div class="member-name">Sarah Kim</div>
+                            <div class="member-score">27/30</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feed -->
+                <div id="modal-feed" style="display: none;">
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">AM</div>
+                            <div class="post-info">
+                                <div class="post-author">Alex Martinez</div>
+                                <div class="post-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 30! 🥶 Can't believe I actually completed this challenge. The cold showers are now part of my routine and I feel amazing!
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar">SK</div>
+                            <div class="post-info">
+                                <div class="post-author">Sarah Kim</div>
+                                <div class="post-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 27 complete! The hardest part is still getting in, but once you're under the water it's actually refreshing. 💪
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About -->
+                <div id="modal-about" style="display: none;">
+                    <div style="padding: 20px;">
+                        <h3 style="color: #FFD700; margin-bottom: 15px;">About This Challenge</h3>
+                        <p style="color: rgba(255,255,255,0.8); line-height: 1.8;">
+                            Take a cold shower every day for 30 days. Studies show cold showers improve circulation, boost immune system, and increase mental resilience.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('tab-active').style.display = 'none';
+            document.getElementById('tab-discover').style.display = 'none';
+            document.getElementById('tab-completed').style.display = 'none';
+
+            document.getElementById('tab-' + tab).style.display = 'block';
+        }
+
+        function openChallengeDetail(name) {
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('challengeModal').classList.add('active');
+            showFeedTab('leaderboard');
+        }
+
+        function closeModal() {
+            document.getElementById('challengeModal').classList.remove('active');
+        }
+
+        function showFeedTab(tab) {
+            document.querySelectorAll('.feed-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('modal-leaderboard').style.display = 'none';
+            document.getElementById('modal-feed').style.display = 'none';
+            document.getElementById('modal-about').style.display = 'none';
+
+            document.getElementById('modal-' + tab).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

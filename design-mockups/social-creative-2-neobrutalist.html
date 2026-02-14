@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Social - Neo-Brutalist Bold</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .page-label {
+            text-align: center;
+            font-size: 18px;
+            color: #E7B43A;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+        }
+
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: #000;
+            border-radius: 40px;
+            border: 4px solid #1a1a1a;
+            box-shadow: 8px 8px 0px #E7B43A,
+                        12px 12px 0px rgba(231,180,58,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            padding: 16px 16px 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: #000;
+            border-bottom: 4px solid #E7B43A;
+        }
+
+        .header-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: #E7B43A;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+            line-height: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 900;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 3px solid #222;
+            background: #0a0a0a;
+            color: #666;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: #E7B43A;
+            color: #000;
+            border-color: #E7B43A;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+            transform: translate(-2px, -2px);
+        }
+
+        .filters-section {
+            background: #000;
+            padding: 12px 16px 16px 16px;
+            position: sticky;
+            top: 109px;
+            z-index: 19;
+            border-bottom: 3px solid #222;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .filter-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pill {
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            border: 3px solid #222;
+            background: #0a0a0a;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .pill.active {
+            background: #E7B43A;
+            color: #000;
+            border-color: #E7B43A;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+            transform: translate(-1px, -1px);
+        }
+
+        .pill-badge {
+            background: #000;
+            color: #E7B43A;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 900;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .pill.active .pill-badge {
+            background: rgba(0,0,0,0.3);
+            color: #000;
+        }
+
+        .feed {
+            padding: 16px;
+        }
+
+        .post {
+            margin-bottom: 20px;
+            background: #0a0a0a;
+            border: 4px solid #222;
+            box-shadow: 6px 6px 0px rgba(231,180,58,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .post:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 9px 9px 0px rgba(231,180,58,0.5);
+        }
+
+        .post-header {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #000;
+            border-bottom: 3px solid #222;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            border: 3px solid #222;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.5);
+        }
+
+        .avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 16px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .post-meta {
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+
+        .circle-badge {
+            padding: 4px 10px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: #E7B43A;
+            color: #000;
+            border: 2px solid #222;
+        }
+
+        .post-body {
+            padding: 20px 18px;
+        }
+
+        .activity-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+            display: block;
+            filter: drop-shadow(3px 3px 0px rgba(0,0,0,0.5));
+        }
+
+        .activity-name {
+            font-size: 26px;
+            font-weight: 900;
+            color: #E7B43A;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        .activity-context {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 3px solid #222;
+        }
+
+        .metric {
+            background: #000;
+            border: 3px solid #E7B43A;
+            padding: 12px 8px;
+            text-align: center;
+            position: relative;
+        }
+
+        .metric::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #E7B43A;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #E7B43A;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+
+        .metric-label {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 900;
+        }
+
+        .post-footer {
+            display: flex;
+            gap: 12px;
+            padding: 16px 18px;
+            background: #000;
+            border-top: 3px solid #222;
+        }
+
+        .reaction {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 8px;
+            background: #0a0a0a;
+            border: 3px solid #222;
+            font-size: 13px;
+            color: #666;
+            font-weight: 900;
+            transition: all 0.2s ease;
+        }
+
+        .reaction:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 2px 2px 0px rgba(231,180,58,0.3);
+        }
+
+        .reaction.active {
+            background: #E7B43A;
+            color: #000;
+            border-color: #E7B43A;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.5);
+            transform: translate(-1px, -1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-label">Neo-Brutalist Bold</div>
+        <div class="phone-mockup">
+            <div class="notch"></div>
+            <div class="status-bar">
+                <div class="time">9:41</div>
+                <div class="status-icons">📶 📶 🔋</div>
+            </div>
+            <div class="screen-content">
+                <div class="header">
+                    <div class="header-title">Social</div>
+                    <div class="tabs">
+                        <div class="tab active">My Circles</div>
+                        <div class="tab">Following</div>
+                    </div>
+                </div>
+                <div class="filters-section">
+                    <div class="filter-pills">
+                        <div class="pill active">
+                            All Circles
+                            <span class="pill-badge">8</span>
+                        </div>
+                        <div class="pill">
+                            Unity
+                            <span class="pill-badge">3</span>
+                        </div>
+                        <div class="pill">
+                            75 HARD
+                            <span class="pill-badge">4</span>
+                        </div>
+                        <div class="pill">
+                            Marathon
+                            <span class="pill-badge">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="feed">
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="avatar">👤</div>
+                            <div class="user-info">
+                                <div class="username">Alex Chen</div>
+                                <div class="post-meta">
+                                    <span>2H AGO</span>
+                                    <span>•</span>
+                                    <span class="circle-badge">Unity</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            <span class="activity-icon">🏃</span>
+                            <div class="activity-name">Morning Run</div>
+                            <div class="activity-context">🎯 Marathon Training</div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span class="metric-value">45</span>
+                                    <span class="metric-label">Minutes</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">6.2</span>
+                                    <span class="metric-label">Miles</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">12</span>
+                                    <span class="metric-label">Streak</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-footer">
+                            <div class="reaction active">🔥 24</div>
+                            <div class="reaction">💪 18</div>
+                            <div class="reaction">💬 3</div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="avatar alt1">👩</div>
+                            <div class="user-info">
+                                <div class="username">Sarah Miller</div>
+                                <div class="post-meta">
+                                    <span>4H AGO</span>
+                                    <span>•</span>
+                                    <span class="circle-badge">75 HARD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            <span class="activity-icon">☀️</span>
+                            <div class="activity-name">Woke Early</div>
+                            <div class="activity-context">Morning Routine • Day 28</div>
+                        </div>
+                        <div class="post-footer">
+                            <div class="reaction">🔥 31</div>
+                            <div class="reaction">💪 12</div>
+                        </div>
+                    </div>
+
+                    <div class="post">
+                        <div class="post-header">
+                            <div class="avatar alt2">🧑</div>
+                            <div class="user-info">
+                                <div class="username">Mike Johnson</div>
+                                <div class="post-meta">
+                                    <span>5H AGO</span>
+                                    <span>•</span>
+                                    <span class="circle-badge">Unity</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            <span class="activity-icon">💪</span>
+                            <div class="activity-name">Strength</div>
+                            <div class="activity-context">🎯 Get Stronger</div>
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span class="metric-value">60</span>
+                                    <span class="metric-label">Minutes</span>
+                                </div>
+                                <div class="metric">
+                                    <span class="metric-value">8</span>
+                                    <span class="metric-label">Streak</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-footer">
+                            <div class="reaction">🔥 19</div>
+                            <div class="reaction active">💪 24</div>
+                            <div class="reaction">💬 1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

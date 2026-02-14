@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Settings - Fitness Warriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .settings-page {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .page-header {
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .circle-banner {
+            height: 100px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner-edit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+        .banner-edit:hover {
+            background: rgba(0,0,0,0.85);
+            transform: scale(1.05);
+        }
+
+        .circle-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: -40px auto 15px;
+            position: relative;
+        }
+        .circle-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 4px solid #0B0F12;
+        }
+        .icon-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: #E7B43A;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #000;
+            cursor: pointer;
+            border: 3px solid #0B0F12;
+        }
+
+        .circle-name-edit {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .circle-code {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Section */
+        .section {
+            padding: 25px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        /* Setting Items */
+        .setting-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .setting-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+        }
+
+        .setting-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .setting-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .setting-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .setting-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .setting-description {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .setting-value {
+            font-size: 13px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+        .setting-arrow {
+            font-size: 16px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+        }
+        .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 10px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+        .toggle-switch.active .toggle-knob {
+            left: 22px;
+        }
+
+        /* Admin Controls */
+        .admin-badge {
+            display: inline-block;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        /* Danger Zone */
+        .danger-item {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.2);
+        }
+        .danger-item:hover {
+            background: rgba(239,68,68,0.12);
+            border-color: rgba(239,68,68,0.3);
+        }
+        .danger-item .setting-icon {
+            background: rgba(239,68,68,0.15);
+            border-color: rgba(239,68,68,0.3);
+        }
+        .danger-item .setting-label {
+            color: #ef4444;
+        }
+
+        /* Button */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(231,180,58,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Settings</h1>
+
+        <div class="settings-page">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="circle-banner">
+                    <div class="banner-edit">📷 Change Banner</div>
+                </div>
+                <div class="circle-icon-wrapper">
+                    <div class="circle-icon">💪</div>
+                    <div class="icon-edit">✏️</div>
+                </div>
+                <div class="circle-name-edit">Fitness Warriors</div>
+                <div class="circle-code">Code: FIT2024</div>
+            </div>
+
+            <!-- General Settings -->
+            <div class="section">
+                <div class="section-title">General</div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">📝</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Circle Name</div>
+                            <div class="setting-description">Fitness Warriors</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">💬</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Description</div>
+                            <div class="setting-description">A community dedicated to fitness goals...</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🌐</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Privacy</div>
+                            <div class="setting-value">Public</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🔗</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Invite Code</div>
+                            <div class="setting-description">FIT2024</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions -->
+            <div class="section">
+                <div class="section-title">Permissions <span class="admin-badge">Admin Only</span></div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">✍️</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Who can post</div>
+                            <div class="setting-value">All members</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🎯</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Who can create challenges</div>
+                            <div class="setting-value">Admins only</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">👥</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Who can invite members</div>
+                            <div class="setting-value">All members</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">✅</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Require approval for new members</div>
+                        </div>
+                        <div class="toggle-switch">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="section">
+                <div class="section-title">Notifications</div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🔔</div>
+                        <div class="setting-info">
+                            <div class="setting-label">New posts</div>
+                            <div class="setting-description">Get notified when someone posts</div>
+                        </div>
+                        <div class="toggle-switch active">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🎯</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Challenge updates</div>
+                            <div class="setting-description">New challenges and milestones</div>
+                        </div>
+                        <div class="toggle-switch active">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">👋</div>
+                        <div class="setting-info">
+                            <div class="setting-label">New members</div>
+                            <div class="setting-description">When someone joins the circle</div>
+                        </div>
+                        <div class="toggle-switch">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🏆</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Leaderboard changes</div>
+                            <div class="setting-description">When rankings update</div>
+                        </div>
+                        <div class="toggle-switch">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Management -->
+            <div class="section">
+                <div class="section-title">Member Management <span class="admin-badge">Admin Only</span></div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">👑</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Manage Admins</div>
+                            <div class="setting-description">Add or remove admin roles</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🚫</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Banned Members</div>
+                            <div class="setting-description">Manage banned users</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">⏳</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Pending Requests</div>
+                            <div class="setting-value">3 requests</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced -->
+            <div class="section">
+                <div class="section-title">Advanced</div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">📊</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Analytics</div>
+                            <div class="setting-description">View circle statistics</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">📥</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Export Data</div>
+                            <div class="setting-description">Download circle data</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🔄</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Transfer Ownership</div>
+                            <div class="setting-description">Make someone else the owner</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="section">
+                <div class="section-title">Danger Zone</div>
+
+                <div class="setting-item danger-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🚪</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Leave Circle</div>
+                            <div class="setting-description">You'll lose access to this circle</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+
+                <div class="setting-item danger-item">
+                    <div class="setting-header">
+                        <div class="setting-icon">🗑️</div>
+                        <div class="setting-info">
+                            <div class="setting-label">Delete Circle</div>
+                            <div class="setting-description">Permanently delete this circle</div>
+                        </div>
+                        <div class="setting-arrow">›</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="section">
+                <button class="btn">Save Changes</button>
+                <button class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

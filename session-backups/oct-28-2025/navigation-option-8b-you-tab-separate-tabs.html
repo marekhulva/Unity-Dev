@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 8B: You Tab - Separate Public/Private Tabs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section {
+            padding: 30px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .username {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #FFD700;
+        }
+
+        .bio {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .content-tabs {
+            display: flex;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 5px;
+            margin: 0 20px;
+            border-radius: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            margin-top: 20px;
+        }
+
+        .content-tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .content-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.15) 100%);
+            color: #FFD700;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .info-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            color: rgba(255, 215, 0, 0.8);
+            font-weight: 600;
+        }
+
+        .goal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .goal-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .goal-icon {
+            font-size: 20px;
+        }
+
+        .goal-progress {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .consistency-widget {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .consistency-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+
+        .consistency-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .day-cell.completed {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 165, 0, 0.2) 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .day-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+        }
+
+        .day-status {
+            font-size: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000000;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: #FFD700;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+        }
+
+        .privacy-notice {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: rgba(76, 175, 80, 1);
+        }
+
+        .privacy-notice.private {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: rgba(255, 107, 107, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>You</h1>
+    </div>
+
+    <div class="hero-section">
+        <div class="avatar">JD</div>
+        <div class="username">John Doe</div>
+        <div class="bio">Building consistency one day at a time. Focused on health, productivity, and growth.</div>
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value">87%</div>
+                <div class="stat-label">Consistency</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">42</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Active Goals</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Badges</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-tabs">
+        <button class="content-tab active" onclick="showTab('public')">Public</button>
+        <button class="content-tab" onclick="showTab('private')">Private</button>
+        <button class="content-tab" onclick="showTab('stats')">Stats</button>
+    </div>
+
+    <!-- Public Tab -->
+    <div class="tab-content active" id="tab-public">
+        <div class="privacy-notice">
+            🌍 This is what everyone sees on your public profile
+        </div>
+
+        <div class="section-header">
+            Public Goals
+            <span class="info-badge">Visible to all</span>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">Daily Exercise</div>
+                </div>
+                <div class="goal-icon">💪</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85%"></div>
+                </div>
+                <div class="progress-text">85% complete this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">Read Daily</div>
+                </div>
+                <div class="goal-icon">📚</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 71%"></div>
+                </div>
+                <div class="progress-text">71% complete this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">Meditation</div>
+                </div>
+                <div class="goal-icon">🧘</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="progress-text">100% complete this week</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Private Tab -->
+    <div class="tab-content" id="tab-private">
+        <div class="privacy-notice private">
+            🔒 These goals are only visible to you
+        </div>
+
+        <div class="section-header">
+            Private Goals
+            <span class="info-badge">Only you</span>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">Therapy Sessions</div>
+                </div>
+                <div class="goal-icon">🧠</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="progress-text">1/1 sessions this week</div>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">No Social Media Before Noon</div>
+                </div>
+                <div class="goal-icon">📱</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 57%"></div>
+                </div>
+                <div class="progress-text">4/7 days this week</div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 30px;">
+            Private Challenges
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">30 Day Sobriety Challenge</div>
+                </div>
+                <div class="goal-icon">🚫</div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 63%"></div>
+                </div>
+                <div class="progress-text">Day 19/30</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Tab -->
+    <div class="tab-content" id="tab-stats">
+        <div class="consistency-widget">
+            <div class="consistency-value">87%</div>
+            <div class="consistency-label">7-Day Consistency</div>
+            <div class="days-grid">
+                <div class="day-cell completed">
+                    <div class="day-label">Mon</div>
+                    <div class="day-status">✓</div>
+                </div>
+                <div class="day-cell completed">
+                    <div class="day-label">Tue</div>
+                    <div class="day-status">✓</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-label">Wed</div>
+                    <div class="day-status">–</div>
+                </div>
+                <div class="day-cell completed">
+                    <div class="day-label">Thu</div>
+                    <div class="day-status">✓</div>
+                </div>
+                <div class="day-cell completed">
+                    <div class="day-label">Fri</div>
+                    <div class="day-status">✓</div>
+                </div>
+                <div class="day-cell completed">
+                    <div class="day-label">Sat</div>
+                    <div class="day-status">✓</div>
+                </div>
+                <div class="day-cell completed">
+                    <div class="day-label">Sun</div>
+                    <div class="day-status">✓</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">Weekly Breakdown</div>
+
+        <div class="goal-card">
+            <div class="goal-header">
+                <div>
+                    <div class="goal-name">All Goals Combined</div>
+                </div>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 82%"></div>
+                </div>
+                <div class="progress-text">82% average completion</div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 30px;">Badges Earned</div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+            <div style="text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 5px;">🏆</div>
+                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">30 Day Streak</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 5px;">💪</div>
+                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Fitness Master</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 5px;">📚</div>
+                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Bookworm</div>
+            </div>
+            <div style="text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 5px;">🧘</div>
+                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.6);">Zen Master</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item">
+            <div class="nav-icon">👥</div>
+            <div>Social</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">☀️</div>
+            <div>Daily</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">⭕</div>
+            <div>Circle</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-icon">🏆</div>
+            <div>Challenges</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-icon">👤</div>
+            <div>You</div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.content-tab').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstinence Modal - Option A Variations</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .page-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 60px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 50px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 6px;
+  }
+  .option-rec {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.5);
+    margin-bottom: 20px;
+  }
+
+  .phone {
+    width: 360px;
+    height: 720px;
+    background: #000;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overlay-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  .modal {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .modal-inner {
+    padding: 32px 24px 24px;
+  }
+
+  .shield-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+
+  .action-name {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .action-subtitle {
+    font-size: 13px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 24px;
+  }
+
+  .question {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+  }
+
+  .btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .btn-no {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 20px 0;
+  }
+
+  .fake-cards {
+    padding: 20px;
+    opacity: 0.15;
+  }
+  .fake-card {
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .option-desc {
+    max-width: 360px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.7;
+  }
+  .option-desc strong {
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ============================================ */
+  /* V1: CARD-STYLE MEDIA BUTTONS                 */
+  /* ============================================ */
+
+  .v1-media {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .v1-media-btn {
+    flex: 1;
+    padding: 14px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .v1-media-btn:hover {
+    background: rgba(212,175,55,0.08);
+    border-color: rgba(212,175,55,0.15);
+  }
+
+  .v1-media-emoji {
+    font-size: 20px;
+  }
+
+  .v1-media-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .v1-media-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .v1-media-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 1px;
+  }
+
+  /* ============================================ */
+  /* V2: PROMPT-STYLE WITH CTA TEXT               */
+  /* ============================================ */
+
+  .v2-share {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .v2-share-prompt {
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .v2-share-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+  }
+
+  .v2-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .v2-input-placeholder {
+    flex: 1;
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .v2-icons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .v2-icon {
+    font-size: 16px;
+    opacity: 0.4;
+    cursor: pointer;
+  }
+
+  /* ============================================ */
+  /* V3: FULL WIDTH TAPPABLE CARDS                */
+  /* ============================================ */
+
+  .v3-media {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .v3-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .v3-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    margin-bottom: 8px;
+  }
+
+  .v3-btn:hover {
+    background: rgba(212,175,55,0.06);
+    border-color: rgba(212,175,55,0.12);
+  }
+
+  .v3-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(212,175,55,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .v3-btn-text {
+    flex: 1;
+  }
+
+  .v3-btn-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .v3-btn-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 2px;
+  }
+
+  .v3-btn-arrow {
+    font-size: 14px;
+    color: rgba(255,255,255,0.15);
+  }
+</style>
+</head>
+<body>
+
+<h1>OPTION A &mdash; MORE INVITING</h1>
+<p class="page-subtitle">Same clean modal, but the media section actually makes you want to share</p>
+
+<div class="options-grid">
+
+  <!-- V1: CARD-STYLE BUTTONS -->
+  <div class="option-wrapper">
+    <div class="option-label">V1 &mdash; SIDE BY SIDE CARDS</div>
+    <div class="option-rec">COMPACT + CLEAR</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <button class="btn-yes">✦ Yes</button>
+          <button class="btn-no">I didn't stay on track</button>
+
+          <div class="v1-media">
+            <div class="v1-media-btn">
+              <span class="v1-media-emoji">📷</span>
+              <span class="v1-media-text">
+                <span class="v1-media-title">Add photo</span>
+                <span class="v1-media-hint">Share the moment</span>
+              </span>
+            </div>
+            <div class="v1-media-btn">
+              <span class="v1-media-emoji">✏️</span>
+              <span class="v1-media-text">
+                <span class="v1-media-title">Add note</span>
+                <span class="v1-media-hint">How did it go?</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Two tappable cards</strong> with emoji + title + hint text. The hints ("Share the moment", "How did it go?") make it feel personal without being pushy.
+    </div>
+  </div>
+
+  <!-- V2: INSTAGRAM-STYLE INPUT ROW -->
+  <div class="option-wrapper">
+    <div class="option-label">V2 &mdash; COMPOSER ROW</div>
+    <div class="option-rec">FAMILIAR PATTERN</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <button class="btn-yes">✦ Yes</button>
+          <button class="btn-no">I didn't stay on track</button>
+
+          <div class="v2-share">
+            <div class="v2-share-prompt">Share with your circle</div>
+            <div class="v2-share-row">
+              <div class="v2-avatar">🧔</div>
+              <span class="v2-input-placeholder">How did it go today?</span>
+              <div class="v2-icons">
+                <span class="v2-icon">📷</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Instagram/social-style input.</strong> User avatar + placeholder text + camera icon. "Share with your circle" prompt. Feels natural — everyone knows this pattern. Tapping opens full composer.
+    </div>
+  </div>
+
+  <!-- V3: STACKED FULL-WIDTH -->
+  <div class="option-wrapper">
+    <div class="option-label">V3 &mdash; STACKED ROWS</div>
+    <div class="option-rec">MOST INVITING</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <button class="btn-yes">✦ Yes</button>
+          <button class="btn-no">I didn't stay on track</button>
+
+          <div class="v3-media">
+            <div class="v3-label">Share your progress</div>
+            <div class="v3-btn">
+              <div class="v3-btn-icon">📷</div>
+              <div class="v3-btn-text">
+                <div class="v3-btn-title">Add a photo</div>
+                <div class="v3-btn-desc">Show what your day looked like</div>
+              </div>
+              <div class="v3-btn-arrow">›</div>
+            </div>
+            <div class="v3-btn">
+              <div class="v3-btn-icon">✏️</div>
+              <div class="v3-btn-text">
+                <div class="v3-btn-title">Write a note</div>
+                <div class="v3-btn-desc">Reflect on how today went</div>
+              </div>
+              <div class="v3-btn-arrow">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Full-width stacked rows</strong> with icon, title, description, and arrow. Most surface area = most inviting. Descriptions give context ("Show what your day looked like", "Reflect on how today went").
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

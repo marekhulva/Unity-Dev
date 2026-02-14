@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstinence Modal - CTO/CPO Picks</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .page-subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 60px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 50px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 6px;
+  }
+  .option-rec {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(212,175,55,0.5);
+    margin-bottom: 20px;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 360px;
+    height: 700px;
+    background: #000;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .overlay-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  .modal {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .modal-inner {
+    padding: 32px 24px 24px;
+  }
+
+  .shield-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 36px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+  }
+
+  .action-name {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .action-subtitle {
+    font-size: 13px;
+    text-align: center;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 24px;
+  }
+
+  .question {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+  }
+
+  .divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 20px 0;
+  }
+
+  .fake-cards {
+    padding: 20px;
+    opacity: 0.15;
+  }
+  .fake-card {
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+
+  .option-desc {
+    max-width: 360px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.7;
+  }
+  .option-desc strong {
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+  }
+  .option-desc .pro { color: rgba(0,200,100,0.7); }
+  .option-desc .con { color: rgba(255,100,100,0.6); }
+
+  /* ============================================ */
+  /* OPTION A: INLINE ICONS - ALWAYS VISIBLE      */
+  /* ============================================ */
+
+  .opt-a .btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .opt-a .btn-no {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+
+  .opt-a .media-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .opt-a .media-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .opt-a .media-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ============================================ */
+  /* OPTION B: TWO-STEP - YES THEN EXPAND         */
+  /* ============================================ */
+
+  .opt-b .btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .opt-b .btn-no {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* EXPANDED STATE after tapping Yes */
+  .opt-b-expanded .check-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .opt-b-expanded .check-circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #D4AF37;
+  }
+
+  .opt-b-expanded .check-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+  }
+
+  .opt-b-expanded .add-section-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .opt-b-expanded .media-options {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .opt-b-expanded .media-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+  }
+
+  .opt-b-expanded .btn-done {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .opt-b-expanded .btn-skip {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
+  /* ============================================ */
+  /* OPTION C: ALL IN ONE - COMPACT               */
+  /* ============================================ */
+
+  .opt-c .btn-yes {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .opt-c .btn-yes-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+  }
+
+  .opt-c .btn-yes-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(212,175,55,0.2);
+  }
+
+  .opt-c .btn-yes-icons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .opt-c .btn-yes-icon {
+    font-size: 15px;
+    opacity: 0.5;
+    cursor: pointer;
+  }
+
+  .opt-c .btn-no {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    cursor: pointer;
+  }
+
+  .opt-c .btn-no-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .opt-c .btn-no-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .opt-c .btn-no-icons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .opt-c .btn-no-icon {
+    font-size: 14px;
+    opacity: 0.2;
+    cursor: pointer;
+  }
+
+  /* Arrow flow labels */
+  .flow-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.15);
+    margin: 30px 0 10px;
+  }
+  .flow-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+<body>
+
+<h1>ABSTINENCE MODAL</h1>
+<p class="page-subtitle">
+  The goal: keep the clean look of the initial modal, but give users the option to add a photo or comment — whether they stayed on track or not.
+</p>
+
+<div class="options-grid">
+
+  <!-- OPTION A: INLINE ICONS ALWAYS VISIBLE -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION A &mdash; SUBTLE ICONS</div>
+    <div class="option-rec">ONE SCREEN, ALWAYS VISIBLE</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal opt-a">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <button class="btn-yes">✦ Yes</button>
+          <button class="btn-no">I didn't stay on track</button>
+
+          <div class="media-row">
+            <div style="text-align:center">
+              <div class="media-icon">📷</div>
+              <div class="media-label">Photo</div>
+            </div>
+            <div style="text-align:center">
+              <div class="media-icon">💬</div>
+              <div class="media-label">Note</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Single screen.</strong> Photo and Note icons sit below the buttons — quiet but always there. Tapping one opens camera or text input before confirming.<br><br>
+      <span class="pro">+ Fastest flow. One tap = done.</span><br>
+      <span class="pro">+ Everything visible upfront.</span><br>
+      <span class="con">- Slightly busier than pure State 1.</span>
+    </div>
+  </div>
+
+  <!-- OPTION B: TWO-STEP EXPAND -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION B &mdash; TWO-STEP</div>
+    <div class="option-rec">CTO RECOMMENDATION</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+
+      <!-- First: initial clean modal (faded up) -->
+      <div style="position:absolute; left:20px; right:20px; top: 40px; z-index:2; border-radius:24px; overflow:hidden; background:#0A0A0A; border:1px solid rgba(255,255,255,0.04); opacity: 0.3; transform: scale(0.92);">
+        <div class="modal-inner opt-b" style="padding: 24px 20px 20px;">
+          <div class="shield-icon" style="width:56px;height:56px;font-size:24px;margin-bottom:14px;">🛡️</div>
+          <div class="action-name" style="font-size:18px;margin-bottom:3px;">Social Media</div>
+          <div class="action-subtitle" style="margin-bottom:16px;">No</div>
+          <div class="question" style="font-size:13px;margin-bottom:16px;">Did you stay on track today?</div>
+          <button class="btn-yes" style="padding:12px;font-size:13px;margin-bottom:8px;">✦ Yes</button>
+          <button class="btn-no" style="padding:10px;font-size:12px;">I didn't stay on track</button>
+        </div>
+      </div>
+
+      <!-- Then: expanded state -->
+      <div style="position:absolute; left:20px; right:20px; top: 50%; transform: translateY(-50%); z-index:3; border-radius:24px; overflow:hidden; background:#0A0A0A; border:1px solid rgba(255,255,255,0.06);">
+        <div class="modal-inner opt-b-expanded">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle" style="margin-bottom:12px;">No</div>
+
+          <div class="check-row">
+            <div class="check-circle">✓</div>
+            <div class="check-text">Stayed on track</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="add-section-label">Want to add anything?</div>
+
+          <div class="media-options">
+            <div class="media-btn">📷 Photo</div>
+            <div class="media-btn">💬 Note</div>
+          </div>
+
+          <button class="btn-done">Done</button>
+          <button class="btn-skip">Skip</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Two steps.</strong> First screen is clean (yes/no). After tapping Yes, it transitions to "Want to add anything?" with photo/note options. Skip button lets you bail instantly.<br><br>
+      <span class="pro">+ Cleanest initial screen.</span><br>
+      <span class="pro">+ Media feels optional, not forced.</span><br>
+      <span class="pro">+ "Want to add anything?" is clear.</span><br>
+      <span class="con">- Two taps minimum to finish.</span>
+    </div>
+  </div>
+
+  <!-- OPTION C: INTEGRATED BUTTONS -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION C &mdash; INTEGRATED</div>
+    <div class="option-rec">CLEANEST SINGLE SCREEN</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal opt-c">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">Social Media</div>
+          <div class="action-subtitle">No</div>
+          <div class="question">Did you stay on track today?</div>
+
+          <div class="btn-yes">
+            <span class="btn-yes-text">✦ Yes</span>
+            <span class="btn-yes-divider"></span>
+            <span class="btn-yes-icons">
+              <span class="btn-yes-icon">📷</span>
+              <span class="btn-yes-icon">💬</span>
+            </span>
+          </div>
+
+          <div class="btn-no">
+            <span class="btn-no-text">I didn't stay on track</span>
+            <span class="btn-no-divider"></span>
+            <span class="btn-no-icons">
+              <span class="btn-no-icon">📷</span>
+              <span class="btn-no-icon">💬</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Icons inside the buttons.</strong> Each button has a divider + photo/note icons on the right. Tapping the text = confirm only. Tapping an icon = confirm + open that media type.<br><br>
+      <span class="pro">+ Single screen, no extra steps.</span><br>
+      <span class="pro">+ Media discoverable but not pushy.</span><br>
+      <span class="con">- Buttons are wider/busier.</span><br>
+      <span class="con">- Tap targets might feel cramped on phone.</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Challenges - Fitness Warriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .challenges-page {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .page-header {
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+        .filter-tab {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .filter-tab.active {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        /* Section */
+        .section {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .section-count {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Challenge Card */
+        .challenge-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .challenge-card:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateY(-2px);
+        }
+
+        .challenge-image {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+        }
+        .challenge-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+        .challenge-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 40px 15px 12px;
+        }
+        .challenge-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .challenge-creator {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .challenge-info {
+            padding: 15px;
+        }
+        .challenge-description {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+        }
+        .stat-icon {
+            font-size: 14px;
+        }
+        .stat-value {
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        .challenge-progress {
+            margin-top: 12px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+        .progress-label {
+            color: rgba(255,255,255,0.6);
+        }
+        .progress-value {
+            color: #E7B43A;
+            font-weight: 700;
+        }
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #E7B43A, #FFD700);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .challenge-footer {
+            display: flex;
+            gap: 10px;
+            padding: 0 15px 15px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(231,180,58,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Completed Badge */
+        .completed-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(34,197,94,0.9);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+        .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.8);
+        }
+        .empty-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+            line-height: 1.5;
+        }
+
+        /* Create FAB */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(231,180,58,0.5);
+            transition: all 0.3s ease;
+        }
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Circle Challenges</h1>
+
+        <div class="challenges-page">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="header-subtitle">Fitness Warriors Challenges</div>
+
+                <div class="filter-tabs">
+                    <div class="filter-tab active">All</div>
+                    <div class="filter-tab">Active</div>
+                    <div class="filter-tab">Upcoming</div>
+                    <div class="filter-tab">Completed</div>
+                </div>
+            </div>
+
+            <!-- Active Challenges -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Active Now</div>
+                    <div class="section-count">3 challenges</div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <div class="challenge-badge">🔥 5 days left</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">30-Day Meditation Journey</div>
+                            <div class="challenge-creator">Created by Sarah M.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Commit to daily meditation practice for 30 days. Build a lasting mindfulness habit together.
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">24</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">500</span> pts
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📅</span>
+                                <span>25 days left</span>
+                            </div>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Your Progress</span>
+                                <span class="progress-value">5/30 days</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 17%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-primary">Log Today</button>
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <div class="challenge-badge">🔥 12 days left</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">100 Push-Ups Challenge</div>
+                            <div class="challenge-creator">Created by Mike T.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Work up to 100 push-ups in a single session through progressive training.
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">18</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">300</span> pts
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📅</span>
+                                <span>18 days left</span>
+                            </div>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Your Progress</span>
+                                <span class="progress-value">12/30 days</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-primary">Log Today</button>
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <div class="challenge-badge">🔥 20 days left</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">10K Steps Daily</div>
+                            <div class="challenge-creator">Created by Alex R.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Walk 10,000 steps every day for a month. Stay active and build consistency!
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">31</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">400</span> pts
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📅</span>
+                                <span>10 days left</span>
+                            </div>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Your Progress</span>
+                                <span class="progress-value">20/30 days</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-primary">Log Today</button>
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Challenges -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Starting Soon</div>
+                    <div class="section-count">2 challenges</div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                        <div class="challenge-badge">📅 Starts in 3 days</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">Hydration Challenge</div>
+                            <div class="challenge-creator">Created by Emma L.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Drink 8 glasses of water daily for 21 days. Stay hydrated, stay healthy!
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">15</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">250</span> pts
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📅</span>
+                                <span>Starts Oct 22</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-primary">Join Challenge</button>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+                        <div class="challenge-badge">📅 Starts in 1 week</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">Morning Yoga Streak</div>
+                            <div class="challenge-creator">Created by Lisa P.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Start your day with 15 minutes of yoga. 30 days of mindful mornings.
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">22</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">450</span> pts
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📅</span>
+                                <span>Starts Nov 1</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-primary">Join Challenge</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Completed Challenges -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">Completed</div>
+                    <div class="section-count">1 challenge</div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-image" style="background: linear-gradient(135deg, #30cfd0, #330867);">
+                        <div class="completed-stamp">✓ COMPLETED</div>
+                        <div class="challenge-overlay">
+                            <div class="challenge-title">21-Day Reading Habit</div>
+                            <div class="challenge-creator">Created by Alex R.</div>
+                        </div>
+                    </div>
+                    <div class="challenge-info">
+                        <div class="challenge-description">
+                            Read for at least 20 minutes every day for 21 days straight.
+                        </div>
+                        <div class="challenge-stats">
+                            <div class="stat-item">
+                                <span class="stat-icon">👥</span>
+                                <span class="stat-value">28</span> joined
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚡</span>
+                                <span class="stat-value">+350</span> pts earned
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">✓</span>
+                                <span>Finished Oct 10</span>
+                            </div>
+                        </div>
+                        <div class="challenge-progress">
+                            <div class="progress-header">
+                                <span class="progress-label">Your Progress</span>
+                                <span class="progress-value">21/21 days</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-footer">
+                        <button class="btn btn-secondary">View Results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Challenge FAB -->
+        <div class="fab">+</div>
+    </div>
+</body>
+</html>

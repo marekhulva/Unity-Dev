@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Simplification - Option 2: Two Tabs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: #000;
+            padding: 20px 0 0;
+            z-index: 10;
+        }
+        .circle-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .circle-emoji {
+            font-size: 32px;
+        }
+        .circle-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .circle-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(231,180,58,0.3);
+            background: rgba(231,180,58,0.1);
+            color: #E7B43A;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(231,180,58,0.2);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        .content {
+            padding-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #E7B43A;
+        }
+
+        .view-all {
+            font-size: 13px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Leaderboard Podium */
+        .podium {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 20px 0;
+        }
+
+        .podium-place {
+            text-align: center;
+            flex: 1;
+        }
+
+        .podium-place.first {
+            order: 2;
+        }
+        .podium-place.second {
+            order: 1;
+        }
+        .podium-place.third {
+            order: 3;
+        }
+
+        .podium-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #E7B43A 0%, rgba(231,180,58,0.3) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 8px;
+        }
+
+        .podium-place.first .podium-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+        }
+
+        .podium-medal {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .podium-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .podium-points {
+            font-size: 11px;
+            color: #E7B43A;
+            font-weight: 600;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .activity-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .activity-content {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 8px;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Challenges & Members Combined View */
+        .combined-section {
+            margin-bottom: 24px;
+        }
+
+        .challenge-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .challenge-emoji {
+            font-size: 32px;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .challenge-meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 8px;
+        }
+
+        .challenge-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        /* Member List */
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .member-stats {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .member-role-badge {
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        .label {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #E7B43A;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        .tab-note {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="label">OPTION 2: Two Tabs</div>
+
+    <div class="header">
+        <div class="circle-name">
+            <div class="circle-emoji">⚡</div>
+            <div class="circle-title">Warriors</div>
+        </div>
+        <div class="circle-actions">
+            <button class="btn">Invite</button>
+            <button class="btn">Settings</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active">Overview</div>
+            <div class="tab">Community</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- TAB 1: OVERVIEW -->
+        <!-- Shows: Stats, Top 3 Leaderboard, Active Challenges, Recent Activity -->
+
+        <div class="section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Members</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Challenges</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">342</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">🏆 Top 3</div>
+            </div>
+            <div class="podium">
+                <div class="podium-place second">
+                    <div class="podium-medal">🥈</div>
+                    <div class="podium-avatar">M</div>
+                    <div class="podium-name">Maria</div>
+                    <div class="podium-points">2,450 pts</div>
+                </div>
+                <div class="podium-place first">
+                    <div class="podium-medal">🥇</div>
+                    <div class="podium-avatar">J</div>
+                    <div class="podium-name">John</div>
+                    <div class="podium-points">3,120 pts</div>
+                </div>
+                <div class="podium-place third">
+                    <div class="podium-medal">🥉</div>
+                    <div class="podium-avatar">S</div>
+                    <div class="podium-name">Sarah</div>
+                    <div class="podium-points">2,180 pts</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">🎯 Active Challenges</div>
+            </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-emoji">🧊</div>
+                    <div>
+                        <div class="challenge-title">7-Day Cold Shower</div>
+                        <div class="challenge-meta">32 participants • 5 days left</div>
+                    </div>
+                </div>
+                <div class="challenge-badge">🔥 Active</div>
+            </div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <div class="challenge-emoji">📖</div>
+                    <div>
+                        <div class="challenge-title">Read 30 Minutes Daily</div>
+                        <div class="challenge-meta">28 participants • 12 days left</div>
+                    </div>
+                </div>
+                <div class="challenge-badge">🔥 Active</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">📱 Recent Activity</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-header">
+                    <div class="activity-avatar">J</div>
+                    <div class="activity-name">John completed Cold Shower 🧊</div>
+                </div>
+                <div class="activity-content">Day 5/7 complete! Feeling unstoppable 💪</div>
+                <div class="activity-stats">
+                    <span>❤️ 12</span>
+                    <span>💬 3</span>
+                    <span>2 hours ago</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-header">
+                    <div class="activity-avatar">M</div>
+                    <div class="activity-name">Maria completed Morning Run 🏃</div>
+                </div>
+                <div class="activity-content">5K done before sunrise ☀️</div>
+                <div class="activity-stats">
+                    <span>❤️ 8</span>
+                    <span>💬 1</span>
+                    <span>5 hours ago</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2 PREVIEW -->
+        <div style="border-top: 2px dashed rgba(231,180,58,0.3); padding-top: 24px; margin-top: 24px;">
+            <div class="tab-note">
+                👆 Tap "Community" tab above to see:<br>
+                • All Challenges (with filters)<br>
+                • Full Member List<br>
+                • Complete Leaderboard
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 80px;"></div>
+</body>
+</html>

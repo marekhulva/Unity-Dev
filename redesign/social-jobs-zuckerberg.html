@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity Social — Jobs × Zuckerberg Vision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #D4AF37;
+    --gold-light: #E7C455;
+    --gold-dim: rgba(212, 175, 55, 0.15);
+    --gold-glow: rgba(212, 175, 55, 0.4);
+    --black-pure: #000000;
+    --black-soft: #0A0A0A;
+    --black-card: #111111;
+    --black-elevated: #1A1A1A;
+    --white: #FFFFFF;
+    --white-80: rgba(255,255,255,0.8);
+    --white-60: rgba(255,255,255,0.6);
+    --white-40: rgba(255,255,255,0.4);
+    --white-20: rgba(255,255,255,0.2);
+    --white-10: rgba(255,255,255,0.1);
+    --white-06: rgba(255,255,255,0.06);
+    --white-03: rgba(255,255,255,0.03);
+    --green: #00FF88;
+    --green-dim: rgba(0, 255, 136, 0.15);
+    --blue: #00D4FF;
+    --blue-dim: rgba(0, 212, 255, 0.12);
+    --purple: #B366FF;
+    --red-fire: #FF6B35;
+  }
+
+  body {
+    background: #000;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== iPhone Frame ===== */
+  .phone-frame {
+    width: 393px;
+    height: 852px;
+    background: var(--black-pure);
+    border-radius: 50px;
+    border: 3px solid #2A2A2A;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 25px 80px rgba(0,0,0,0.8),
+      0 0 120px rgba(212, 175, 55, 0.05);
+  }
+
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1A1A1A;
+    border-radius: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .dynamic-island .camera {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0D0D1A;
+    border: 1.5px solid #1E1E2E;
+  }
+
+  /* Screen Content */
+  .screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 60px;
+    padding-bottom: 90px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ===== STATUS BAR ===== */
+  .status-bar {
+    position: absolute;
+    top: 14px;
+    left: 32px;
+    right: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .status-bar .time { letter-spacing: 0.5px; }
+  .status-bar .icons { display: flex; gap: 5px; align-items: center; }
+  .status-bar .icons svg { width: 16px; height: 16px; }
+
+  /* ===== HEADER — Jobs: Typography IS the brand ===== */
+  .header {
+    padding: 8px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #C49B30);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .header-action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--white-06);
+    border: 1px solid var(--white-06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .header-action-btn:hover {
+    background: var(--white-10);
+    border-color: var(--white-10);
+  }
+  .header-action-btn svg { width: 18px; height: 18px; color: var(--white-60); }
+  .notification-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--black-pure);
+  }
+
+  /* ===== PRESENCE ROW — Zuckerberg: Who's active NOW ===== */
+  .presence-row {
+    padding: 16px 0 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    display: flex;
+    gap: 0;
+  }
+  .presence-row::-webkit-scrollbar { display: none; }
+  .presence-inner {
+    display: flex;
+    gap: 16px;
+    padding: 0 24px;
+  }
+  .presence-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    min-width: 64px;
+  }
+  .presence-avatar-ring {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .presence-avatar-ring.has-update {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+    padding: 2.5px;
+  }
+  .presence-avatar-ring.no-update {
+    background: var(--white-10);
+    padding: 2.5px;
+  }
+  .presence-avatar-ring.self {
+    background: transparent;
+    border: 2px dashed var(--white-20);
+    padding: 0;
+  }
+  .presence-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--black-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    position: relative;
+  }
+  .presence-avatar-ring.self .presence-avatar {
+    width: 49px;
+    height: 49px;
+  }
+  .presence-online {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 2.5px solid var(--black-pure);
+  }
+  .presence-add {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2.5px solid var(--black-pure);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    line-height: 1;
+  }
+  .presence-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--white-60);
+    max-width: 64px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .presence-item.self .presence-name { color: var(--white-40); }
+
+  /* Divider line */
+  .section-divider {
+    height: 1px;
+    margin: 0 24px;
+    background: linear-gradient(90deg, transparent, var(--white-06), transparent);
+  }
+
+  /* ===== CONTEXT SWITCHER — Jobs: Simple choices ===== */
+  .context-switcher {
+    padding: 14px 24px 8px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .context-switcher::-webkit-scrollbar { display: none; }
+  .context-pill {
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid transparent;
+  }
+  .context-pill.active {
+    background: var(--white);
+    color: var(--black-pure);
+  }
+  .context-pill:not(.active) {
+    background: var(--white-06);
+    color: var(--white-60);
+    border-color: var(--white-06);
+  }
+  .context-pill:not(.active):hover {
+    background: var(--white-10);
+    color: var(--white-80);
+  }
+  .context-pill .pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* ===== COMPOSER — Jobs: Inviting simplicity ===== */
+  .composer {
+    margin: 12px 20px;
+    padding: 14px 16px;
+    background: var(--white-03);
+    border: 1px solid var(--white-06);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .composer:hover {
+    background: var(--white-06);
+    border-color: var(--white-10);
+  }
+  .composer-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2A1F3D, #1A1520);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .composer-text {
+    font-size: 14px;
+    color: var(--white-40);
+    flex: 1;
+  }
+  .composer-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .composer-action {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: background 0.2s;
+  }
+  .composer-action:hover { background: var(--white-06); }
+  .composer-action svg { width: 18px; height: 18px; color: var(--white-40); }
+
+  /* ===== MOMENTUM BANNER — Jobs: Delight × Zuck: Social proof ===== */
+  .momentum-banner {
+    margin: 8px 20px 16px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.03));
+    border: 1px solid rgba(212,175,55,0.15);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .momentum-banner::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(212,175,55,0.08), transparent 70%);
+    border-radius: 50%;
+  }
+  .momentum-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .momentum-content { flex: 1; position: relative; z-index: 1; }
+  .momentum-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 2px;
+  }
+  .momentum-sub {
+    font-size: 12px;
+    color: var(--white-60);
+    line-height: 1.4;
+  }
+  .momentum-sub strong { color: var(--gold-light); font-weight: 600; }
+  .momentum-avatars {
+    display: flex;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .momentum-avatars .m-av {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--black-card);
+    border: 2px solid rgba(212,175,55,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    margin-left: -8px;
+  }
+  .momentum-avatars .m-av:first-child { margin-left: 0; }
+  .momentum-avatars .m-av.count {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(212,175,55,0.1);
+  }
+
+  /* ===== FEED ===== */
+  .feed {
+    padding: 0 0 20px;
+  }
+
+  /* ===== POST CARD — The Fusion ===== */
+  /* Jobs: Every element has purpose. Breathing room. Typography hierarchy. */
+  /* Zuckerberg: Engagement hooks. Social proof. Low friction reactions. */
+  .post-card {
+    margin: 0 20px 2px;
+    padding: 20px;
+    background: var(--black-soft);
+    border: 1px solid var(--white-06);
+    border-radius: 24px;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .post-card:hover {
+    border-color: var(--white-10);
+  }
+
+  /* Post Header */
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .post-avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .post-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: var(--black-elevated);
+  }
+  .post-avatar.streak-ring {
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 12px rgba(212,175,55,0.2);
+  }
+  .streak-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background: linear-gradient(135deg, #FF6B35, #FF4500);
+    font-size: 9px;
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 8px;
+    border: 2px solid var(--black-soft);
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+  }
+  .post-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .post-user-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .post-username {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .post-goal-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+  }
+  .post-time {
+    font-size: 12px;
+    color: var(--white-40);
+    margin-top: 1px;
+  }
+  .post-more {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--white-40);
+    transition: background 0.2s;
+  }
+  .post-more:hover { background: var(--white-06); }
+
+  /* Post Content */
+  .post-content {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--white-80);
+    margin-bottom: 14px;
+    letter-spacing: 0.1px;
+  }
+  .post-content strong { color: var(--white); font-weight: 600; }
+
+  /* Check-in Card — Jobs: Celebrate achievement elegantly */
+  .checkin-card {
+    margin-bottom: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .checkin-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background: linear-gradient(135deg, currentColor, transparent 60%);
+  }
+  .checkin-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .checkin-info { flex: 1; }
+  .checkin-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    margin-bottom: 2px;
+  }
+  .checkin-action {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .checkin-check {
+    font-size: 18px;
+  }
+
+  /* Photo in post */
+  .post-photo {
+    width: 100%;
+    height: 220px;
+    border-radius: 16px;
+    margin-bottom: 14px;
+    object-fit: cover;
+    background: linear-gradient(135deg, #1a1520, #0D1117, #1a1520);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white-20);
+    font-size: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .post-photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
+  }
+
+  /* Engagement Row — Zuckerberg: Social proof drives engagement */
+  .engagement-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .engagement-faces {
+    display: flex;
+    margin-right: 6px;
+  }
+  .engagement-faces .e-face {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--black-elevated);
+    border: 2px solid var(--black-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    margin-left: -6px;
+  }
+  .engagement-faces .e-face:first-child { margin-left: 0; }
+  .engagement-text {
+    font-size: 12px;
+    color: var(--white-40);
+  }
+  .engagement-text strong {
+    color: var(--white-60);
+    font-weight: 600;
+  }
+
+  /* Action Bar — Jobs: Clear, confident actions */
+  .action-bar {
+    display: flex;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--white-06);
+    gap: 4px;
+  }
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white-60);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    border: none;
+    outline: none;
+  }
+  .action-btn:hover {
+    background: var(--white-06);
+    color: var(--white-80);
+  }
+  .action-btn.active {
+    color: var(--red-fire);
+  }
+  .action-btn.active:hover {
+    background: rgba(255,107,53,0.1);
+  }
+  .action-btn svg { width: 18px; height: 18px; }
+  .action-spacer { flex: 1; }
+
+  /* ===== LIVING PROGRESS CARD — Jobs: Data as art ===== */
+  .progress-card {
+    margin: 0 20px 2px;
+    padding: 20px;
+    background: var(--black-soft);
+    border: 1px solid var(--white-06);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-card.perfect-day {
+    border-color: rgba(212,175,55,0.2);
+  }
+  .progress-card.perfect-day::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .progress-card.perfect-day::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 60px;
+    background: radial-gradient(ellipse at top, rgba(212,175,55,0.08), transparent);
+  }
+  .progress-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .progress-ring-wrapper {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+  .progress-ring-bg {
+    position: absolute;
+    inset: 0;
+  }
+  .progress-ring-bg circle {
+    fill: none;
+    stroke: var(--white-06);
+    stroke-width: 3;
+  }
+  .progress-ring-fill {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+  .progress-ring-fill circle {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 132;
+    transition: stroke-dashoffset 1s ease;
+  }
+  .progress-avatar-inner {
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    background: var(--black-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .progress-info { flex: 1; }
+  .progress-user {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .progress-subtitle {
+    font-size: 12px;
+    color: var(--white-40);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 1px;
+  }
+  .progress-subtitle .perfect-badge {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Action Tiles */
+  .action-tiles {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .action-tile {
+    flex: 1;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--white-03);
+    border: 1px solid var(--white-06);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .action-tile.completed::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--green);
+  }
+  .action-tile-emoji {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .action-tile-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--white-60);
+    line-height: 1.3;
+  }
+  .action-tile-check {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 10px;
+  }
+
+  /* Progress action bar */
+  .progress-footer {
+    display: flex;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--white-06);
+    position: relative;
+    z-index: 1;
+  }
+  .progress-stat {
+    font-size: 12px;
+    color: var(--white-40);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .progress-stat strong {
+    color: var(--gold-light);
+    font-weight: 700;
+  }
+
+  /* ===== CELEBRATION POST — Jobs: Moments of delight ===== */
+  .celebration-card {
+    margin: 0 20px 2px;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212,175,55,0.2);
+  }
+  .celebration-bg {
+    background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(0,0,0,0.95) 40%, rgba(212,175,55,0.04));
+    padding: 24px 20px;
+    position: relative;
+  }
+  .celebration-bg::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -30px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(212,175,55,0.06), transparent 65%);
+    border-radius: 50%;
+  }
+  .celebration-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .celebration-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(212,175,55,0.2), var(--black-card));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px rgba(212,175,55,0.3);
+  }
+  .celebration-meta { flex: 1; }
+  .celebration-user {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .celebration-milestone {
+    font-size: 12px;
+    color: var(--gold-light);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .celebration-body {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 12px 0 8px;
+  }
+  .celebration-number {
+    font-size: 56px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), #C49B30);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -2px;
+  }
+  .celebration-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white-60);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  .celebration-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .celebration-react-btn {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    outline: none;
+  }
+  .celebration-react-btn.primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #000;
+  }
+  .celebration-react-btn.secondary {
+    background: var(--white-06);
+    color: var(--white-60);
+    border: 1px solid var(--white-10);
+  }
+
+  /* ===== COMMENT PREVIEW — Zuckerberg: Drive conversation ===== */
+  .comment-preview {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--white-06);
+  }
+  .comment-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .comment-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--black-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .comment-bubble {
+    background: var(--white-03);
+    padding: 8px 12px;
+    border-radius: 14px;
+    border-top-left-radius: 4px;
+    flex: 1;
+  }
+  .comment-user {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--white-80);
+  }
+  .comment-text {
+    font-size: 13px;
+    color: var(--white-60);
+    line-height: 1.4;
+    margin-top: 1px;
+  }
+  .comment-more {
+    font-size: 12px;
+    color: var(--white-40);
+    margin-top: 8px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* Inline comment input */
+  .comment-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .comment-input-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--black-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+  .comment-input {
+    flex: 1;
+    background: var(--white-03);
+    border: 1px solid var(--white-06);
+    border-radius: 100px;
+    padding: 7px 14px;
+    font-size: 12px;
+    color: var(--white-40);
+  }
+
+  /* ===== SUGGESTED SECTION — Zuck: Growth loops ===== */
+  .suggestion-section {
+    margin: 16px 20px;
+    padding: 16px;
+    background: var(--white-03);
+    border: 1px solid var(--white-06);
+    border-radius: 20px;
+  }
+  .suggestion-header {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--white-60);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .suggestion-cards {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .suggestion-cards::-webkit-scrollbar { display: none; }
+  .suggestion-card {
+    min-width: 140px;
+    padding: 14px;
+    background: var(--black-card);
+    border: 1px solid var(--white-06);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .suggestion-card:hover {
+    border-color: var(--white-20);
+    transform: translateY(-1px);
+  }
+  .suggestion-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--black-elevated);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .suggestion-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+  .suggestion-shared {
+    font-size: 11px;
+    color: var(--white-40);
+  }
+  .suggestion-follow-btn {
+    padding: 6px 18px;
+    border-radius: 100px;
+    background: var(--white);
+    color: #000;
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .suggestion-follow-btn:hover {
+    transform: scale(1.03);
+  }
+
+  /* ===== TAB BAR — Jobs: Clarity of purpose ===== */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 84px;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--white-06);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    padding-bottom: 28px;
+    z-index: 50;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tab-icon svg {
+    width: 22px;
+    height: 22px;
+    color: var(--white-40);
+    transition: color 0.2s;
+  }
+  .tab-item.active .tab-icon svg { color: var(--gold); }
+  .tab-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--white-40);
+    transition: color 0.2s;
+  }
+  .tab-item.active .tab-label { color: var(--gold); }
+  .tab-dot {
+    position: absolute;
+    top: -4px;
+    right: 50%;
+    transform: translateX(14px);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  /* ===== SPACING UTILITY ===== */
+  .gap-8 { height: 8px; }
+  .gap-12 { height: 12px; }
+
+  /* ===== DESIGN NOTES PANEL ===== */
+  .design-notes {
+    max-width: 500px;
+    margin-left: 60px;
+    padding: 40px 0;
+  }
+  .design-notes h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .design-notes h1 span {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .design-notes .subtitle {
+    font-size: 16px;
+    color: var(--white-60);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .design-notes h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    margin-top: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .design-notes h2 .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .design-notes .principle {
+    padding: 16px;
+    background: var(--white-03);
+    border: 1px solid var(--white-06);
+    border-radius: 16px;
+    margin-bottom: 10px;
+  }
+  .design-notes .principle h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--white-80);
+  }
+  .design-notes .principle p {
+    font-size: 13px;
+    color: var(--white-40);
+    line-height: 1.5;
+  }
+  .design-notes .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+  .tag.jobs { background: rgba(0, 122, 255, 0.15); color: #5AC8FA; }
+  .tag.zuck { background: rgba(24, 119, 242, 0.15); color: #5B9DFF; }
+  .tag.both { background: rgba(212,175,55,0.15); color: var(--gold-light); }
+
+  @media (max-width: 900px) {
+    body { flex-direction: column; align-items: center; }
+    .design-notes { margin-left: 0; margin-top: 40px; max-width: 393px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== PHONE MOCKUP ===== -->
+<div class="phone-frame">
+  <div class="dynamic-island"><div class="camera"></div></div>
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <span class="icons">
+      <svg viewBox="0 0 24 24" fill="white"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+      <svg viewBox="0 0 24 24" fill="white"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+    </span>
+  </div>
+
+  <div class="screen">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-logo">Unity</div>
+      <div class="header-actions">
+        <div class="header-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div class="header-action-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notification-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presence Row: Who's active now -->
+    <div class="presence-row">
+      <div class="presence-inner">
+        <div class="presence-item self">
+          <div class="presence-avatar-ring self">
+            <div class="presence-avatar">
+              🧔
+              <div class="presence-add">+</div>
+            </div>
+          </div>
+          <span class="presence-name">Your day</span>
+        </div>
+        <div class="presence-item">
+          <div class="presence-avatar-ring has-update">
+            <div class="presence-avatar">
+              👩‍🎨
+              <div class="presence-online"></div>
+            </div>
+          </div>
+          <span class="presence-name">Sarah</span>
+        </div>
+        <div class="presence-item">
+          <div class="presence-avatar-ring has-update">
+            <div class="presence-avatar">💪</div>
+          </div>
+          <span class="presence-name">Marcus</span>
+        </div>
+        <div class="presence-item">
+          <div class="presence-avatar-ring no-update">
+            <div class="presence-avatar">
+              🧘‍♀️
+              <div class="presence-online"></div>
+            </div>
+          </div>
+          <span class="presence-name">Priya</span>
+        </div>
+        <div class="presence-item">
+          <div class="presence-avatar-ring has-update">
+            <div class="presence-avatar">🎸</div>
+          </div>
+          <span class="presence-name">Alex</span>
+        </div>
+        <div class="presence-item">
+          <div class="presence-avatar-ring no-update">
+            <div class="presence-avatar">📚</div>
+          </div>
+          <span class="presence-name">Jordan</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Context Switcher -->
+    <div class="context-switcher">
+      <div class="context-pill active">All</div>
+      <div class="context-pill">Following</div>
+      <div class="context-pill">Mindful AM<span class="pill-count">3</span></div>
+      <div class="context-pill">Build Squad</div>
+    </div>
+
+    <!-- Composer -->
+    <div class="composer">
+      <div class="composer-avatar">🧔</div>
+      <span class="composer-text">What did you complete today?</span>
+      <div class="composer-actions">
+        <div class="composer-action">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Momentum Banner -->
+    <div class="momentum-banner">
+      <div class="momentum-icon">🔥</div>
+      <div class="momentum-content">
+        <div class="momentum-title">Circle on fire today</div>
+        <div class="momentum-sub"><strong>4 of 6</strong> members checked in already</div>
+      </div>
+      <div class="momentum-avatars">
+        <div class="m-av">👩‍🎨</div>
+        <div class="m-av">💪</div>
+        <div class="m-av">🧘‍♀️</div>
+        <div class="m-av count">+1</div>
+      </div>
+    </div>
+
+    <div class="feed">
+
+      <!-- Post 1: Living Progress Card (Perfect Day) -->
+      <div class="progress-card perfect-day">
+        <div class="progress-header">
+          <div class="progress-ring-wrapper">
+            <svg class="progress-ring-bg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21"/></svg>
+            <svg class="progress-ring-fill" viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" style="stroke-dashoffset: 0"/></svg>
+            <div class="progress-avatar-inner">👩‍🎨</div>
+          </div>
+          <div class="progress-info">
+            <div class="post-user-row">
+              <span class="progress-user">Sarah Chen</span>
+              <span class="streak-badge" style="position:static; border:none; font-size:10px; padding:2px 6px;">🔥 14</span>
+            </div>
+            <div class="progress-subtitle">
+              <span class="perfect-badge">✦ Perfect Day</span>
+              <span style="color:var(--white-20)">·</span>
+              <span>2h ago</span>
+            </div>
+          </div>
+          <div class="post-more">···</div>
+        </div>
+        <div class="action-tiles">
+          <div class="action-tile completed">
+            <div class="action-tile-check">✅</div>
+            <div class="action-tile-emoji">🧘</div>
+            <div class="action-tile-name">Morning Meditation</div>
+          </div>
+          <div class="action-tile completed">
+            <div class="action-tile-check">✅</div>
+            <div class="action-tile-emoji">✏️</div>
+            <div class="action-tile-name">Journal Entry</div>
+          </div>
+          <div class="action-tile completed">
+            <div class="action-tile-check">✅</div>
+            <div class="action-tile-emoji">🏃‍♀️</div>
+            <div class="action-tile-name">5K Run</div>
+          </div>
+        </div>
+        <div class="progress-footer">
+          <div class="progress-stat"><strong>3/3</strong> completed</div>
+          <div class="action-spacer"></div>
+          <div class="action-btn active" style="padding:8px 10px;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            12
+          </div>
+          <div class="action-btn" style="padding:8px 10px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            4
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-8"></div>
+
+      <!-- Post 2: Regular text post with check-in -->
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar-wrapper">
+            <div class="post-avatar streak-ring">💪</div>
+            <div class="streak-badge">🔥 31</div>
+          </div>
+          <div class="post-meta">
+            <div class="post-user-row">
+              <span class="post-username">Marcus Webb</span>
+              <span class="post-goal-tag" style="background: rgba(0,255,136,0.12); color: var(--green);">Fitness</span>
+            </div>
+            <div class="post-time">45m ago · Mindful AM</div>
+          </div>
+          <div class="post-more">···</div>
+        </div>
+        <div class="checkin-card" style="background: var(--green-dim); border: 1px solid rgba(0,255,136,0.1); color: var(--green);">
+          <div class="checkin-icon" style="background: rgba(0,255,136,0.15);">🏋️</div>
+          <div class="checkin-info">
+            <div class="checkin-label" style="color: var(--green);">Completed</div>
+            <div class="checkin-action">Morning Gym Session</div>
+          </div>
+          <div class="checkin-check">✓</div>
+        </div>
+        <div class="post-content">
+          Hit a new PR on deadlifts today — <strong>315 lbs</strong>. Consistency is undefeated. That's 31 days straight of showing up.
+        </div>
+        <div class="engagement-row">
+          <div class="engagement-faces">
+            <div class="e-face">👩‍🎨</div>
+            <div class="e-face">🧔</div>
+            <div class="e-face">🧘‍♀️</div>
+          </div>
+          <span class="engagement-text"><strong>Sarah</strong>, <strong>you</strong> and 8 others</span>
+        </div>
+        <div class="action-bar">
+          <div class="action-btn active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="rgba(255,107,53,0.15)" stroke="currentColor"/><path d="M15.5 11c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="currentColor"/></svg>
+            🔥 10
+          </div>
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            3
+          </div>
+          <div class="action-spacer"></div>
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </div>
+        </div>
+        <!-- Comment Preview -->
+        <div class="comment-preview">
+          <div class="comment-item">
+            <div class="comment-avatar">🧘‍♀️</div>
+            <div class="comment-bubble">
+              <span class="comment-user">Priya</span>
+              <div class="comment-text">315?! That's insane progress. The streak is paying off 💪</div>
+            </div>
+          </div>
+          <div class="comment-more">View all 3 comments</div>
+          <div class="comment-input-row">
+            <div class="comment-input-avatar">🧔</div>
+            <div class="comment-input">Add a comment...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-8"></div>
+
+      <!-- Celebration Card -->
+      <div class="celebration-card">
+        <div class="celebration-bg">
+          <div class="celebration-header">
+            <div class="celebration-avatar">🎸</div>
+            <div class="celebration-meta">
+              <div class="celebration-user">Alex Rivera</div>
+              <div class="celebration-milestone">✦ Milestone reached</div>
+            </div>
+            <div class="post-more" style="color:var(--white-40)">···</div>
+          </div>
+          <div class="celebration-body">
+            <div class="celebration-number">50</div>
+            <div class="celebration-label">Day Streak</div>
+          </div>
+          <div class="celebration-actions">
+            <button class="celebration-react-btn primary">🔥 Celebrate</button>
+            <button class="celebration-react-btn secondary">💬 Comment</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-8"></div>
+
+      <!-- Post 3: Photo post -->
+      <div class="post-card">
+        <div class="post-header">
+          <div class="post-avatar-wrapper">
+            <div class="post-avatar">🧘‍♀️</div>
+          </div>
+          <div class="post-meta">
+            <div class="post-user-row">
+              <span class="post-username">Priya Sharma</span>
+              <span class="post-goal-tag" style="background: var(--blue-dim); color: var(--blue);">Mindfulness</span>
+            </div>
+            <div class="post-time">3h ago · Following</div>
+          </div>
+          <div class="post-more">···</div>
+        </div>
+        <div class="post-content">
+          Morning meditation spot. There's something about being up before the world that makes everything feel possible.
+        </div>
+        <div class="post-photo" style="background: linear-gradient(135deg, #1a2332, #0D1117, #1a1520);">
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <span style="font-size:48px;">🌅</span>
+            <span style="font-size:12px;color:var(--white-20);font-weight:500;">sunrise-meditation.jpg</span>
+          </div>
+        </div>
+        <div class="engagement-row">
+          <div class="engagement-faces">
+            <div class="e-face">💪</div>
+            <div class="e-face">🧔</div>
+          </div>
+          <span class="engagement-text"><strong>Marcus</strong> and <strong>4 others</strong></span>
+        </div>
+        <div class="action-bar">
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            6
+          </div>
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            2
+          </div>
+          <div class="action-spacer"></div>
+          <div class="action-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-8"></div>
+
+      <!-- Suggestion Section: Grow the network -->
+      <div class="suggestion-section">
+        <div class="suggestion-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--white-40)" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          People in your circles also follow
+        </div>
+        <div class="suggestion-cards">
+          <div class="suggestion-card">
+            <div class="suggestion-avatar">🎯</div>
+            <div class="suggestion-name">Kai Nguyen</div>
+            <div class="suggestion-shared">3 mutual</div>
+            <button class="suggestion-follow-btn">Follow</button>
+          </div>
+          <div class="suggestion-card">
+            <div class="suggestion-avatar">📷</div>
+            <div class="suggestion-name">Mia Torres</div>
+            <div class="suggestion-shared">2 mutual</div>
+            <button class="suggestion-follow-btn">Follow</button>
+          </div>
+          <div class="suggestion-card">
+            <div class="suggestion-avatar">🎮</div>
+            <div class="suggestion-name">Devon Park</div>
+            <div class="suggestion-shared">5 mutual</div>
+            <button class="suggestion-follow-btn">Follow</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gap-12"></div>
+
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item active">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <span class="tab-label">Social</span>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <span class="tab-label">Daily</span>
+      <div class="tab-dot"></div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <span class="tab-label">Circle</span>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 9 7 12 7s5-3 7.5-3a2.5 2.5 0 0 1 0 5H18"/><path d="M6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/><path d="M12 7v14"/></svg>
+      </div>
+      <span class="tab-label">Challenges</span>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span class="tab-label">Profile</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== DESIGN PHILOSOPHY NOTES ===== -->
+<div class="design-notes">
+  <h1>Social Page: <span>The Vision</span></h1>
+  <p class="subtitle">
+    What happens when Jobs' obsessive minimalism meets Zuckerberg's engagement genius — applied to accountability, not addiction.
+  </p>
+
+  <h2><span class="icon" style="background:rgba(0,122,255,0.15);">🍎</span> Jobs Principles</h2>
+
+  <div class="principle">
+    <h3><span class="tag jobs">Jobs</span> Typography IS the Brand</h3>
+    <p>The "UNITY" wordmark is the only logo. No icons, no symbols. The gold gradient letterforms carry the entire brand identity — just like how "iPhone" needed nothing else.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag jobs">Jobs</span> Ruthless Reduction</h3>
+    <p>Every element earns its pixel. The composer is one line, not a card with tabs. Context switching is pills, not a dropdown. The tab bar has 5 items — the maximum before confusion.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag jobs">Jobs</span> Moments of Delight</h3>
+    <p>The "Perfect Day" gold glow. The celebration card's oversized number. The progress ring filling. These aren't decorations — they're emotional rewards that make achievement feel tangible.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag jobs">Jobs</span> Information Hierarchy</h3>
+    <p>Your eye flows: Logo → Presence → Feed. Within each card: Who → What they did → How to engage. Nothing competes for attention. The hierarchy is absolute.</p>
+  </div>
+
+  <h2><span class="icon" style="background:rgba(24,119,242,0.15);">👤</span> Zuckerberg Principles</h2>
+
+  <div class="principle">
+    <h3><span class="tag zuck">Zuck</span> Presence = Urgency</h3>
+    <p>The presence row (Stories-inspired) shows who's active NOW. Green dots create FOMO. Gold rings mean new activity. This is the #1 engagement driver — "your people are here."</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag zuck">Zuck</span> Social Proof Everywhere</h3>
+    <p>Stacked avatar faces on reactions. "Sarah, you and 8 others." Momentum banner showing "4 of 6 checked in." Every signal says: your circle is moving. Are you?</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag zuck">Zuck</span> Zero-Friction Engagement</h3>
+    <p>Comment preview shows the best comment (drives more). Inline comment input. One-tap reactions. The celebration card has dedicated CTA buttons. Every interaction is one touch away.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag zuck">Zuck</span> Growth Loops Built In</h3>
+    <p>"People in your circles also follow" — organic discovery. The suggestion cards with mutual counts lower the trust barrier. Every user who joins makes the network more valuable.</p>
+  </div>
+
+  <h2><span class="icon" style="background:rgba(212,175,55,0.15);">⚡</span> The Fusion</h2>
+
+  <div class="principle">
+    <h3><span class="tag both">Both</span> Accountability, Not Addiction</h3>
+    <p>Unlike Meta's feeds designed for infinite scroll, this feed has natural stopping points. The momentum banner gives you the day's pulse in one glance. You check in, see your circle's progress, engage — and you're done. Purposeful, not parasitic.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag both">Both</span> Premium Dark Aesthetic</h3>
+    <p>Jobs would insist on the dark canvas — it makes the gold pop, makes photos vivid, feels luxurious. Zuckerberg would approve the contrast ratios that keep you scanning. The glassmorphic cards float above the void. It feels expensive.</p>
+  </div>
+
+  <div class="principle">
+    <h3><span class="tag both">Both</span> The Card System</h3>
+    <p>Three card types, each purpose-built: <strong>Progress Cards</strong> (daily completions with visual rings), <strong>Post Cards</strong> (text/media with social engagement), and <strong>Celebration Cards</strong> (milestone moments with premium treatment). Jobs designs the visual system; Zuckerberg designs the engagement mechanics.</p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,192 @@
+{
+  "exported_at": "2026-02-09T23:32:01.657Z",
+  "database": "preview (iqlibqtswseitxtqpmlm)",
+  "tables": {
+    "challenges": [
+      {
+        "id": "e809e35d-1a7b-42d0-bd6d-70c8ec867c12",
+        "name": "7 Day Mental Detox",
+        "description": "7 days to reset your mind and reclaim mental clarity.\n\nWHAT YOU'LL TRACK:\n\nDAY 1:\n🧠 Brain Dump (60 min) - Write everything on your mind\n💪 Exercise (20+ min)\n😴 Sleep Goal (8+ hours)\n🚫 No Social Media\n🚫 No Long-Form Content\n🧘 Detox Compliance\n\nDAYS 2-7:\n✍️ Freewriting (20 min on pen & paper)\n💪 Exercise (20+ min)\n😴 Sleep Goal (8+ hours)\n🚫 No Social Media\n🚫 No Long-Form Content\n🧘 Detox Compliance\n\nREPLACEMENT ACTIVITIES (encouraged):\nUse the freed-up time for:\n• 📺 Light TV (comedy, feel-good shows)\n• 📚 High-quality books\n• 💼 Deep work blocks\n• 👥 In-person social interaction\n• 🎨 Creative hobbies\n\nBONUS RECOMMENDATIONS:\n• Avoid alcohol, weed, other vices\n• Get sunlight and movement daily\n• Eat whole, real foods\n• Journal your observations\n\nWHY THIS WORKS:\nYour brain is overstimulated. This detox creates space for clarity, focus, and genuine rest. The first 2-3 days are hardest - boredom is the goal. Let yourself be bored. That's when the reset happens.\n\nRemember: You need 32/42 checkmarks to succeed (75%). That's 6 per day on average. Missing a few is OK - this is about progress, not perfection.",
+        "emoji": "🧠",
+        "type": "streak",
+        "scope": "global",
+        "circle_id": null,
+        "duration_days": 7,
+        "success_threshold": 75,
+        "predetermined_activities": [
+          {
+            "id": "detox-brain-dump",
+            "emoji": "🧠",
+            "title": "Brain Dump",
+            "end_day": 1,
+            "frequency": "once",
+            "start_day": 1,
+            "description": "Write everything on your mind for 60 minutes. Thoughts, worries, ideas, everything. Write without stopping, no structure needed.",
+            "min_duration_minutes": 60
+          },
+          {
+            "id": "detox-freewrite",
+            "emoji": "✍️",
+            "title": "Freewriting",
+            "end_day": 7,
+            "frequency": "daily",
+            "start_day": 2,
+            "description": "Freewrite for 20 minutes on pen and paper. No structure, no editing, just flow.",
+            "min_duration_minutes": 20
+          },
+          {
+            "id": "detox-exercise",
+            "emoji": "💪",
+            "title": "Exercise",
+            "frequency": "daily",
+            "description": "At least 20 minutes of physical movement. Walking, gym, yoga, sports - anything that gets you moving.",
+            "min_duration_minutes": 20
+          },
+          {
+            "id": "detox-sleep",
+            "emoji": "😴",
+            "title": "Sleep Goal",
+            "frequency": "daily",
+            "description": "Get 8+ hours of quality sleep. Mark complete in the morning if you slept well."
+          },
+          {
+            "id": "detox-no-social",
+            "emoji": "🚫",
+            "title": "No Social Media",
+            "frequency": "daily",
+            "description": "Stay off Instagram, TikTok, Twitter, Facebook, and other social media platforms today. (Checking messages/DMs is OK if necessary, but no scrolling feeds)"
+          },
+          {
+            "id": "detox-no-content",
+            "emoji": "📵",
+            "title": "No Long-Form Content",
+            "frequency": "daily",
+            "description": "Avoid YouTube, podcasts, movies, TV shows, and news today. (Exception: Light comedy TV is OK as replacement activity)"
+          },
+          {
+            "id": "detox-compliance",
+            "emoji": "🧘",
+            "title": "Detox Compliance",
+            "frequency": "daily",
+            "description": "Avoid other dopamine-heavy digital inputs today: doom-scrolling, gaming binges, rabbit-hole browsing, etc. Keep digital consumption intentional."
+          }
+        ],
+        "rules": {},
+        "benefits": [],
+        "badge_emoji": "🧠",
+        "badge_name": "Mental Detox Master",
+        "has_forum": true,
+        "status": "active",
+        "created_by": null,
+        "created_at": "2026-02-09T19:46:01.813039+00:00",
+        "updated_at": "2026-02-09T19:46:01.813039+00:00"
+      },
+      {
+        "id": "845455ab-8522-4b39-a6c6-5903ae521eab",
+        "name": "7 Day Mental Detox",
+        "description": "7 days to reset your mind and reclaim mental clarity.\n\nWHAT YOU'LL TRACK:\n\nDAY 1:\n🧠 Brain Dump (60 min) - Write everything on your mind\n💪 Exercise (20+ min)\n😴 Sleep Goal (8+ hours)\n🚫 No Social Media\n🚫 No Long-Form Content\n🧘 Detox Compliance\n\nDAYS 2-7:\n✍️ Freewriting (20 min on pen & paper)\n💪 Exercise (20+ min)\n😴 Sleep Goal (8+ hours)\n🚫 No Social Media\n🚫 No Long-Form Content\n🧘 Detox Compliance\n\nREPLACEMENT ACTIVITIES (encouraged):\nUse the freed-up time for:\n• 📺 Light TV (comedy, feel-good shows)\n• 📚 High-quality books\n• 💼 Deep work blocks\n• 👥 In-person social interaction\n• 🎨 Creative hobbies\n\nBONUS RECOMMENDATIONS:\n• Avoid alcohol, weed, other vices\n• Get sunlight and movement daily\n• Eat whole, real foods\n• Journal your observations\n\nWHY THIS WORKS:\nYour brain is overstimulated. This detox creates space for clarity, focus, and genuine rest. The first 2-3 days are hardest - boredom is the goal. Let yourself be bored. That's when the reset happens.\n\nRemember: You need 32/42 checkmarks to succeed (75%). That's 6 per day on average. Missing a few is OK - this is about progress, not perfection.",
+        "emoji": "🧠",
+        "type": "streak",
+        "scope": "circle",
+        "circle_id": "204dcff7-5243-4443-afca-e28720f19b62",
+        "duration_days": 7,
+        "success_threshold": 75,
+        "predetermined_activities": [
+          {
+            "id": "detox-brain-dump",
+            "emoji": "🧠",
+            "title": "Brain Dump",
+            "end_day": 1,
+            "frequency": "once",
+            "start_day": 1,
+            "description": "Write everything on your mind for 60 minutes. Thoughts, worries, ideas, everything. Write without stopping, no structure needed.",
+            "min_duration_minutes": 60
+          },
+          {
+            "id": "detox-freewrite",
+            "emoji": "✍️",
+            "title": "Freewriting",
+            "end_day": 7,
+            "frequency": "daily",
+            "start_day": 2,
+            "description": "Freewrite for 20 minutes on pen and paper. No structure, no editing, just flow.",
+            "min_duration_minutes": 20
+          },
+          {
+            "id": "detox-exercise",
+            "emoji": "💪",
+            "title": "Exercise",
+            "frequency": "daily",
+            "description": "At least 20 minutes of physical movement. Walking, gym, yoga, sports - anything that gets you moving.",
+            "min_duration_minutes": 20
+          },
+          {
+            "id": "detox-sleep",
+            "emoji": "😴",
+            "title": "Sleep Goal",
+            "frequency": "daily",
+            "description": "Get 8+ hours of quality sleep. Mark complete in the morning if you slept well."
+          },
+          {
+            "id": "detox-no-social",
+            "emoji": "🚫",
+            "title": "No Social Media",
+            "frequency": "daily",
+            "description": "Stay off Instagram, TikTok, Twitter, Facebook, and other social media platforms today. (Checking messages/DMs is OK if necessary, but no scrolling feeds)"
+          },
+          {
+            "id": "detox-no-content",
+            "emoji": "📵",
+            "title": "No Long-Form Content",
+            "frequency": "daily",
+            "description": "Avoid YouTube, podcasts, movies, TV shows, and news today. (Exception: Light comedy TV is OK as replacement activity)"
+          },
+          {
+            "id": "detox-compliance",
+            "emoji": "🧘",
+            "title": "Detox Compliance",
+            "frequency": "daily",
+            "description": "Avoid other dopamine-heavy digital inputs today: doom-scrolling, gaming binges, rabbit-hole browsing, etc. Keep digital consumption intentional."
+          }
+        ],
+        "rules": {},
+        "benefits": [],
+        "badge_emoji": "🧠",
+        "badge_name": "Mental Detox Master",
+        "has_forum": true,
+        "status": "active",
+        "created_by": null,
+        "created_at": "2026-02-09T19:59:40.338241+00:00",
+        "updated_at": "2026-02-09T19:59:40.338241+00:00"
+      }
+    ],
+    "circles": [
+      {
+        "id": "204dcff7-5243-4443-afca-e28720f19b62",
+        "name": "JING PATH",
+        "description": "Mental optimization and clarity path",
+        "invite_code": "AQUP6Z",
+        "created_by": "dd0a43f7-f414-4dde-856f-ea8e717b01b7",
+        "created_at": "2026-02-09T19:59:40.109954+00:00",
+        "member_count": 0,
+        "is_active": true,
+        "join_code": "JACKSON",
+        "emoji": "🔵",
+        "category": null,
+        "is_private": false
+      }
+    ],
+    "circle_members": [
+      {
+        "id": "278ba18d-0ef5-471a-8cea-6a089a47ab61",
+        "circle_id": "204dcff7-5243-4443-afca-e28720f19b62",
+        "user_id": "dd0a43f7-f414-4dde-856f-ea8e717b01b7",
+        "joined_at": "2026-02-09T19:59:40.169308+00:00",
+        "role": "admin"
+      }
+    ],
+    "profiles": [],
+    "posts": [],
+    "challenge_participants": []
+  }
+}

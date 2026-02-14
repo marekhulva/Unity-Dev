@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Circles UI Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #FFD700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .option {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .option h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .phone-mockup {
+            width: 100%;
+            max-width: 350px;
+            height: 600px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        /* Option A: Dropdown Selector */
+        .dropdown-header {
+            background: #1a1a1a;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .circle-selector {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-top: 5px;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .circle-emoji {
+            font-size: 20px;
+        }
+
+        .member-count {
+            color: #666;
+            font-size: 12px;
+            margin-left: auto;
+        }
+
+        /* Option B: Tab Bar */
+        .tab-bar {
+            background: #1a1a1a;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            border-bottom: 1px solid #333;
+        }
+
+        .tab {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: #888;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: #FFD700;
+            color: #FFD700;
+        }
+
+        .tab.add {
+            background: transparent;
+            border: 1px dashed #666;
+            color: #666;
+        }
+
+        /* Feed Items */
+        .feed {
+            padding: 15px;
+        }
+
+        .post {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .circle-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .circle-badge .emoji {
+            font-size: 14px;
+        }
+
+        .post-content {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #333;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Join Circle Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal h3 {
+            color: #FFD700;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .qr-button {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .popular-circles {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .popular-circles h4 {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .circle-item {
+            padding: 8px 0;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .circle-item:hover {
+            color: #FFD700;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+        }
+
+        .feature-notes {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-notes h3 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .feature-notes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-notes li {
+            padding: 5px 0;
+            color: #ccc;
+        }
+
+        .feature-notes li:before {
+            content: "✓ ";
+            color: #FFD700;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Multiple Circles UI Design Options</h1>
+
+        <div class="options-grid">
+            <!-- Option A: Dropdown Selector -->
+            <div class="option">
+                <h2>Option A: Dropdown Selector (Recommended)</h2>
+                <div class="phone-mockup">
+                    <div class="dropdown-header">
+                        <div style="position: relative;">
+                            <div class="circle-selector" onclick="toggleDropdown('dropdown1')">
+                                🌐 All Circles ▼
+                            </div>
+                            <div class="dropdown-menu" id="dropdown1">
+                                <div class="dropdown-item">
+                                    <span class="circle-emoji">🌐</span>
+                                    <span>All Circles</span>
+                                    <span class="member-count">3 circles</span>
+                                </div>
+                                <div class="dropdown-item">
+                                    <span class="circle-emoji">🏀</span>
+                                    <span>Basketball Bros</span>
+                                    <span class="member-count">12 members</span>
+                                </div>
+                                <div class="dropdown-item">
+                                    <span class="circle-emoji">🧘</span>
+                                    <span>Wellness Warriors</span>
+                                    <span class="member-count">8 members</span>
+                                </div>
+                                <div class="dropdown-item">
+                                    <span class="circle-emoji">💼</span>
+                                    <span>Startup Hustlers</span>
+                                    <span class="member-count">15 members</span>
+                                </div>
+                                <div class="dropdown-item" style="border-top: 1px solid #333;">
+                                    <span class="circle-emoji">➕</span>
+                                    <span>Join New Circle</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 15px;">
+                            <span>🔔</span>
+                            <span>👤</span>
+                        </div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="avatar"></div>
+                                <div class="post-meta">
+                                    <div class="username">John Smith</div>
+                                    <div class="circle-badge">
+                                        <span class="emoji">🏀</span>
+                                        <span>Basketball Bros • 2h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Just crushed 100 free throws in a row! 🔥 Consistency is key!
+                            </div>
+                            <div class="post-actions">
+                                <span>❤️ 12</span>
+                                <span>💬 3</span>
+                                <span>🔁 Share</span>
+                            </div>
+                        </div>
+
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="avatar" style="background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);"></div>
+                                <div class="post-meta">
+                                    <div class="username">Sarah Johnson</div>
+                                    <div class="circle-badge">
+                                        <span class="emoji">🧘</span>
+                                        <span>Wellness Warriors • 5h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                30 days of meditation complete! Feeling more centered than ever 🧘‍♀️
+                            </div>
+                            <div class="post-actions">
+                                <span>❤️ 8</span>
+                                <span>💬 2</span>
+                                <span>🔁 Share</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-notes">
+                    <h3>Pros:</h3>
+                    <ul>
+                        <li>Clean, minimal interface</li>
+                        <li>Scalable for many circles</li>
+                        <li>Clear visual hierarchy</li>
+                        <li>Familiar dropdown pattern</li>
+                        <li>Shows member count</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Option B: Tab Bar -->
+            <div class="option">
+                <h2>Option B: Tab Bar</h2>
+                <div class="phone-mockup">
+                    <div class="tab-bar">
+                        <div class="tab active">All</div>
+                        <div class="tab">🏀 Hoops</div>
+                        <div class="tab">🧘 Zen</div>
+                        <div class="tab">💼 Work</div>
+                        <div class="tab add">+</div>
+                    </div>
+
+                    <div class="feed">
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="avatar"></div>
+                                <div class="post-meta">
+                                    <div class="username">Mike Wilson</div>
+                                    <div class="circle-badge">
+                                        <span class="emoji">🏀</span>
+                                        <span>Basketball Bros • 1h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Game tonight at 7pm! Who's in? 🏀
+                            </div>
+                            <div class="post-actions">
+                                <span>❤️ 5</span>
+                                <span>💬 8</span>
+                                <span>🔁 Share</span>
+                            </div>
+                        </div>
+
+                        <div class="post">
+                            <div class="post-header">
+                                <div class="avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                                <div class="post-meta">
+                                    <div class="username">Emma Davis</div>
+                                    <div class="circle-badge">
+                                        <span class="emoji">💼</span>
+                                        <span>Startup Hustlers • 3h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Just closed our Series A! Dreams do come true with hard work 🚀
+                            </div>
+                            <div class="post-actions">
+                                <span>❤️ 24</span>
+                                <span>💬 12</span>
+                                <span>🔁 Share</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-notes">
+                    <h3>Pros:</h3>
+                    <ul>
+                        <li>Quick one-tap switching</li>
+                        <li>Always visible options</li>
+                        <li>Good for 3-5 circles</li>
+                        <li>No extra tap needed</li>
+                    </ul>
+                    <h3 style="margin-top: 15px;">Cons:</h3>
+                    <ul>
+                        <li>Limited space for many circles</li>
+                        <li>Names must be shortened</li>
+                        <li>No member count visible</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Join Circle Modal -->
+        <div class="option" style="max-width: 500px; margin: 0 auto;">
+            <h2>Join Circle Modal Design</h2>
+            <div class="modal-content" style="position: static;">
+                <h3>Join a New Circle</h3>
+
+                <div class="input-group">
+                    <label>Enter Circle Invite Code:</label>
+                    <input type="text" placeholder="e.g., HOOPS2024" />
+                </div>
+
+                <button class="qr-button">📷 Scan QR Code</button>
+
+                <div class="popular-circles">
+                    <h4>Popular Circles Near You:</h4>
+                    <div class="circle-item">• HOOPS2024 - Local Basketball League</div>
+                    <div class="circle-item">• ZENLIFE - Morning Meditation Group</div>
+                    <div class="circle-item">• STARTUP - Entrepreneur Network</div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-cancel">Cancel</button>
+                    <button class="btn btn-primary">Join Circle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('show');
+
+            // Close other dropdowns
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                if (menu.id !== id) {
+                    menu.classList.remove('show');
+                }
+            });
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.circle-selector') && !event.target.closest('.dropdown-menu')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

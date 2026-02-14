@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Unity - Polished Feed</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: radial-gradient(circle at 30% 50%, #0a0a0a, #000);
+            color: #fff;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(231,180,58,0.12), transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102,126,234,0.08), transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: float 10s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-label {
+            text-align: center;
+            font-size: 16px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .phone-mockup {
+            width: 390px;
+            height: 844px;
+            background: linear-gradient(135deg, rgba(10,10,10,0.95), rgba(0,0,0,0.98));
+            border-radius: 50px;
+            border: 1px solid rgba(231,180,58,0.2);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.9),
+                        0 0 60px rgba(231,180,58,0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(40px);
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 25px 25px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-bottom: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            padding: 0 0 100px 0;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            padding: 20px 20px 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: linear-gradient(180deg, rgba(0,0,0,0.98), rgba(0,0,0,0.85));
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .header-title {
+            font-size: 38px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #E7B43A 0%, #FFD700 25%, #E7B43A 50%, #FFD700 75%, #E7B43A 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+            animation: shimmer 4s ease infinite;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            background: rgba(255,255,255,0.03);
+            padding: 6px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 24px;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), rgba(255,215,0,0.2));
+            color: #E7B43A;
+            box-shadow: 0 4px 20px rgba(231,180,58,0.25),
+                        inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .feed {
+            padding: 20px 20px 20px 20px;
+            position: relative;
+            padding-left: 76px;
+        }
+
+        .feed::before {
+            content: '';
+            position: absolute;
+            left: 42px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A 0%, rgba(231,180,58,0.3) 80%, rgba(231,180,58,0.1) 100%);
+        }
+
+        .post {
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        .timeline-avatar {
+            position: absolute;
+            left: -56px;
+            top: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(231,180,58,0.3);
+        }
+
+        .timeline-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0.15;
+            filter: blur(10px);
+            z-index: -1;
+        }
+
+        .timeline-avatar.alt1 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .timeline-avatar.alt1::after {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .timeline-avatar.alt2 {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .timeline-avatar.alt2::after {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .timeline-avatar.alt3 {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .timeline-avatar.alt3::after {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        /* Activity Check-in Card */
+        .post-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+            backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .post-card:hover {
+            transform: translateX(6px) translateY(-2px);
+            border-color: rgba(231,180,58,0.35);
+            box-shadow: 0 12px 40px rgba(231,180,58,0.12),
+                        0 0 0 1px rgba(231,180,58,0.1);
+        }
+
+        .post-header {
+            padding: 16px 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .post-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            font-weight: 500;
+        }
+
+        .post-type-tag {
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-checkin {
+            background: rgba(231,180,58,0.15);
+            color: rgba(231,180,58,0.9);
+            border: 1px solid rgba(231,180,58,0.25);
+        }
+
+        .tag-status {
+            background: rgba(79,172,254,0.15);
+            color: rgba(79,172,254,0.9);
+            border: 1px solid rgba(79,172,254,0.25);
+        }
+
+        .tag-photo {
+            background: rgba(240,147,251,0.15);
+            color: rgba(240,147,251,0.9);
+            border: 1px solid rgba(240,147,251,0.25);
+        }
+
+        .circle-badge {
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.25), rgba(255,215,0,0.15));
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        .post-body {
+            padding: 16px 18px;
+        }
+
+        .activity-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.4px;
+            line-height: 1.3;
+        }
+
+        .activity-context {
+            font-size: 14px;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.5;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .metric {
+            text-align: center;
+            background: rgba(0,0,0,0.25);
+            padding: 12px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .post-footer {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(0,0,0,0.15));
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .reactions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .reaction-avatars {
+            display: flex;
+            align-items: center;
+        }
+
+        .reactor-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            border: 2px solid #000;
+            margin-left: -8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .reactor-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .reactor-avatar.more {
+            background: rgba(255,255,255,0.1);
+            font-size: 9px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .reaction-count {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        .comment-preview {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+        }
+
+        .engagement-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .reaction {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.55);
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .reaction:hover {
+            color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .reaction.active {
+            color: #E7B43A;
+            background: rgba(231,180,58,0.1);
+        }
+
+        /* Status Update Card */
+        .status-card {
+            background: linear-gradient(135deg, rgba(79,172,254,0.08), rgba(0,242,254,0.04));
+            backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(79,172,254,0.2);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .status-card:hover {
+            transform: translateX(6px) translateY(-2px);
+            border-color: rgba(79,172,254,0.35);
+            box-shadow: 0 12px 40px rgba(79,172,254,0.1);
+        }
+
+        .status-text {
+            font-size: 15px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.6;
+            letter-spacing: -0.1px;
+        }
+
+        /* Photo Post Card */
+        .photo-card {
+            background: linear-gradient(135deg, rgba(240,147,251,0.08), rgba(245,87,108,0.04));
+            backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(240,147,251,0.2);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .photo-card:hover {
+            transform: translateX(6px) translateY(-2px);
+            border-color: rgba(240,147,251,0.35);
+            box-shadow: 0 12px 40px rgba(240,147,251,0.1);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-caption {
+            padding: 16px 18px;
+        }
+
+        .caption-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-label">Unity - Polished Feed (CPO Version)</div>
+        <div class="phone-mockup">
+            <div class="notch"></div>
+            <div class="status-bar">
+                <div class="time">9:41</div>
+                <div class="status-icons">📶 📶 🔋</div>
+            </div>
+            <div class="screen-content">
+                <div class="header">
+                    <div class="header-title">Unity</div>
+                    <div class="tabs">
+                        <div class="tab active">My Circles</div>
+                        <div class="tab">Following</div>
+                    </div>
+                </div>
+                <div class="feed">
+
+                    <!-- Activity Check-in with Metrics -->
+                    <div class="post">
+                        <div class="timeline-avatar">👤</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-header-top">
+                                    <div class="user-info">
+                                        <div class="username">Alex Chen</div>
+                                        <div class="post-meta">
+                                            <span class="timestamp">2h ago</span>
+                                            <span class="post-type-tag tag-checkin">Check-in</span>
+                                            <span class="circle-badge">Unity Circle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Morning Run</div>
+                                <div class="activity-context">Marathon Training • Felt great today, finally broke through that mental barrier!</div>
+                                <div class="metrics">
+                                    <div class="metric">
+                                        <span class="metric-value">45</span>
+                                        <span class="metric-label">Minutes</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">6.2</span>
+                                        <span class="metric-label">Miles</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">12</span>
+                                        <span class="metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reactions-row">
+                                    <div class="reaction-avatars">
+                                        <div class="reactor-avatar">👩</div>
+                                        <div class="reactor-avatar">🧑</div>
+                                        <div class="reactor-avatar">👨</div>
+                                        <div class="reactor-avatar more">+5</div>
+                                        <span class="reaction-count">reacted</span>
+                                    </div>
+                                    <div class="comment-preview">3 comments</div>
+                                </div>
+                                <div class="engagement-actions">
+                                    <div class="reaction active">🔥 24</div>
+                                    <div class="reaction">💪 18</div>
+                                    <div class="reaction">💬 Reply</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Update -->
+                    <div class="post">
+                        <div class="timeline-avatar alt1">👩</div>
+                        <div class="status-card">
+                            <div class="post-header">
+                                <div class="post-header-top">
+                                    <div class="user-info">
+                                        <div class="username">Sarah Miller</div>
+                                        <div class="post-meta">
+                                            <span class="timestamp">3h ago</span>
+                                            <span class="post-type-tag tag-status">Update</span>
+                                            <span class="circle-badge">75 HARD</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="status-text">Day 28 and I'm feeling unstoppable! Anyone else struggling with the early wake-ups? Would love some tips for making it easier 💪</div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reactions-row">
+                                    <div class="reaction-avatars">
+                                        <div class="reactor-avatar">👤</div>
+                                        <div class="reactor-avatar">🧑</div>
+                                        <div class="reactor-avatar more">+3</div>
+                                        <span class="reaction-count">reacted</span>
+                                    </div>
+                                    <div class="comment-preview">7 comments</div>
+                                </div>
+                                <div class="engagement-actions">
+                                    <div class="reaction">🔥 12</div>
+                                    <div class="reaction">💪 8</div>
+                                    <div class="reaction">💬 Reply</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Photo Post -->
+                    <div class="post">
+                        <div class="timeline-avatar alt2">🧑</div>
+                        <div class="photo-card">
+                            <div class="post-header">
+                                <div class="post-header-top">
+                                    <div class="user-info">
+                                        <div class="username">Mike Johnson</div>
+                                        <div class="post-meta">
+                                            <span class="timestamp">5h ago</span>
+                                            <span class="post-type-tag tag-photo">Photo</span>
+                                            <span class="circle-badge">Unity Circle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <img src="data:image/svg+xml,%3Csvg width='800' height='600' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:rgb(79,172,254);stop-opacity:0.8' /%3E%3Cstop offset='100%25' style='stop-color:rgb(0,242,254);stop-opacity:0.8' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='800' height='600' fill='url(%23grad1)' /%3E%3Ctext x='50%25' y='50%25' font-family='Arial' font-size='32' fill='white' text-anchor='middle' dominant-baseline='middle' opacity='0.6'%3EProgress Photo%3C/text%3E%3C/svg%3E" alt="Workout progress" class="post-image">
+                            <div class="photo-caption">
+                                <div class="caption-text">8 weeks in and the results are showing! Consistency really is everything 💪</div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reactions-row">
+                                    <div class="reaction-avatars">
+                                        <div class="reactor-avatar">👤</div>
+                                        <div class="reactor-avatar">👩</div>
+                                        <div class="reactor-avatar">👨</div>
+                                        <div class="reactor-avatar more">+12</div>
+                                        <span class="reaction-count">reacted</span>
+                                    </div>
+                                    <div class="comment-preview">15 comments</div>
+                                </div>
+                                <div class="engagement-actions">
+                                    <div class="reaction active">🔥 45</div>
+                                    <div class="reaction">💪 32</div>
+                                    <div class="reaction">💬 Reply</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Activity Check-in (no metrics) -->
+                    <div class="post">
+                        <div class="timeline-avatar alt3">👨</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-header-top">
+                                    <div class="user-info">
+                                        <div class="username">James Lee</div>
+                                        <div class="post-meta">
+                                            <span class="timestamp">6h ago</span>
+                                            <span class="post-type-tag tag-checkin">Check-in</span>
+                                            <span class="circle-badge">Marathon</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Read 20 Pages</div>
+                                <div class="activity-context">Personal Growth • Currently reading "Atomic Habits" - so many good insights!</div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reactions-row">
+                                    <div class="reaction-avatars">
+                                        <div class="reactor-avatar">👩</div>
+                                        <div class="reactor-avatar">🧑</div>
+                                        <span class="reaction-count">reacted</span>
+                                    </div>
+                                    <div class="comment-preview">2 comments</div>
+                                </div>
+                                <div class="engagement-actions">
+                                    <div class="reaction">🔥 15</div>
+                                    <div class="reaction">💪 8</div>
+                                    <div class="reaction">💬 Reply</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity with Metrics -->
+                    <div class="post">
+                        <div class="timeline-avatar alt1">👩</div>
+                        <div class="post-card">
+                            <div class="post-header">
+                                <div class="post-header-top">
+                                    <div class="user-info">
+                                        <div class="username">Emma Davis</div>
+                                        <div class="post-meta">
+                                            <span class="timestamp">7h ago</span>
+                                            <span class="post-type-tag tag-checkin">Check-in</span>
+                                            <span class="circle-badge">Unity Circle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-body">
+                                <div class="activity-name">Meditation</div>
+                                <div class="activity-context">Mindfulness Practice • Starting the day with gratitude</div>
+                                <div class="metrics">
+                                    <div class="metric">
+                                        <span class="metric-value">20</span>
+                                        <span class="metric-label">Minutes</span>
+                                    </div>
+                                    <div class="metric">
+                                        <span class="metric-value">45</span>
+                                        <span class="metric-label">Streak</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-footer">
+                                <div class="reactions-row">
+                                    <div class="reaction-avatars">
+                                        <div class="reactor-avatar">👤</div>
+                                        <div class="reactor-avatar">🧑</div>
+                                        <div class="reactor-avatar">👨</div>
+                                        <div class="reactor-avatar more">+6</div>
+                                        <span class="reaction-count">reacted</span>
+                                    </div>
+                                    <div class="comment-preview">4 comments</div>
+                                </div>
+                                <div class="engagement-actions">
+                                    <div class="reaction">🔥 28</div>
+                                    <div class="reaction active">💪 15</div>
+                                    <div class="reaction">💬 Reply</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

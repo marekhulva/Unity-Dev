@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - RPG Quest</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Player Card */
+        .player-card {
+            background: linear-gradient(135deg, #0f3460, #16213e);
+            border: 2px solid #e94560;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(233,69,96,0.3);
+        }
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #e94560, #f39c12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 3px solid #ffd700;
+        }
+        .player-info {
+            flex: 1;
+        }
+        .player-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .player-title {
+            font-size: 12px;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .level-badge {
+            background: #e94560;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* XP Bar */
+        .xp-section {
+            margin-top: 15px;
+        }
+        .xp-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .xp-bar {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #f39c12);
+            width: 65%;
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+
+        /* Daily Quest */
+        .quest-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .quest-icon {
+            font-size: 24px;
+        }
+        .quest-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Quest List */
+        .quest-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-left: 4px solid #e94560;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quest-item:hover {
+            background: rgba(255,255,255,0.08);
+            border-left-color: #ffd700;
+            transform: translateX(5px);
+        }
+        .quest-item.completed {
+            border-left-color: #4CAF50;
+            opacity: 0.6;
+        }
+        .quest-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .quest-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .quest-item.completed .quest-checkbox {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            position: relative;
+        }
+        .quest-item.completed .quest-checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 700;
+        }
+        .quest-content {
+            flex: 1;
+        }
+        .quest-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .quest-item.completed .quest-name {
+            text-decoration: line-through;
+        }
+        .quest-description {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 10px;
+        }
+        .quest-rewards {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+        }
+        .reward {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ffd700;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Achievement Popup */
+        .achievement {
+            background: linear-gradient(135deg, #ffd700, #f39c12);
+            color: #1a1a2e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 20px rgba(255,215,0,0.4);
+        }
+        .achievement-icon {
+            font-size: 32px;
+        }
+        .achievement-text {
+            flex: 1;
+        }
+        .achievement-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .achievement-desc {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Player Card -->
+        <div class="player-card">
+            <div class="player-header">
+                <div class="avatar">⚔️</div>
+                <div class="player-info">
+                    <div class="player-name">Warrior Chris</div>
+                    <div class="player-title">Daily Quest Master</div>
+                </div>
+                <div class="level-badge">LVL 12</div>
+            </div>
+            <div class="xp-section">
+                <div class="xp-header">
+                    <span>Experience</span>
+                    <span>1,540 / 2,000 XP</span>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Quests -->
+        <div class="quest-header">
+            <div class="quest-icon">📜</div>
+            <div class="quest-title">Today's Quests</div>
+        </div>
+
+        <div class="quest-item completed">
+            <div class="quest-top">
+                <div class="quest-checkbox"></div>
+                <div class="quest-content">
+                    <div class="quest-name">Morning Meditation Quest</div>
+                    <div class="quest-description">Complete 10 minutes of mindful meditation</div>
+                    <div class="quest-rewards">
+                        <div class="reward">⚡ +50 XP</div>
+                        <div class="reward">🏅 +10 pts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quest-item">
+            <div class="quest-top">
+                <div class="quest-checkbox"></div>
+                <div class="quest-content">
+                    <div class="quest-name">Hydration Challenge</div>
+                    <div class="quest-description">Drink 8 glasses of water throughout the day</div>
+                    <div class="quest-rewards">
+                        <div class="reward">⚡ +30 XP</div>
+                        <div class="reward">🏅 +5 pts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quest-item">
+            <div class="quest-top">
+                <div class="quest-checkbox"></div>
+                <div class="quest-content">
+                    <div class="quest-name">Knowledge Quest</div>
+                    <div class="quest-description">Read for 30 minutes to gain wisdom</div>
+                    <div class="quest-rewards">
+                        <div class="reward">⚡ +75 XP</div>
+                        <div class="reward">🏅 +15 pts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quest-item">
+            <div class="quest-top">
+                <div class="quest-checkbox"></div>
+                <div class="quest-content">
+                    <div class="quest-name">Evening Reflection</div>
+                    <div class="quest-description">Write in your gratitude journal</div>
+                    <div class="quest-rewards">
+                        <div class="reward">⚡ +40 XP</div>
+                        <div class="reward">🏅 +8 pts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value">7</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-value">24</div>
+                <div class="stat-label">Quests Done</div>
+            </div>
+        </div>
+
+        <!-- Achievement -->
+        <div class="achievement">
+            <div class="achievement-icon">🎖️</div>
+            <div class="achievement-text">
+                <div class="achievement-title">Achievement Unlocked!</div>
+                <div class="achievement-desc">Complete 7 days in a row</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.quest-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('completed');
+            });
+        });
+    </script>
+</body>
+</html>

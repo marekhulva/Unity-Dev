@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Page - Complete Implementation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-frame {
+            width: 390px;
+            background: #000000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 8px solid #1a1a1a;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .screen {
+            height: 750px;
+            overflow-y: auto;
+            background: #000000;
+        }
+
+        .header {
+            padding: 20px 20px 16px;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .header-underline {
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                #D4AF37 0%, #C9A050 20%, #B8860B 35%,
+                #A0790A 50%, #B8860B 65%, #C9A050 80%, #D4AF37 100%
+            );
+        }
+
+        /* Circle Selector */
+        .circle-selector {
+            display: flex;
+            justify-content: center;
+            padding: 16px 20px 12px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .selector-pill {
+            padding: 8px 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .selector-pill:hover {
+            border-color: rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .selector-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        .selector-arrow {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* View Tabs */
+        .view-tabs {
+            display: flex;
+            padding: 12px 20px;
+            gap: 8px;
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.05);
+        }
+
+        .view-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .view-tab.active {
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .content {
+            padding: 16px 20px 100px;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+        }
+
+        .section-subtitle {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+        }
+
+        /* Leaderboard Items */
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .leaderboard-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .leaderboard-item.highlight {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .rank-container {
+            width: 40px;
+            text-align: center;
+        }
+
+        .rank-icon {
+            font-size: 20px;
+        }
+
+        .rank-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #FFD700;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 15px;
+            font-weight: 500;
+            color: #FFFFFF;
+        }
+
+        .user-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        /* Consistency Circle */
+        .consistency-circle {
+            position: relative;
+            width: 50px;
+            height: 50px;
+        }
+
+        .consistency-bg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .consistency-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        /* Challenge Cards */
+        .challenge-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 165, 0, 0.03) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .challenge-card.expanded {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.05) 100%);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #FFD700;
+            letter-spacing: 0.5px;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .challenge-leaderboard {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .challenge-card.expanded .challenge-leaderboard {
+            display: block;
+        }
+
+        .expand-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            height: 80px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-radius: 40px 40px 0 0;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.2s;
+        }
+
+        .tab-item.active {
+            color: #FFD700;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        .tab-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* Dropdown Modal */
+        .dropdown-modal {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            display: none;
+            z-index: 1000;
+            padding: 60px 20px 20px;
+        }
+
+        .dropdown-modal.active {
+            display: block;
+        }
+
+        .dropdown-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .dropdown-item.active {
+            background: rgba(255, 215, 0, 0.08);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .dropdown-item-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-item-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #FFFFFF;
+            font-size: 18px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>●●●●</span>
+        </div>
+
+        <div class="screen">
+            <div class="header">
+                <div class="header-title">CIRCLE</div>
+                <div class="header-underline"></div>
+            </div>
+
+            <!-- Circle Selector -->
+            <div class="circle-selector">
+                <div class="selector-pill" onclick="toggleDropdown()">
+                    <span class="selector-text" id="current-circle-name">SF CIRCLE</span>
+                    <span class="selector-arrow">▼</span>
+                </div>
+            </div>
+
+            <!-- View Tabs -->
+            <div class="view-tabs">
+                <div class="view-tab active" onclick="showTab('overview')">Overview</div>
+                <div class="view-tab" onclick="showTab('challenges')">Challenges</div>
+                <div class="view-tab" onclick="showTab('members')">Members</div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="content" id="overview-tab">
+                <div class="stats-card">
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-value" id="member-count">23</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-value" id="avg-consistency">87%</div>
+                            <div class="stat-label">Avg Consistency</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-value" id="circle-streak">7</div>
+                            <div class="stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">Overall Leaderboard</div>
+                <div class="section-subtitle">Based on daily action completion</div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-container">
+                        <div class="rank-icon">👑</div>
+                    </div>
+                    <div class="avatar">JD</div>
+                    <div class="user-info">
+                        <div class="username">John Doe</div>
+                        <div class="user-meta">15 day streak</div>
+                    </div>
+                    <div class="consistency-circle">
+                        <svg class="consistency-bg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(192,192,192,0.2)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#FFD700" stroke-width="4" stroke-dasharray="119 126" stroke-dashoffset="0" transform="rotate(-90 25 25)" stroke-linecap="round"/>
+                        </svg>
+                        <div class="consistency-text">95%</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-container">
+                        <div class="rank-icon">🥈</div>
+                    </div>
+                    <div class="avatar">AS</div>
+                    <div class="user-info">
+                        <div class="username">Alice Smith</div>
+                        <div class="user-meta">12 day streak</div>
+                    </div>
+                    <div class="consistency-circle">
+                        <svg class="consistency-bg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(192,192,192,0.2)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#C0C0C0" stroke-width="4" stroke-dasharray="116 126" stroke-dashoffset="0" transform="rotate(-90 25 25)" stroke-linecap="round"/>
+                        </svg>
+                        <div class="consistency-text">92%</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item highlight">
+                    <div class="rank-container">
+                        <div class="rank-number">#3</div>
+                    </div>
+                    <div class="avatar">YO</div>
+                    <div class="user-info">
+                        <div class="username">You</div>
+                        <div class="user-meta">10 day streak</div>
+                    </div>
+                    <div class="consistency-circle">
+                        <svg class="consistency-bg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(192,192,192,0.2)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#FFD700" stroke-width="4" stroke-dasharray="112 126" stroke-dashoffset="0" transform="rotate(-90 25 25)" stroke-linecap="round"/>
+                        </svg>
+                        <div class="consistency-text">89%</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-container">
+                        <div class="rank-number">#4</div>
+                    </div>
+                    <div class="avatar">MJ</div>
+                    <div class="user-info">
+                        <div class="username">Mike Johnson</div>
+                        <div class="user-meta">8 day streak</div>
+                    </div>
+                    <div class="consistency-circle">
+                        <svg class="consistency-bg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(192,192,192,0.2)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#888" stroke-width="4" stroke-dasharray="107 126" stroke-dashoffset="0" transform="rotate(-90 25 25)" stroke-linecap="round"/>
+                        </svg>
+                        <div class="consistency-text">85%</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-container">
+                        <div class="rank-number">#5</div>
+                    </div>
+                    <div class="avatar">SK</div>
+                    <div class="user-info">
+                        <div class="username">Sarah Kim</div>
+                        <div class="user-meta">6 day streak</div>
+                    </div>
+                    <div class="consistency-circle">
+                        <svg class="consistency-bg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(192,192,192,0.2)" stroke-width="4"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="#888" stroke-width="4" stroke-dasharray="101 126" stroke-dashoffset="0" transform="rotate(-90 25 25)" stroke-linecap="round"/>
+                        </svg>
+                        <div class="consistency-text">80%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenges Tab -->
+            <div class="content" id="challenges-tab" style="display: none;">
+                <div class="section-header">Active Circle Challenges</div>
+
+                <div class="challenge-card" id="challenge-1" onclick="toggleChallenge('challenge-1')">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">📚</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">SF Reading Sprint</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">CIRCLE ONLY</span>
+                                <span>•</span>
+                                <span>23 participants</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">14</span> days left</span>
+                        </div>
+                        <div class="stat">
+                            <span>📖</span>
+                            <span><span class="stat-value">12</span> books read</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏆</span>
+                            <span>Rank <span class="stat-value">#3</span></span>
+                        </div>
+                    </div>
+                    <div class="expand-button">
+                        <span>View Leaderboard</span>
+                        <span>▼</span>
+                    </div>
+
+                    <div class="challenge-leaderboard">
+                        <div class="section-subtitle" style="margin-top: 12px;">Challenge Standings</div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-icon">👑</div>
+                            </div>
+                            <div class="avatar">SL</div>
+                            <div class="user-info">
+                                <div class="username">Sarah Lee</div>
+                                <div class="user-meta">5 books • Perfect streak</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">5</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-icon">🥈</div>
+                            </div>
+                            <div class="avatar">TK</div>
+                            <div class="user-info">
+                                <div class="username">Tom Kim</div>
+                                <div class="user-meta">4 books • 1 missed day</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">4</div>
+                        </div>
+
+                        <div class="leaderboard-item highlight">
+                            <div class="rank-container">
+                                <div class="rank-number">#3</div>
+                            </div>
+                            <div class="avatar">YO</div>
+                            <div class="user-info">
+                                <div class="username">You</div>
+                                <div class="user-meta">2 books • On track</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">2</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-number">#4</div>
+                            </div>
+                            <div class="avatar">LP</div>
+                            <div class="user-info">
+                                <div class="username">Lisa Park</div>
+                                <div class="user-meta">2 books</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card" id="challenge-2" onclick="toggleChallenge('challenge-2')">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">💪</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">30 Day Fitness</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">CIRCLE ONLY</span>
+                                <span>•</span>
+                                <span>18 participants</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">21</span> days left</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏋️</span>
+                            <span><span class="stat-value">142</span> workouts</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏆</span>
+                            <span>Rank <span class="stat-value">#7</span></span>
+                        </div>
+                    </div>
+                    <div class="expand-button">
+                        <span>View Leaderboard</span>
+                        <span>▼</span>
+                    </div>
+
+                    <div class="challenge-leaderboard">
+                        <div class="section-subtitle" style="margin-top: 12px;">Challenge Standings</div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-icon">👑</div>
+                            </div>
+                            <div class="avatar">JD</div>
+                            <div class="user-info">
+                                <div class="username">John Doe</div>
+                                <div class="user-meta">30 workouts • Perfect</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">30</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-icon">🥈</div>
+                            </div>
+                            <div class="avatar">AS</div>
+                            <div class="user-info">
+                                <div class="username">Alice Smith</div>
+                                <div class="user-meta">28 workouts</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">28</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-container">
+                                <div class="rank-number">#3</div>
+                            </div>
+                            <div class="avatar">MJ</div>
+                            <div class="user-info">
+                                <div class="username">Mike Johnson</div>
+                                <div class="user-meta">25 workouts</div>
+                            </div>
+                            <div class="stat-value" style="font-size: 18px;">25</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-state" style="margin-top: 40px;">
+                    <div class="empty-icon">💡</div>
+                    <div class="empty-text">
+                        Circle admins can create challenges<br>from the Social page
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members Tab -->
+            <div class="content" id="members-tab" style="display: none;">
+                <div class="section-header">All Members (23)</div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">JD</div>
+                    <div class="user-info">
+                        <div class="username">John Doe</div>
+                        <div class="user-meta">95% consistency • 15 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">AS</div>
+                    <div class="user-info">
+                        <div class="username">Alice Smith</div>
+                        <div class="user-meta">92% consistency • 12 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item highlight">
+                    <div class="avatar">YO</div>
+                    <div class="user-info">
+                        <div class="username">You</div>
+                        <div class="user-meta">89% consistency • 10 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">MJ</div>
+                    <div class="user-info">
+                        <div class="username">Mike Johnson</div>
+                        <div class="user-meta">85% consistency • 8 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">SK</div>
+                    <div class="user-info">
+                        <div class="username">Sarah Kim</div>
+                        <div class="user-meta">80% consistency • 6 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">SL</div>
+                    <div class="user-info">
+                        <div class="username">Sarah Lee</div>
+                        <div class="user-meta">78% consistency • 5 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">TK</div>
+                    <div class="user-info">
+                        <div class="username">Tom Kim</div>
+                        <div class="user-meta">75% consistency • 4 day streak</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="avatar">LP</div>
+                    <div class="user-info">
+                        <div class="username">Lisa Park</div>
+                        <div class="user-meta">72% consistency • 3 day streak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+            <div class="tab-item">
+                <div class="tab-icon">📊</div>
+                <div class="tab-label">Daily</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">👥</div>
+                <div class="tab-label">Social</div>
+            </div>
+            <div class="tab-item active">
+                <div class="tab-icon">⭕</div>
+                <div class="tab-label">Circle</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">📈</div>
+                <div class="tab-label">Progress</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dropdown Modal -->
+    <div class="dropdown-modal" id="circle-dropdown">
+        <div class="dropdown-close" onclick="toggleDropdown()">✕</div>
+        <div class="dropdown-header">Your Circles</div>
+
+        <div class="dropdown-item active" onclick="selectCircle('SF Circle', 23, 87, 7)">
+            <div class="dropdown-item-name">SF Circle</div>
+            <div class="dropdown-item-meta">23 members • 87% avg consistency</div>
+        </div>
+
+        <div class="dropdown-item" onclick="selectCircle('Marina', 18, 82, 5)">
+            <div class="dropdown-item-name">Marina</div>
+            <div class="dropdown-item-meta">18 members • 82% avg consistency</div>
+        </div>
+
+        <div class="dropdown-item" onclick="selectCircle('Jing Boys', 12, 91, 12)">
+            <div class="dropdown-item-name">Jing Boys</div>
+            <div class="dropdown-item-meta">12 members • 91% avg consistency</div>
+        </div>
+
+        <div class="dropdown-item" onclick="selectCircle('Test Circle', 5, 76, 3)">
+            <div class="dropdown-item-name">Test Circle</div>
+            <div class="dropdown-item-meta">5 members • 76% avg consistency</div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tab) {
+            // Update tab styling
+            document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Hide all tabs
+            document.getElementById('overview-tab').style.display = 'none';
+            document.getElementById('challenges-tab').style.display = 'none';
+            document.getElementById('members-tab').style.display = 'none';
+
+            // Show selected tab
+            document.getElementById(tab + '-tab').style.display = 'block';
+
+            // Scroll to top
+            document.querySelector('.screen').scrollTop = 0;
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('circle-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        function selectCircle(name, members, consistency, streak) {
+            // Update UI
+            document.getElementById('current-circle-name').textContent = name.toUpperCase();
+            document.getElementById('member-count').textContent = members;
+            document.getElementById('avg-consistency').textContent = consistency + '%';
+            document.getElementById('circle-streak').textContent = streak;
+
+            // Update dropdown active state
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Close dropdown
+            toggleDropdown();
+
+            // Reset to overview tab
+            document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view-tab')[0].classList.add('active');
+
+            document.getElementById('overview-tab').style.display = 'block';
+            document.getElementById('challenges-tab').style.display = 'none';
+            document.getElementById('members-tab').style.display = 'none';
+
+            // Scroll to top
+            document.querySelector('.screen').scrollTop = 0;
+        }
+
+        function toggleChallenge(challengeId) {
+            const card = document.getElementById(challengeId);
+            card.classList.toggle('expanded');
+
+            // Update button text
+            const button = card.querySelector('.expand-button span:first-child');
+            if (card.classList.contains('expanded')) {
+                button.textContent = 'Hide Leaderboard';
+                card.querySelector('.expand-button span:last-child').textContent = '▲';
+            } else {
+                button.textContent = 'View Leaderboard';
+                card.querySelector('.expand-button span:last-child').textContent = '▼';
+            }
+        }
+    </script>
+</body>
+</html>

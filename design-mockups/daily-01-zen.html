@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Zen Minimalist</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+            color: #1a1a1a;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Zen Header */
+        .zen-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .date {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .greeting {
+            font-size: 32px;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        .quote {
+            font-size: 13px;
+            color: #999;
+            font-style: italic;
+            max-width: 280px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Focus Area */
+        .focus-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        .focus-label {
+            font-size: 11px;
+            color: #999;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        .focus-action {
+            font-size: 24px;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+        .complete-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 24px;
+        }
+        .complete-btn:hover {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            transform: scale(1.05);
+        }
+        .complete-btn.done {
+            border-color: #4CAF50;
+            background: #4CAF50;
+        }
+
+        /* Remaining Tasks */
+        .remaining {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .remaining-number {
+            font-size: 48px;
+            font-weight: 200;
+            color: #1a1a1a;
+        }
+        .remaining-label {
+            font-size: 12px;
+            color: #999;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Action List */
+        .action-list {
+            margin-bottom: 40px;
+        }
+        .action-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .action-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .action-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+        .action-item.done .action-check {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            position: relative;
+        }
+        .action-item.done .action-check::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .action-text {
+            flex: 1;
+            font-size: 15px;
+            color: #1a1a1a;
+        }
+        .action-item.done .action-text {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        /* Breathe Section */
+        .breathe {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .breathe-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            border: 2px solid rgba(255,255,255,0.3);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            animation: breathe 4s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .breathe-label {
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.03);
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 300;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Zen Header -->
+        <div class="zen-header">
+            <div class="date">Wednesday, Nov 20</div>
+            <div class="greeting">Good Morning</div>
+            <div class="quote">"The present moment is all you ever have."</div>
+        </div>
+
+        <!-- Focus Area -->
+        <div class="focus-area">
+            <div class="focus-label">Your Focus Right Now</div>
+            <div class="focus-action">Complete morning meditation</div>
+            <div class="complete-btn">○</div>
+        </div>
+
+        <!-- Remaining -->
+        <div class="remaining">
+            <div class="remaining-number">3</div>
+            <div class="remaining-label">Actions Remaining</div>
+        </div>
+
+        <!-- Action List -->
+        <div class="action-list">
+            <div class="action-item done">
+                <div class="action-check"></div>
+                <div class="action-text">Morning stretching</div>
+            </div>
+            <div class="action-item">
+                <div class="action-check"></div>
+                <div class="action-text">Drink 8 glasses of water</div>
+            </div>
+            <div class="action-item">
+                <div class="action-check"></div>
+                <div class="action-text">Read for 20 minutes</div>
+            </div>
+            <div class="action-item">
+                <div class="action-check"></div>
+                <div class="action-text">Evening gratitude journal</div>
+            </div>
+        </div>
+
+        <!-- Breathe -->
+        <div class="breathe">
+            <div class="breathe-circle">Breathe</div>
+            <div class="breathe-label">Take a moment to center yourself</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">7</div>
+                <div class="stat-label">Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">25%</div>
+                <div class="stat-label">Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">89%</div>
+                <div class="stat-label">Week</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity
+        document.querySelectorAll('.action-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('done');
+            });
+        });
+
+        document.querySelector('.complete-btn').addEventListener('click', function() {
+            this.classList.toggle('done');
+            this.textContent = this.classList.contains('done') ? '✓' : '○';
+        });
+    </script>
+</body>
+</html>

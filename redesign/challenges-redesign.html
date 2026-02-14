@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity Challenges — Redesigned</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #D4AF37;
+    --gold-light: #E7C455;
+    --gold-warm: #FFC84A;
+    --gold-bright: #FFD700;
+    --black: #000000;
+    --white: #FFFFFF;
+    --white-96: rgba(255,255,255,0.96);
+    --white-80: rgba(255,255,255,0.8);
+    --white-60: rgba(255,255,255,0.6);
+    --white-50: rgba(255,255,255,0.5);
+    --white-40: rgba(255,255,255,0.4);
+    --white-20: rgba(255,255,255,0.2);
+    --white-10: rgba(255,255,255,0.1);
+    --white-08: rgba(255,255,255,0.08);
+    --white-06: rgba(255,255,255,0.06);
+    --white-04: rgba(255,255,255,0.04);
+    --white-03: rgba(255,255,255,0.03);
+  }
+
+  body {
+    background: #000;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .phone-frame {
+    width: 393px;
+    height: 852px;
+    background: var(--black);
+    border-radius: 50px;
+    border: 3px solid #2A2A2A;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 25px 80px rgba(0,0,0,0.8),
+      0 0 120px rgba(212, 175, 55, 0.05);
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 36px;
+    background: #1A1A1A;
+    border-radius: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-top: 60px;
+    padding-bottom: 90px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ===== HEADER ===== */
+  .header {
+    padding: 20px 24px 16px;
+  }
+
+  .title {
+    fontSize: 24px;
+    font-weight: 800;
+    color: var(--gold-bright);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .search-container {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .search-bar {
+    width: 100%;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 16px;
+    padding: 14px 44px;
+    font-size: 15px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+  }
+
+  .search-bar::placeholder {
+    color: var(--white-40);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    opacity: 0.4;
+  }
+
+  .filter-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--gold);
+  }
+
+  /* Filter Pills */
+  .filter-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+  .filter-pills::-webkit-scrollbar { display: none; }
+
+  .filter-pill {
+    padding: 8px 16px;
+    background: var(--white-04);
+    border: 1px solid var(--white-08);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white-60);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-pill.active {
+    background: rgba(212,175,55,0.15);
+    border-color: rgba(212,175,55,0.3);
+    color: var(--gold-bright);
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-bottom: 32px;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--white-40);
+    text-transform: uppercase;
+  }
+
+  .section-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+  }
+
+  /* ===== MY ACTIVE CHALLENGES ===== */
+  .active-status-card {
+    background: var(--white-03);
+    border: 1px solid var(--white-08);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 24px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .active-status-card:hover {
+    border-color: var(--white-10);
+  }
+
+  .active-status-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--gold), var(--gold-light));
+  }
+
+  .status-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .status-content {
+    flex: 1;
+  }
+
+  .status-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .status-subtitle {
+    font-size: 13px;
+    color: var(--white-50);
+  }
+
+  .status-progress {
+    width: 52px;
+    height: 52px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .progress-ring {
+    width: 100%;
+    height: 100%;
+  }
+
+  .progress-ring circle {
+    fill: none;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+
+  .progress-ring-bg {
+    stroke: var(--white-10);
+  }
+
+  .progress-ring-fill {
+    stroke: var(--gold);
+    transform: rotate(-90deg);
+    transform-origin: center;
+  }
+
+  .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold);
+  }
+
+  /* ===== HERO CHALLENGE ===== */
+  .hero-challenge {
+    margin: 0 20px;
+    background: var(--white-03);
+    border: 1px solid var(--white-08);
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .hero-challenge:hover {
+    border-color: var(--white-10);
+  }
+
+  .hero-banner {
+    height: 160px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.05));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--white-10), transparent);
+  }
+
+  .hero-content {
+    padding: 20px;
+  }
+
+  .hero-category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(212,175,55,0.12);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  .hero-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .hero-description {
+    font-size: 14px;
+    color: var(--white-60);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--white-08);
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--white-50);
+  }
+
+  .hero-meta-item span {
+    color: var(--white-80);
+    font-weight: 600;
+  }
+
+  /* ===== CHALLENGE CARD ===== */
+  .challenge-card {
+    background: var(--white-03);
+    border: 1px solid var(--white-08);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 24px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .challenge-card:hover {
+    border-color: var(--white-10);
+  }
+
+  .challenge-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .challenge-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .challenge-info {
+    flex: 1;
+  }
+
+  .challenge-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .challenge-subtitle {
+    font-size: 13px;
+    color: var(--white-50);
+  }
+
+  .challenge-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--white-08);
+  }
+
+  .challenge-stats {
+    display: flex;
+    gap: 12px;
+  }
+
+  .challenge-stat {
+    font-size: 12px;
+    color: var(--white-40);
+  }
+
+  .challenge-stat span {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .difficulty-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .difficulty-easy {
+    background: rgba(255,255,255,0.08);
+    color: var(--white-60);
+  }
+
+  .difficulty-medium {
+    background: rgba(212,175,55,0.12);
+    color: var(--gold);
+  }
+
+  .difficulty-hard {
+    background: rgba(212,175,55,0.15);
+    color: var(--gold-bright);
+  }
+
+  /* ===== TAB BAR ===== */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 84px;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--white-06);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    padding-bottom: 28px;
+    z-index: 50;
+  }
+
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-icon svg {
+    width: 22px;
+    height: 22px;
+    color: var(--white-40);
+  }
+
+  .tab-item.active .tab-icon svg {
+    color: var(--gold);
+  }
+
+  .tab-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--white-40);
+  }
+
+  .tab-item.active .tab-label {
+    color: var(--gold);
+  }
+
+  @media (max-width: 900px) {
+    body {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="dynamic-island"></div>
+
+  <div class="screen">
+    <!-- Header -->
+    <div class="header">
+      <div class="title">CHALLENGES</div>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" class="search-bar" placeholder="Search challenges...">
+        <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="filter-pills">
+        <div class="filter-pill active">All</div>
+        <div class="filter-pill">💪 Fitness</div>
+        <div class="filter-pill">🧘 Mindfulness</div>
+        <div class="filter-pill">📚 Learning</div>
+        <div class="filter-pill">🍎 Nutrition</div>
+        <div class="filter-pill">⚡ Productivity</div>
+      </div>
+    </div>
+
+    <!-- My Active Challenges -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">My Active Challenges</div>
+        <div class="section-link">View All →</div>
+      </div>
+
+      <!-- Active Challenge Card 1 -->
+      <div class="active-status-card">
+        <div class="status-icon">💪</div>
+        <div class="status-content">
+          <div class="status-title">75 HARD</div>
+          <div class="status-subtitle">Day 23 of 75 • 52 days left 🔥</div>
+        </div>
+        <div class="status-progress">
+          <svg class="progress-ring" viewBox="0 0 52 52">
+            <circle class="progress-ring-bg" cx="26" cy="26" r="22"/>
+            <circle class="progress-ring-fill" cx="26" cy="26" r="22"
+              stroke-dasharray="138.2" stroke-dashoffset="92.5"/>
+          </svg>
+          <div class="progress-text">31%</div>
+        </div>
+      </div>
+
+      <!-- Active Challenge Card 2 -->
+      <div class="active-status-card">
+        <div class="status-icon">📖</div>
+        <div class="status-content">
+          <div class="status-title">30 Day Reading</div>
+          <div class="status-subtitle">Day 12 of 30 • 18 days left 📚</div>
+        </div>
+        <div class="status-progress">
+          <svg class="progress-ring" viewBox="0 0 52 52">
+            <circle class="progress-ring-bg" cx="26" cy="26" r="22"/>
+            <circle class="progress-ring-fill" cx="26" cy="26" r="22"
+              stroke-dasharray="138.2" stroke-dashoffset="83"/>
+          </svg>
+          <div class="progress-text">40%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured This Week -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Featured This Week</div>
+      </div>
+
+      <div class="hero-challenge">
+        <div class="hero-banner">🏃</div>
+        <div class="hero-content">
+          <div class="hero-category">💪 Fitness</div>
+          <div class="hero-title">Run Every Day Challenge</div>
+          <div class="hero-description">
+            Build a consistent running habit by running at least 1 mile every single day for 30 days straight.
+          </div>
+          <div class="hero-meta">
+            <div class="hero-meta-item">📅 <span>30 days</span></div>
+            <div class="hero-meta-item">👥 <span>1.2K joined</span></div>
+            <div class="hero-meta-item">🎯 <span>80% goal</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Most Popular -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Most Popular</div>
+        <div class="section-link">See All →</div>
+      </div>
+
+      <!-- Challenge Card 1 -->
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div class="challenge-icon">🧘</div>
+          <div class="challenge-info">
+            <div class="challenge-title">Morning Meditation</div>
+            <div class="challenge-subtitle">Start each day with 10 minutes of mindfulness</div>
+          </div>
+        </div>
+        <div class="challenge-footer">
+          <div class="challenge-stats">
+            <div class="challenge-stat">📅 <span>21 days</span></div>
+            <div class="challenge-stat">👥 <span>842</span></div>
+          </div>
+          <div class="difficulty-badge difficulty-easy">Easy</div>
+        </div>
+      </div>
+
+      <!-- Challenge Card 2 -->
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div class="challenge-icon">💧</div>
+          <div class="challenge-info">
+            <div class="challenge-title">Hydration Hero</div>
+            <div class="challenge-subtitle">Drink 1 gallon of water daily</div>
+          </div>
+        </div>
+        <div class="challenge-footer">
+          <div class="challenge-stats">
+            <div class="challenge-stat">📅 <span>30 days</span></div>
+            <div class="challenge-stat">👥 <span>623</span></div>
+          </div>
+          <div class="difficulty-badge difficulty-medium">Medium</div>
+        </div>
+      </div>
+
+      <!-- Challenge Card 3 -->
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div class="challenge-icon">📚</div>
+          <div class="challenge-info">
+            <div class="challenge-title">Read 12 Books</div>
+            <div class="challenge-subtitle">One book per month for a year</div>
+          </div>
+        </div>
+        <div class="challenge-footer">
+          <div class="challenge-stats">
+            <div class="challenge-stat">📅 <span>365 days</span></div>
+            <div class="challenge-stat">👥 <span>1.5K</span></div>
+          </div>
+          <div class="difficulty-badge difficulty-hard">Hard</div>
+        </div>
+      </div>
+
+      <!-- Challenge Card 4 -->
+      <div class="challenge-card">
+        <div class="challenge-header">
+          <div class="challenge-icon">🍎</div>
+          <div class="challenge-info">
+            <div class="challenge-title">Sugar-Free September</div>
+            <div class="challenge-subtitle">30 days without added sugar</div>
+          </div>
+        </div>
+        <div class="challenge-footer">
+          <div class="challenge-stats">
+            <div class="challenge-stat">📅 <span>30 days</span></div>
+            <div class="challenge-stat">👥 <span>934</span></div>
+          </div>
+          <div class="difficulty-badge difficulty-medium">Medium</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </div>
+      <div class="tab-label">Social</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="tab-label">Daily</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="tab-label">Circle</div>
+    </div>
+    <div class="tab-item active">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5C7 4 9 7 12 7s5-3 7.5-3a2.5 2.5 0 0 1 0 5H18"/>
+          <path d="M6 9v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V9"/>
+          <path d="M12 7v14"/>
+        </svg>
+      </div>
+      <div class="tab-label">Challenges</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <div class="tab-label">Profile</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

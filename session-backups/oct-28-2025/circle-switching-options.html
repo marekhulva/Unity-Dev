@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Circle Switching Options</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: #000000;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .nav-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: rgba(255, 215, 0, 0.8);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+
+        .option-container {
+            display: none;
+        }
+
+        .option-container.active {
+            display: block;
+        }
+
+        .phone-frame {
+            max-width: 390px;
+            margin: 20px auto;
+            background: #000000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 8px solid #1a1a1a;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .screen {
+            height: 750px;
+            overflow-y: auto;
+            background: #000000;
+        }
+
+        .header {
+            padding: 20px 20px 12px;
+            background: rgba(0, 0, 0, 0.95);
+        }
+
+        .header-title {
+            fontSize: 14px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #FFFFFF;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .header-underline {
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(90deg,
+                #D4AF37 0%, #C9A050 20%, #B8860B 35%,
+                #A0790A 50%, #B8860B 65%, #C9A050 80%, #D4AF37 100%
+            );
+        }
+
+        /* Option A: Dropdown Selector */
+        .dropdown-selector {
+            margin: 12px 20px 0;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .dropdown-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #FFD700;
+            letter-spacing: 0.5px;
+        }
+
+        .dropdown-arrow {
+            font-size: 12px;
+            color: rgba(255, 215, 0, 0.6);
+        }
+
+        /* Option B: Circle Tabs */
+        .circle-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            background: rgba(10, 10, 10, 0.5);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .circle-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .circle-tab {
+            min-width: fit-content;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .circle-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: #FFD700;
+        }
+
+        /* Option C: Icon-Only Tabs */
+        .icon-tabs {
+            display: flex;
+            gap: 12px;
+            padding: 12px 20px;
+            overflow-x: auto;
+            background: rgba(10, 10, 10, 0.5);
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            justify-content: center;
+        }
+
+        .icon-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .icon-tab {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .icon-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.5);
+            transform: scale(1.1);
+        }
+
+        .icon-name {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .icon-name.active {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        /* Option D: Floating Pill Selector (like Social composer) */
+        .floating-pill {
+            margin: 16px 20px 12px;
+            padding: 0;
+            background: transparent;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pill-selector {
+            padding: 8px 14px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .pill-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        .pill-arrow {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .content {
+            padding: 16px 20px 80px;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-header {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+        }
+
+        .tab-bar {
+            position: sticky;
+            bottom: 0;
+            height: 80px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px 20px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-item.active {
+            color: #FFD700;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        .tab-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .info-box {
+            background: rgba(255, 215, 0, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .info-title {
+            font-weight: 700;
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+
+        .pros-cons {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        .pros-cons h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+
+        .pro, .con {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .pro::before {
+            content: "✅";
+            position: absolute;
+            left: 0;
+        }
+
+        .con::before {
+            content: "❌";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-title">⭕ Multi-Circle Switching Options</div>
+        <div class="nav-subtitle">How should users switch between their circles?</div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showOption('dropdown')">A: Dropdown</div>
+            <div class="nav-tab" onclick="showOption('tabs')">B: Text Tabs</div>
+            <div class="nav-tab" onclick="showOption('icons')">C: Icon Tabs</div>
+            <div class="nav-tab" onclick="showOption('pill')">D: Floating Pill</div>
+        </div>
+    </div>
+
+    <!-- Option A: Dropdown Selector -->
+    <div class="option-container active" id="dropdown-option">
+        <div class="phone-frame">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●</span>
+            </div>
+
+            <div class="screen">
+                <div class="header">
+                    <div class="header-title">CIRCLE</div>
+                    <div class="header-underline"></div>
+                </div>
+
+                <!-- Dropdown Selector -->
+                <div class="dropdown-selector">
+                    <div class="dropdown-text">SF CIRCLE</div>
+                    <div class="dropdown-arrow">▼</div>
+                </div>
+
+                <div class="content">
+                    <div class="stats-card">
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">🏆</div>
+                                <div class="stat-value">87%</div>
+                                <div class="stat-label">Avg Consistency</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Leaderboard</div>
+
+                    <div class="info-box">
+                        <div class="info-title">Option A: Dropdown Selector</div>
+                        <strong>How it works:</strong> Tap the dropdown to see all your circles in a modal. Select one to switch.<br><br>
+                        <strong>Style:</strong> Similar to Social page composer circle selector. Clean and familiar.
+                    </div>
+                </div>
+
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-label">Daily</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👥</div>
+                        <div class="tab-label">Social</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">⭕</div>
+                        <div class="tab-label">Circle</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-label">Progress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pros-cons">
+            <h3>Pros & Cons</h3>
+            <div class="pro">Clean, doesn't take much space</div>
+            <div class="pro">Consistent with Social page pattern</div>
+            <div class="pro">Works well with many circles (5+)</div>
+            <div class="pro">Can show dropdown overlay menu without layout shift</div>
+            <div class="con">Requires an extra tap to see other circles</div>
+            <div class="con">Not immediately obvious there are other circles</div>
+        </div>
+    </div>
+
+    <!-- Option B: Text Tabs -->
+    <div class="option-container" id="tabs-option">
+        <div class="phone-frame">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●</span>
+            </div>
+
+            <div class="screen">
+                <div class="header">
+                    <div class="header-title">CIRCLE</div>
+                    <div class="header-underline"></div>
+                </div>
+
+                <!-- Text Tabs -->
+                <div class="circle-tabs">
+                    <div class="circle-tab active">SF Circle</div>
+                    <div class="circle-tab">Marina</div>
+                    <div class="circle-tab">Jing Boys</div>
+                    <div class="circle-tab">Test Circle</div>
+                </div>
+
+                <div class="content">
+                    <div class="stats-card">
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">🏆</div>
+                                <div class="stat-value">87%</div>
+                                <div class="stat-label">Avg Consistency</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Leaderboard</div>
+
+                    <div class="info-box">
+                        <div class="info-title">Option B: Text Tabs</div>
+                        <strong>How it works:</strong> Horizontal scrollable tabs showing all circle names. Tap to switch instantly.<br><br>
+                        <strong>Style:</strong> Like browser tabs or Instagram stories. Quick switching.
+                    </div>
+                </div>
+
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-label">Daily</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👥</div>
+                        <div class="tab-label">Social</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">⭕</div>
+                        <div class="tab-label">Circle</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-label">Progress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pros-cons">
+            <h3>Pros & Cons</h3>
+            <div class="pro">All circles visible at once</div>
+            <div class="pro">Quick one-tap switching</div>
+            <div class="pro">No modal/dropdown needed</div>
+            <div class="pro">Clear which circle you're viewing</div>
+            <div class="con">Takes up vertical space</div>
+            <div class="con">Can get cluttered with many circles</div>
+            <div class="con">Long circle names get truncated</div>
+        </div>
+    </div>
+
+    <!-- Option C: Icon-Only Tabs -->
+    <div class="option-container" id="icons-option">
+        <div class="phone-frame">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●</span>
+            </div>
+
+            <div class="screen">
+                <div class="header">
+                    <div class="header-title">CIRCLE</div>
+                    <div class="header-underline"></div>
+                </div>
+
+                <!-- Icon Tabs -->
+                <div style="text-align: center; padding: 8px 0 4px; background: rgba(10, 10, 10, 0.5);">
+                    <div class="icon-name active">SF CIRCLE</div>
+                </div>
+                <div class="icon-tabs">
+                    <div class="icon-tab active">🌉</div>
+                    <div class="icon-tab">⛵</div>
+                    <div class="icon-tab">🎯</div>
+                    <div class="icon-tab">✅</div>
+                </div>
+
+                <div class="content">
+                    <div class="stats-card">
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">🏆</div>
+                                <div class="stat-value">87%</div>
+                                <div class="stat-label">Avg Consistency</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Leaderboard</div>
+
+                    <div class="info-box">
+                        <div class="info-title">Option C: Icon-Only Tabs</div>
+                        <strong>How it works:</strong> Each circle has an emoji/icon. Tap icon to switch. Active circle name shown above.<br><br>
+                        <strong>Style:</strong> Clean, visual, space-efficient. Works well with custom circle emojis.
+                    </div>
+                </div>
+
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-label">Daily</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👥</div>
+                        <div class="tab-label">Social</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">⭕</div>
+                        <div class="tab-label">Circle</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-label">Progress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pros-cons">
+            <h3>Pros & Cons</h3>
+            <div class="pro">Very clean and compact</div>
+            <div class="pro">Visual and fun (emojis/icons)</div>
+            <div class="pro">Quick switching</div>
+            <div class="pro">Scales well (can fit many circles)</div>
+            <div class="con">Requires circles to have emojis/icons set</div>
+            <div class="con">Might not be obvious what each icon means at first</div>
+            <div class="con">Need to see name somewhere (shown above tabs)</div>
+        </div>
+    </div>
+
+    <!-- Option D: Floating Pill -->
+    <div class="option-container" id="pill-option">
+        <div class="phone-frame">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>●●●●</span>
+            </div>
+
+            <div class="screen">
+                <div class="header">
+                    <div class="header-title">CIRCLE</div>
+                    <div class="header-underline"></div>
+                </div>
+
+                <!-- Floating Pill Selector -->
+                <div class="floating-pill">
+                    <div class="pill-selector">
+                        <div class="pill-text">SF CIRCLE</div>
+                        <div class="pill-arrow">▼</div>
+                    </div>
+                </div>
+
+                <div class="content" style="padding-top: 8px;">
+                    <div class="stats-card">
+                        <div class="stats-row">
+                            <div class="stat-item">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-value">23</div>
+                                <div class="stat-label">Members</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">🏆</div>
+                                <div class="stat-value">87%</div>
+                                <div class="stat-label">Avg Consistency</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-value">7</div>
+                                <div class="stat-label">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Leaderboard</div>
+
+                    <div class="info-box">
+                        <div class="info-title">Option D: Floating Pill Selector</div>
+                        <strong>How it works:</strong> Compact pill button that opens dropdown. Matches Social composer style exactly.<br><br>
+                        <strong>Style:</strong> Most consistent with current app design (same as Social page circle selector in composer).
+                    </div>
+                </div>
+
+                <div class="tab-bar">
+                    <div class="tab-item">
+                        <div class="tab-icon">📊</div>
+                        <div class="tab-label">Daily</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">👥</div>
+                        <div class="tab-label">Social</div>
+                    </div>
+                    <div class="tab-item active">
+                        <div class="tab-icon">⭕</div>
+                        <div class="tab-label">Circle</div>
+                    </div>
+                    <div class="tab-item">
+                        <div class="tab-icon">📈</div>
+                        <div class="tab-label">Progress</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pros-cons">
+            <h3>Pros & Cons</h3>
+            <div class="pro">✨ Most consistent with existing app design</div>
+            <div class="pro">Clean and minimal</div>
+            <div class="pro">User already knows this pattern from Social page</div>
+            <div class="pro">Dropdown overlays without layout shift</div>
+            <div class="con">Requires dropdown modal</div>
+            <div class="con">Extra tap to switch circles</div>
+        </div>
+    </div>
+
+    <div style="max-width: 800px; margin: 30px auto; padding: 20px; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 16px; color: rgba(255, 255, 255, 0.8);">
+        <h3 style="color: #FFD700; margin-bottom: 15px;">💡 Recommendation</h3>
+
+        <div style="margin-bottom: 15px;">
+            <strong style="color: #06FFA5;">Option D: Floating Pill Selector</strong> is the best choice because:
+        </div>
+
+        <div style="margin-bottom: 10px;">✅ <strong>Consistency:</strong> Exactly matches the circle selector you already have in Social page composer</div>
+        <div style="margin-bottom: 10px;">✅ <strong>Familiar:</strong> Users already know this interaction pattern</div>
+        <div style="margin-bottom: 10px;">✅ <strong>Clean:</strong> Doesn't clutter the UI</div>
+        <div style="margin-bottom: 10px;">✅ <strong>Scalable:</strong> Works with 2 circles or 20 circles</div>
+        <div style="margin-bottom: 10px;">✅ <strong>Easy to implement:</strong> Reuse existing DropdownSelector component</div>
+
+        <hr style="border: none; border-top: 1px solid rgba(255, 215, 0, 0.2); margin: 20px 0;">
+
+        <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 8px;">
+            <strong style="color: #FFD700;">Alternative:</strong> Option C (Icon Tabs) if you want more visual/playful UI and quick switching is important. But requires all circles to have emojis.
+        </div>
+    </div>
+
+    <script>
+        function showOption(option) {
+            document.querySelectorAll('.option-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(option + '-option').classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Living Progress Card - V2 Exact Spec</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .feed-container {
+      width: 100%;
+      max-width: 600px;
+      padding: 0 16px;
+    }
+
+    .card {
+      width: 100%;
+      background: #1a1a1a;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px);
+      border-radius: 22px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .card.perfect-day {
+      border: 1px solid rgba(231, 180, 58, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      background:
+        radial-gradient(ellipse 200px 100px at top center, rgba(231, 180, 58, 0.08), transparent 60%),
+        #1a1a1a;
+      background-image:
+        radial-gradient(ellipse 200px 100px at top center, rgba(231, 180, 58, 0.08), transparent 60%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,.02) 2px, rgba(255,255,255,.02) 4px);
+    }
+
+    /* Perfect Day Title Row */
+    .perfect-day-title {
+      text-align: center;
+      padding-top: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 8px;
+    }
+
+    .perfect-day-title-text {
+      color: #fff;
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .perfect-day-underline {
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #06FFA5 20%, #06FFA5 80%, transparent);
+      opacity: 0.4;
+      margin: 8px auto 0;
+    }
+
+    /* Tighter spacing for perfect day */
+    .card.perfect-day .header {
+      margin-bottom: 10px;
+    }
+
+    .card.perfect-day .actions-row {
+      margin-bottom: 10px;
+    }
+
+    /* Complete label under ring */
+    .ring-label {
+      text-align: center;
+      color: #666;
+      font-size: 11px;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Header Row */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .left-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .status-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #06FFA5;
+      border: 2px solid #1a1a1a;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .username {
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .metadata {
+      color: #888;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .metadata .highlight {
+      color: #E7B43A;
+      font-weight: 600;
+    }
+
+    /* Progress Ring */
+    .progress-ring-container {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Just Did Pill */
+    .just-did-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 34px;
+      padding: 0 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid #E7B43A;
+      border-radius: 18px;
+      margin-bottom: 10px;
+    }
+
+    .just-did-text {
+      color: #E7B43A;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .check-icon {
+      font-size: 14px;
+    }
+
+    /* Actions Row - SLIM HORIZONTAL TILES */
+    .actions-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .action-tile {
+      flex: 1;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      transition: all 0.2s ease;
+    }
+
+    .action-tile.completed {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .action-tile.newest {
+      background: rgba(231, 180, 58, 0.08);
+      border: 2px solid #E7B43A;
+      box-shadow: 0 0 16px rgba(231, 180, 58, 0.25);
+      padding: 0 11px;
+    }
+
+    .action-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .action-label {
+      color: #999;
+      font-size: 16px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .action-tile.completed .action-label {
+      color: #ccc;
+    }
+
+    .action-tile.newest .action-label {
+      color: #E7B43A;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .footer {
+      color: #666;
+      font-size: 14px;
+      padding-bottom: 12px;
+    }
+
+    .footer .count {
+      color: #888;
+    }
+
+    .state-label {
+      color: #666;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    /* Perfect Day variant */
+    .just-did-pill.perfect {
+      border-color: #06FFA5;
+      box-shadow: 0 0 12px rgba(6, 255, 165, 0.2);
+    }
+
+    .just-did-pill.perfect .just-did-text {
+      color: #06FFA5;
+    }
+  </style>
+</head>
+<body>
+  <div class="feed-container">
+
+    <div class="state-label">State 1: 2 of 4 completed (50%)</div>
+
+    <div class="card">
+      <!-- Header Row -->
+      <div class="header">
+        <div class="left-group">
+          <div class="avatar-wrapper">
+            <div class="avatar">M</div>
+            <div class="status-dot"></div>
+          </div>
+          <div class="user-info">
+            <div class="username">Marek</div>
+            <div class="metadata">
+              Today <span class="highlight">2 of 4</span> &nbsp;50%
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Ring -->
+        <div class="progress-ring-container">
+          <svg class="progress-ring" width="56" height="56">
+            <circle
+              cx="28"
+              cy="28"
+              r="23"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.15)"
+              stroke-width="6"
+            />
+            <circle
+              cx="28"
+              cy="28"
+              r="23"
+              fill="none"
+              stroke="url(#gradient1)"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-dasharray="144.5"
+              stroke-dashoffset="72.25"
+            />
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#E7B43A;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#06FFA5;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="progress-percentage">50%</div>
+        </div>
+      </div>
+
+      <!-- Just Did Pill -->
+      <div class="just-did-pill">
+        <span class="just-did-text">Just did: Run</span>
+        <span class="check-icon">✓</span>
+      </div>
+
+      <!-- Actions Row - Slim horizontal tiles -->
+      <div class="actions-row">
+        <div class="action-tile completed">
+          <div class="action-icon">📖</div>
+          <div class="action-label">Read</div>
+        </div>
+        <div class="action-tile completed newest">
+          <div class="action-icon">🏃</div>
+          <div class="action-label">Run</div>
+        </div>
+        <div class="action-tile completed">
+          <div class="action-icon">🧘</div>
+          <div class="action-label">Meditate</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <span class="count">2 left:</span> Workout, Journal
+      </div>
+    </div>
+
+    <div class="state-label">State 2: 4 of 4 completed (100% - Perfect Day)</div>
+
+    <div class="card perfect-day">
+      <!-- Row 0: Perfect Day Title -->
+      <div class="perfect-day-title">
+        <div class="perfect-day-title-text">Perfect Day</div>
+        <div class="perfect-day-underline"></div>
+      </div>
+
+      <!-- Row 1: Header -->
+      <div class="header">
+        <div class="left-group">
+          <div class="avatar-wrapper">
+            <div class="avatar">M</div>
+            <div class="status-dot"></div>
+          </div>
+          <div class="user-info">
+            <div class="username">Marek</div>
+            <div class="metadata">
+              Today <span class="highlight">4 of 4</span> &nbsp;100%
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <div class="progress-ring-container">
+            <svg class="progress-ring" width="56" height="56">
+              <circle
+                cx="28"
+                cy="28"
+                r="23"
+                fill="none"
+                stroke="rgba(255, 255, 255, 0.15)"
+                stroke-width="6"
+              />
+              <circle
+                cx="28"
+                cy="28"
+                r="23"
+                fill="none"
+                stroke="#06FFA5"
+                stroke-width="6"
+                stroke-linecap="round"
+                stroke-dasharray="144.5"
+                stroke-dashoffset="0"
+              />
+            </svg>
+            <div class="progress-percentage" style="color: #06FFA5;">100%</div>
+          </div>
+          <div class="ring-label">Complete</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Actions Grid -->
+      <div class="actions-row">
+        <div class="action-tile completed">
+          <div class="action-icon">📖</div>
+          <div class="action-label">Read</div>
+        </div>
+        <div class="action-tile completed">
+          <div class="action-icon">🏃</div>
+          <div class="action-label">Run</div>
+        </div>
+        <div class="action-tile completed">
+          <div class="action-icon">🧘</div>
+          <div class="action-label">Meditate</div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <div class="action-tile completed">
+          <div class="action-icon">💪</div>
+          <div class="action-label">Workout</div>
+        </div>
+        <div class="action-tile completed" style="border: 1px solid rgba(231, 180, 58, 0.2);">
+          <div class="action-icon">📝</div>
+          <div class="action-label">Journal</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <span class="count">0 left</span>
+      </div>
+    </div>
+
+    <div class="state-label">State 3: 1 of 4 completed (25%)</div>
+
+    <div class="card">
+      <div class="header">
+        <div class="left-group">
+          <div class="avatar-wrapper">
+            <div class="avatar">M</div>
+            <div class="status-dot"></div>
+          </div>
+          <div class="user-info">
+            <div class="username">Marek</div>
+            <div class="metadata">
+              Today <span class="highlight">1 of 4</span> &nbsp;25%
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-ring-container">
+          <svg class="progress-ring" width="56" height="56">
+            <circle
+              cx="28"
+              cy="28"
+              r="23"
+              fill="none"
+              stroke="rgba(255, 255, 255, 0.15)"
+              stroke-width="6"
+            />
+            <circle
+              cx="28"
+              cy="28"
+              r="23"
+              fill="none"
+              stroke="url(#gradient2)"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-dasharray="144.5"
+              stroke-dashoffset="108.375"
+            />
+            <defs>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#E7B43A;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#06FFA5;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="progress-percentage">25%</div>
+        </div>
+      </div>
+
+      <div class="just-did-pill">
+        <span class="just-did-text">Just did: Meditate</span>
+        <span class="check-icon">✓</span>
+      </div>
+
+      <div class="actions-row">
+        <div class="action-tile completed newest">
+          <div class="action-icon">🧘</div>
+          <div class="action-label">Meditate</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span class="count">3 left:</span> Read, Run, Workout
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

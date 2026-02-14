@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option B: Challenges in Social (Integrated)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .phone-frame {
+            max-width: 390px;
+            margin: 20px auto;
+            background: #000000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 8px solid #1a1a1a;
+        }
+
+        .status-bar {
+            height: 44px;
+            background: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .screen {
+            height: 750px;
+            overflow-y: auto;
+            background: #000000;
+        }
+
+        .header {
+            padding: 16px 20px 12px;
+            background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pinned-card {
+            margin: 12px 20px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 165, 0, 0.02) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .pinned-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pinned-option.active {
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .challenges-carousel {
+            padding: 16px 0;
+            background: #0a0a0a;
+            border-top: 1px solid rgba(255, 215, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.05);
+        }
+
+        .carousel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px 12px;
+        }
+
+        .carousel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFD700;
+            letter-spacing: 0.5px;
+        }
+
+        .carousel-see-all {
+            font-size: 12px;
+            color: rgba(255, 215, 0, 0.6);
+            cursor: pointer;
+        }
+
+        .carousel-scroll {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .carousel-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-card {
+            min-width: 200px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, rgba(255, 165, 0, 0.03) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .carousel-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .carousel-card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .carousel-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .carousel-title-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .carousel-progress {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .carousel-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .carousel-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 2px;
+        }
+
+        .view-tabs {
+            display: flex;
+            padding: 12px 20px;
+            gap: 8px;
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.05);
+        }
+
+        .view-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.4);
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .view-tab.active {
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .content {
+            padding: 16px 20px 80px;
+        }
+
+        .post-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        }
+
+        .post-user {
+            flex: 1;
+        }
+
+        .post-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .post-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .post-challenge-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 8px;
+            font-size: 11px;
+            color: #FFD700;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .challenge-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05) 0%, rgba(255, 165, 0, 0.03) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .challenge-card:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .challenge-card.global {
+            background: linear-gradient(135deg, rgba(6, 255, 165, 0.05) 0%, rgba(6, 200, 165, 0.03) 100%);
+            border-color: rgba(6, 255, 165, 0.15);
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .challenge-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .challenge-card.global .challenge-icon {
+            background: linear-gradient(135deg, #06FFA5 0%, #06C8A5 100%);
+        }
+
+        .challenge-info {
+            flex: 1;
+        }
+
+        .challenge-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .challenge-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .challenge-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #FFD700;
+            letter-spacing: 0.5px;
+        }
+
+        .challenge-card.global .challenge-badge {
+            background: rgba(6, 255, 165, 0.15);
+            color: #06FFA5;
+        }
+
+        .challenge-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #FFD700;
+        }
+
+        .challenge-card.global .stat-value {
+            color: #06FFA5;
+        }
+
+        .section-header {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.03);
+            border: 1px solid rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-item.top-3 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 165, 0, 0.05) 100%);
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .rank {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #FFD700;
+        }
+
+        .leaderboard-item.top-3 .rank {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000000;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000000;
+            font-size: 13px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .user-score {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .score {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 390px;
+            width: 100%;
+            height: 80px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 20px 20px;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            transition: color 0.2s;
+        }
+
+        .tab-item.active {
+            color: #FFD700;
+        }
+
+        .tab-icon {
+            font-size: 24px;
+        }
+
+        .tab-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .composer {
+            margin-bottom: 16px;
+            padding: 14px;
+            background: transparent;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .composer-text {
+            flex: 1;
+            font-size: 14px;
+            color: rgba(255, 215, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>●●●●</span>
+        </div>
+
+        <div class="screen">
+            <div class="header">
+                <div class="header-title">Social</div>
+            </div>
+
+            <!-- Pinned Card -->
+            <div class="pinned-card">
+                <div class="pinned-option" onclick="showFeedView('circle')">Circle</div>
+                <div class="pinned-option active" onclick="showFeedView('explore')">Explore</div>
+            </div>
+
+            <!-- Active Challenges Carousel -->
+            <div class="challenges-carousel">
+                <div class="carousel-header">
+                    <div class="carousel-title">🏆 Your Active Challenges</div>
+                    <div class="carousel-see-all" onclick="showView('challenges')">See All</div>
+                </div>
+                <div class="carousel-scroll">
+                    <div class="carousel-card">
+                        <div class="carousel-card-header">
+                            <div class="carousel-icon">❄️</div>
+                            <div>
+                                <div class="carousel-title-text">Cold Shower</div>
+                                <div class="carousel-progress">Day 12/30</div>
+                            </div>
+                        </div>
+                        <div class="carousel-bar">
+                            <div class="carousel-fill" style="width: 40%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-card">
+                        <div class="carousel-card-header">
+                            <div class="carousel-icon">📚</div>
+                            <div>
+                                <div class="carousel-title-text">Reading Sprint</div>
+                                <div class="carousel-progress">2 books done</div>
+                            </div>
+                        </div>
+                        <div class="carousel-bar">
+                            <div class="carousel-fill" style="width: 67%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-card">
+                        <div class="carousel-card-header">
+                            <div class="carousel-icon">🌅</div>
+                            <div>
+                                <div class="carousel-title-text">5AM Club</div>
+                                <div class="carousel-progress">Day 8/21</div>
+                            </div>
+                        </div>
+                        <div class="carousel-bar">
+                            <div class="carousel-fill" style="width: 38%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Tabs -->
+            <div class="view-tabs">
+                <div class="view-tab active" onclick="showView('posts')">Posts</div>
+                <div class="view-tab" onclick="showView('challenges')">Challenges</div>
+                <div class="view-tab" onclick="showView('leaderboards')">Leaderboards</div>
+            </div>
+
+            <!-- Posts View -->
+            <div class="content" id="posts-view">
+                <div class="composer">
+                    <div class="post-avatar"></div>
+                    <div class="composer-text">Share your victory...</div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user">
+                            <div class="post-username">Mike Chen</div>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Day 15! The hardest part is stepping in, but the feeling after is incredible. Who else feels unstoppable? 💪❄️
+                    </div>
+                    <div class="post-challenge-tag">
+                        ❄️ 30 Day Cold Shower
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user">
+                            <div class="post-username">Sarah Lee</div>
+                            <div class="post-time">4 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Finished "Atomic Habits" today! Book #2 of the reading challenge. The compound effect is real 📖✨
+                    </div>
+                    <div class="post-challenge-tag">
+                        📚 SF Reading Sprint
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user">
+                            <div class="post-username">Alex Rivera</div>
+                            <div class="post-time">6 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Up at 5AM again! The quiet morning hours are pure gold. Best decision I've made this year 🌅
+                    </div>
+                    <div class="post-challenge-tag">
+                        🌅 5AM Club Challenge
+                    </div>
+                </div>
+
+                <div class="post-card">
+                    <div class="post-header">
+                        <div class="post-avatar"></div>
+                        <div class="post-user">
+                            <div class="post-username">Jordan Smith</div>
+                            <div class="post-time">8 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        Crushed leg day today 🔥 The SF Fitness challenge is pushing me harder than I thought possible!
+                    </div>
+                    <div class="post-challenge-tag">
+                        💪 Marina Fitness Week
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenges View -->
+            <div class="content" id="challenges-view" style="display: none;">
+                <div class="section-header">🌍 Global Challenges</div>
+
+                <div class="challenge-card global">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">❄️</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">30 Day Cold Shower</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">GLOBAL</span>
+                                <span>•</span>
+                                <span>2,847 warriors</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">30</span> days</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏆</span>
+                            <span><span class="stat-value">1,234</span> completed</span>
+                        </div>
+                        <div class="stat">
+                            <span>🔥</span>
+                            <span><span class="stat-value">89%</span> active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card global">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">🌅</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">5AM Club Challenge</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">GLOBAL</span>
+                                <span>•</span>
+                                <span>5,123 warriors</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">21</span> days</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏆</span>
+                            <span><span class="stat-value">2,891</span> completed</span>
+                        </div>
+                        <div class="stat">
+                            <span>🔥</span>
+                            <span><span class="stat-value">76%</span> active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header">👥 Your Circles' Challenges</div>
+
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">📚</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">SF Reading Sprint</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">SF CIRCLE</span>
+                                <span>•</span>
+                                <span>23 members</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">14</span> days left</span>
+                        </div>
+                        <div class="stat">
+                            <span>📖</span>
+                            <span><span class="stat-value">12</span> books read</span>
+                        </div>
+                        <div class="stat">
+                            <span>🔥</span>
+                            <span><span class="stat-value">91%</span> active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="challenge-card">
+                    <div class="challenge-header">
+                        <div class="challenge-icon">💪</div>
+                        <div class="challenge-info">
+                            <div class="challenge-title">Marina Fitness Week</div>
+                            <div class="challenge-meta">
+                                <span class="challenge-badge">MARINA CIRCLE</span>
+                                <span>•</span>
+                                <span>18 members</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="challenge-stats">
+                        <div class="stat">
+                            <span>📅</span>
+                            <span><span class="stat-value">3</span> days left</span>
+                        </div>
+                        <div class="stat">
+                            <span>🏋️</span>
+                            <span><span class="stat-value">142</span> workouts</span>
+                        </div>
+                        <div class="stat">
+                            <span>🔥</span>
+                            <span><span class="stat-value">100%</span> active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboards View -->
+            <div class="content" id="leaderboards-view" style="display: none;">
+                <div class="section-header">❄️ 30 Day Cold Shower</div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">1</div>
+                    <div class="avatar">JD</div>
+                    <div class="user-info">
+                        <div class="username">John Doe</div>
+                        <div class="user-score">30 days • Perfect</div>
+                    </div>
+                    <div class="score">30</div>
+                </div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">2</div>
+                    <div class="avatar">AS</div>
+                    <div class="user-info">
+                        <div class="username">Alice Smith</div>
+                        <div class="user-score">30 days • Perfect</div>
+                    </div>
+                    <div class="score">30</div>
+                </div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">3</div>
+                    <div class="avatar">MJ</div>
+                    <div class="user-info">
+                        <div class="username">Mike Johnson</div>
+                        <div class="user-score">29 days</div>
+                    </div>
+                    <div class="score">29</div>
+                </div>
+
+                <div class="section-header">📚 SF Reading Sprint</div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">1</div>
+                    <div class="avatar">SL</div>
+                    <div class="user-info">
+                        <div class="username">Sarah Lee</div>
+                        <div class="user-score">5 books</div>
+                    </div>
+                    <div class="score">5</div>
+                </div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">2</div>
+                    <div class="avatar">TK</div>
+                    <div class="user-info">
+                        <div class="username">Tom Kim</div>
+                        <div class="user-score">4 books</div>
+                    </div>
+                    <div class="score">4</div>
+                </div>
+
+                <div class="leaderboard-item top-3">
+                    <div class="rank">3</div>
+                    <div class="avatar">LP</div>
+                    <div class="user-info">
+                        <div class="username">Lisa Park</div>
+                        <div class="user-score">3 books</div>
+                    </div>
+                    <div class="score">3</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-bar">
+            <div class="tab-item">
+                <div class="tab-icon">📊</div>
+                <div class="tab-label">Daily</div>
+            </div>
+            <div class="tab-item active">
+                <div class="tab-icon">👥</div>
+                <div class="tab-label">Social</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon">📈</div>
+                <div class="tab-label">Progress</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showView(view) {
+            const tabs = document.querySelectorAll('.view-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('posts-view').style.display = 'none';
+            document.getElementById('challenges-view').style.display = 'none';
+            document.getElementById('leaderboards-view').style.display = 'none';
+
+            document.getElementById(view + '-view').style.display = 'block';
+        }
+
+        function showFeedView(type) {
+            const options = document.querySelectorAll('.pinned-option');
+            options.forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

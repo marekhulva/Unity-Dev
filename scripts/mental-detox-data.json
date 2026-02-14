@@ -1,0 +1,76 @@
+{
+  "name": "7 Day Mental Detox",
+  "description": "7 days to reset your mind and reclaim mental clarity.\n\nEVERY DAY\n• Freewriting \u2014 20 min, pen & paper\n• Exercise \u2014 20+ min\n• In Bed by 10:30 PM\n• No Social Media\n• No Long-Form Content\n• Detox Compliance\n\nOn Day 1, Freewriting becomes a 60-minute Brain Dump \u2014 write everything on your mind without stopping.\n\nREPLACEMENT ACTIVITIES\n• Light TV \u2014 comedy, feel-good shows\n• High-quality books\n• Deep work blocks\n• In-person social interaction\n• Creative hobbies\n\nWHY IT WORKS\n\nYour brain is overstimulated. This detox creates space for clarity, focus, and genuine rest. The first 2\u20133 days are hardest \u2014 boredom is the goal. Let yourself be bored. That\u2019s when the reset happens.\n\n32/42 checkmarks to pass (75%). Missing a few is fine \u2014 progress over perfection.",
+  "emoji": "🧠",
+  "type": "streak",
+  "scope": "circle",
+  "circle_id": "d73be526-5cef-45bb-8121-065bb810ac2f",
+  "duration_days": 7,
+  "success_threshold": 75,
+  "badge_emoji": "🧠",
+  "badge_name": "Mental Detox Master",
+  "has_forum": true,
+  "status": "active",
+  "predetermined_activities": [
+    {
+      "id": "detox-brain-dump",
+      "title": "Brain Dump",
+      "emoji": "🧠",
+      "frequency": "once",
+      "min_duration_minutes": 60,
+      "start_day": 1,
+      "end_day": 1,
+      "description": "Write everything on your mind for 60 minutes. Thoughts, worries, ideas, everything. Write without stopping, no structure needed."
+    },
+    {
+      "id": "detox-freewrite",
+      "title": "Freewriting",
+      "emoji": "✍️",
+      "frequency": "daily",
+      "min_duration_minutes": 20,
+      "start_day": 2,
+      "end_day": 7,
+      "description": "Freewrite for 20 minutes on pen and paper. No structure, no editing, just flow."
+    },
+    {
+      "id": "detox-exercise",
+      "title": "Exercise",
+      "emoji": "💪",
+      "frequency": "daily",
+      "min_duration_minutes": 20,
+      "description": "At least 20 minutes of physical movement. Walking, gym, yoga, sports - anything that gets you moving."
+    },
+    {
+      "id": "detox-sleep",
+      "title": "In Bed by 10:30 PM",
+      "emoji": "😴",
+      "frequency": "daily",
+      "is_abstinence": true,
+      "description": "Be in bed with lights off by 10:30 PM. No screens, no scrolling — just sleep."
+    },
+    {
+      "id": "detox-no-social",
+      "title": "No Social Media",
+      "emoji": "🚫",
+      "frequency": "daily",
+      "is_abstinence": true,
+      "description": "Stay off Instagram, TikTok, Twitter, Facebook, and other social media platforms today. (Checking messages/DMs is OK if necessary, but no scrolling feeds)"
+    },
+    {
+      "id": "detox-no-content",
+      "title": "No Long-Form Content",
+      "emoji": "📵",
+      "frequency": "daily",
+      "is_abstinence": true,
+      "description": "Avoid YouTube, podcasts, movies, TV shows, and news today. (Exception: Light comedy TV is OK as replacement activity)"
+    },
+    {
+      "id": "detox-compliance",
+      "title": "No Nicotine, Alcohol, Junk Food",
+      "emoji": "🧘",
+      "frequency": "daily",
+      "is_abstinence": true,
+      "description": "Avoid other dopamine-heavy digital inputs today: doom-scrolling, gaming binges, rabbit-hole browsing, etc. Keep digital consumption intentional."
+    }
+  ]
+}

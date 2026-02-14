@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Circle Challenge</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .create-page {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            padding-bottom: 100px;
+        }
+
+        /* Header */
+        .page-header {
+            padding: 30px 20px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 5px;
+        }
+        .header-tip {
+            font-size: 12px;
+            color: rgba(231,180,58,0.8);
+            background: rgba(231,180,58,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(231,180,58,0.2);
+        }
+
+        /* Section */
+        .section {
+            padding: 25px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        .section-description {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+        }
+
+        /* Form Fields */
+        .form-field {
+            margin-bottom: 20px;
+        }
+        .field-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .field-hint {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 5px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(231,180,58,0.5);
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Image Upload */
+        .image-upload {
+            width: 100%;
+            height: 160px;
+            background: rgba(255,255,255,0.04);
+            border: 2px dashed rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .image-upload:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.5);
+        }
+        .upload-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Template Pills */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .template-card {
+            background: rgba(255,255,255,0.04);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .template-card:hover,
+        .template-card.selected {
+            background: rgba(231,180,58,0.1);
+            border-color: rgba(231,180,58,0.5);
+        }
+        .template-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .template-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .template-desc {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Duration Selector */
+        .duration-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .duration-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .duration-btn:hover,
+        .duration-btn.selected {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.5);
+        }
+        .duration-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #E7B43A;
+            margin-bottom: 3px;
+        }
+        .duration-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Points Slider */
+        .points-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .points-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .points-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Privacy Toggle */
+        .privacy-options {
+            display: flex;
+            gap: 10px;
+        }
+        .privacy-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .privacy-btn:hover,
+        .privacy-btn.selected {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.5);
+        }
+        .privacy-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .privacy-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .privacy-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Sticky Footer */
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(11,15,18,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+            max-width: 420px;
+            margin: 0 auto;
+            border-radius: 20px 20px 0 0;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(231,180,58,0.4);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        /* Checkbox */
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .checkbox-field:hover {
+            background: rgba(255,255,255,0.06);
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .checkbox.checked {
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            border-color: #E7B43A;
+        }
+        .checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .checkbox-label {
+            font-size: 13px;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Create Challenge</h1>
+
+        <div class="create-page">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="header-subtitle">Create a new challenge for Fitness Warriors</div>
+                <div class="header-tip">💡 Challenges with clear goals get 3x more participants!</div>
+            </div>
+
+            <!-- Basic Info -->
+            <div class="section">
+                <div class="section-title">Basic Information</div>
+
+                <div class="form-field">
+                    <label class="field-label">Challenge Name *</label>
+                    <input type="text" placeholder="e.g., 30-Day Meditation Journey">
+                    <div class="field-hint">Make it clear and motivating</div>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Description *</label>
+                    <textarea placeholder="Describe what participants will do and why it matters..."></textarea>
+                    <div class="field-hint">Explain the challenge and its benefits</div>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Challenge Image</label>
+                    <div class="image-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Tap to upload image</div>
+                    </div>
+                    <div class="field-hint">Recommended: 1200x600px</div>
+                </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="section">
+                <div class="section-title">Quick Templates</div>
+                <div class="section-description">Choose a template to get started faster</div>
+
+                <div class="template-grid">
+                    <div class="template-card selected">
+                        <div class="template-icon">🔥</div>
+                        <div class="template-name">Daily Habit</div>
+                        <div class="template-desc">Do something every day</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🎯</div>
+                        <div class="template-name">Goal Target</div>
+                        <div class="template-desc">Reach a specific goal</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📊</div>
+                        <div class="template-name">Tracking</div>
+                        <div class="template-desc">Track progress daily</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">⏱️</div>
+                        <div class="template-name">Timed</div>
+                        <div class="template-desc">Time-based activity</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Duration -->
+            <div class="section">
+                <div class="section-title">Duration</div>
+
+                <div class="duration-options">
+                    <div class="duration-btn">
+                        <div class="duration-value">7</div>
+                        <div class="duration-label">days</div>
+                    </div>
+                    <div class="duration-btn">
+                        <div class="duration-value">14</div>
+                        <div class="duration-label">days</div>
+                    </div>
+                    <div class="duration-btn selected">
+                        <div class="duration-value">30</div>
+                        <div class="duration-label">days</div>
+                    </div>
+                    <div class="duration-btn">
+                        <div class="duration-value">60</div>
+                        <div class="duration-label">days</div>
+                    </div>
+                    <div class="duration-btn">
+                        <div class="duration-value">90</div>
+                        <div class="duration-label">days</div>
+                    </div>
+                    <div class="duration-btn">
+                        <div class="duration-value">⚙️</div>
+                        <div class="duration-label">custom</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Start Date -->
+            <div class="section">
+                <div class="section-title">Start Date</div>
+
+                <div class="form-field">
+                    <label class="field-label">When does it begin? *</label>
+                    <select>
+                        <option>Start immediately</option>
+                        <option>Tomorrow</option>
+                        <option>Next Monday</option>
+                        <option>Custom date...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Points Reward -->
+            <div class="section">
+                <div class="section-title">Points Reward</div>
+                <div class="section-description">How many points will participants earn?</div>
+
+                <div class="points-display">
+                    <div class="points-value">500</div>
+                    <div class="points-label">points for completion</div>
+                </div>
+                <input type="range" min="100" max="1000" value="500" step="50">
+            </div>
+
+            <!-- Privacy -->
+            <div class="section">
+                <div class="section-title">Privacy</div>
+
+                <div class="privacy-options">
+                    <div class="privacy-btn selected">
+                        <div class="privacy-icon">👥</div>
+                        <div class="privacy-name">Circle Only</div>
+                        <div class="privacy-desc">Only Fitness Warriors members</div>
+                    </div>
+                    <div class="privacy-btn">
+                        <div class="privacy-icon">🌐</div>
+                        <div class="privacy-name">Global</div>
+                        <div class="privacy-desc">Anyone can join</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Options -->
+            <div class="section">
+                <div class="section-title">Advanced Options</div>
+
+                <div class="checkbox-field">
+                    <div class="checkbox checked"></div>
+                    <div class="checkbox-label">Allow check-ins with photos</div>
+                </div>
+
+                <div class="checkbox-field">
+                    <div class="checkbox checked"></div>
+                    <div class="checkbox-label">Show leaderboard to participants</div>
+                </div>
+
+                <div class="checkbox-field">
+                    <div class="checkbox"></div>
+                    <div class="checkbox-label">Require admin approval for participants</div>
+                </div>
+
+                <div class="checkbox-field">
+                    <div class="checkbox"></div>
+                    <div class="checkbox-label">Enable team mode (coming soon)</div>
+                </div>
+            </div>
+
+            <!-- Rules & Guidelines -->
+            <div class="section">
+                <div class="section-title">Rules & Guidelines</div>
+
+                <div class="form-field">
+                    <label class="field-label">Challenge Rules (Optional)</label>
+                    <textarea placeholder="e.g., Meditate for at least 10 minutes each day..."></textarea>
+                    <div class="field-hint">Clear rules help participants succeed</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Footer -->
+        <div class="sticky-footer">
+            <button class="btn btn-secondary">Save Draft</button>
+            <button class="btn btn-primary">Create Challenge</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily - Energy Levels</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+        }
+        .energy-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .energy-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* Energy Meter */
+        .energy-meter {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .meter-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .energy-display {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .energy-bars {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .energy-bar {
+            width: 30px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .energy-bar-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, #00d2ff, #3a7bd5);
+            border-radius: 15px;
+            transition: height 0.5s ease;
+        }
+        .energy-bar:nth-child(1) .energy-bar-fill { height: 100%; }
+        .energy-bar:nth-child(2) .energy-bar-fill { height: 100%; }
+        .energy-bar:nth-child(3) .energy-bar-fill { height: 100%; }
+        .energy-bar:nth-child(4) .energy-bar-fill { height: 80%; background: linear-gradient(to top, #3a7bd5, #00d2ff); }
+        .energy-bar:nth-child(5) .energy-bar-fill { height: 0%; }
+
+        .energy-status {
+            font-size: 16px;
+            color: #00d2ff;
+            font-weight: 600;
+        }
+
+        /* Time-Based Tasks */
+        .tasks-by-energy {
+            margin-bottom: 30px;
+        }
+        .energy-section {
+            margin-bottom: 30px;
+        }
+        .energy-section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .energy-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .energy-section.high .energy-icon {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+        }
+        .energy-section.medium .energy-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        .energy-section.low .energy-icon {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+        .energy-section-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .energy-section-time {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .task-card {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #00d2ff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .task-card:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(8px);
+        }
+        .task-card.completed {
+            opacity: 0.5;
+            border-left-color: #4CAF50;
+        }
+        .energy-section.medium .task-card {
+            border-left-color: #f093fb;
+        }
+        .energy-section.low .task-card {
+            border-left-color: #4facfe;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .task-check {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .task-card.completed .task-check {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            position: relative;
+        }
+        .task-card.completed .task-check::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .task-info {
+            flex: 1;
+        }
+        .task-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .task-card.completed .task-name {
+            text-decoration: line-through;
+        }
+        .task-details {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+        .task-duration {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Energy Tips */
+        .energy-tip {
+            background: linear-gradient(135deg, rgba(0,210,255,0.1), rgba(58,123,213,0.1));
+            border: 1px solid rgba(0,210,255,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .tip-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .tip-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00d2ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tip-content {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        /* Stats */
+        .energy-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="energy-title">Energy Flow</div>
+            <div class="energy-subtitle">Optimize your day based on energy levels</div>
+        </div>
+
+        <!-- Energy Meter -->
+        <div class="energy-meter">
+            <div class="meter-label">Current Energy</div>
+            <div class="energy-display">⚡</div>
+            <div class="energy-bars">
+                <div class="energy-bar"><div class="energy-bar-fill"></div></div>
+                <div class="energy-bar"><div class="energy-bar-fill"></div></div>
+                <div class="energy-bar"><div class="energy-bar-fill"></div></div>
+                <div class="energy-bar"><div class="energy-bar-fill"></div></div>
+                <div class="energy-bar"><div class="energy-bar-fill"></div></div>
+            </div>
+            <div class="energy-status">High Energy - Peak Performance</div>
+        </div>
+
+        <!-- Tasks by Energy -->
+        <div class="tasks-by-energy">
+            <!-- High Energy -->
+            <div class="energy-section high">
+                <div class="energy-section-header">
+                    <div class="energy-icon">🚀</div>
+                    <div style="flex: 1;">
+                        <div class="energy-section-title">High Energy Tasks</div>
+                        <div class="energy-section-time">Best: 6AM - 12PM</div>
+                    </div>
+                </div>
+
+                <div class="task-card completed">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Intense Workout</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 45 min</div>
+                                <div>💪 High intensity</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card completed">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Deep Work Session</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 90 min</div>
+                                <div>🧠 Focus required</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medium Energy -->
+            <div class="energy-section medium">
+                <div class="energy-section-header">
+                    <div class="energy-icon">🌟</div>
+                    <div style="flex: 1;">
+                        <div class="energy-section-title">Medium Energy Tasks</div>
+                        <div class="energy-section-time">Best: 12PM - 5PM</div>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Read Professional Book</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 30 min</div>
+                                <div>📚 Learning</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Meal Prep</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 30 min</div>
+                                <div>🍳 Routine</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Energy -->
+            <div class="energy-section low">
+                <div class="energy-section-header">
+                    <div class="energy-icon">🌙</div>
+                    <div style="flex: 1;">
+                        <div class="energy-section-title">Low Energy Tasks</div>
+                        <div class="energy-section-time">Best: 5PM - 10PM</div>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Gentle Stretching</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 15 min</div>
+                                <div>🧘 Relaxing</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-check"></div>
+                        <div class="task-info">
+                            <div class="task-name">Gratitude Journal</div>
+                            <div class="task-details">
+                                <div class="task-duration">⏱️ 10 min</div>
+                                <div>📝 Reflective</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Tip -->
+        <div class="energy-tip">
+            <div class="tip-icon">💡</div>
+            <div class="tip-title">Energy Optimization</div>
+            <div class="tip-content">
+                Schedule your most demanding tasks during your peak energy hours (morning). Save routine and reflective tasks for when energy naturally dips.
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="energy-stats">
+            <div class="stat-card">
+                <div class="stat-value" style="color: #00d2ff;">75%</div>
+                <div class="stat-label">Energy Used</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color: #4CAF50;">2/6</div>
+                <div class="stat-label">Tasks Done</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.task-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('completed');
+            });
+        });
+    </script>
+</body>
+</html>

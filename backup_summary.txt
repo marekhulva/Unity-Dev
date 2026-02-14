@@ -1,0 +1,51 @@
+DATABASE BACKUP SUMMARY
+=======================
+File: db_cluster-29-08-2025@08-28-17.backup
+Size: 32MB
+Date: August 29, 2025
+
+WHAT'S IN YOUR BACKUP:
+----------------------
+
+1. CIRCLES (2 total):
+   - TEST123 - Test Circle (80 members)
+   - JING - Retreat (2 members)
+
+2. ALL DATABASE TABLES:
+   ✅ profiles (all users)
+   ✅ circles 
+   ✅ circle_members
+   ✅ challenges
+   ✅ challenge_participants
+   ✅ challenge_activities
+   ✅ actions (habits)
+   ✅ goals
+   ✅ posts
+   ✅ follows
+   ✅ reactions
+   ✅ notifications
+   ✅ comments
+   ✅ post_likes
+
+3. SYSTEM TABLES:
+   ✅ Auth tables (user authentication)
+   ✅ Storage metadata
+   ✅ Realtime subscriptions
+   ✅ Database functions & triggers
+
+4. WHAT'S NOT INCLUDED:
+   ❌ Actual photo/video files (stored separately in Supabase Storage)
+   ❌ These remain safe in cloud storage
+
+HOW TO RESTORE:
+---------------
+1. In Supabase Dashboard → Database → Backups
+2. Click "Restore" and upload this file
+3. Or create new project and restore there
+
+IMPORTANT:
+----------
+- This is a complete database snapshot
+- All user data, posts, challenges are preserved
+- You can safely restore to any point
+- Keep this file secure!

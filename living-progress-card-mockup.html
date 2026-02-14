@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Living Progress Card - Mockup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .mockup-title {
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Row 1: Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .left-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .username-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .username {
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #06FFA5;
+      box-shadow: 0 0 8px #06FFA5;
+    }
+
+    .metadata {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .metadata .highlight {
+      color: #FFD700;
+      font-weight: 600;
+    }
+
+    /* Progress Ring */
+    .progress-ring-container {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      flex-shrink: 0;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .progress-percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    /* Row 2: Just did pill */
+    .just-did-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1.5px solid #FFD700;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 16px rgba(255, 215, 0, 0.3);
+    }
+
+    .just-did-text {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .just-did-action {
+      color: #FFD700;
+      font-weight: bold;
+    }
+
+    /* Row 3: Actions Grid */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .action-tile {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .action-tile.completed {
+      background: rgba(6, 255, 165, 0.1);
+      border: 1px solid rgba(6, 255, 165, 0.3);
+    }
+
+    .action-tile.newest {
+      background: rgba(255, 215, 0, 0.15);
+      border: 2px solid #FFD700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    .action-icon {
+      font-size: 28px;
+    }
+
+    .action-label {
+      color: #888;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .action-tile.completed .action-label {
+      color: #06FFA5;
+    }
+
+    .action-tile.newest .action-label {
+      color: #FFD700;
+      font-weight: 700;
+    }
+
+    /* Row 4: Footer */
+    .footer {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .footer .count {
+      color: #888;
+      font-weight: 600;
+    }
+
+    /* States Toggle */
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #FFD700;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: #FFC700;
+      transform: translateY(-2px);
+    }
+
+    .state-label {
+      color: #888;
+      font-size: 14px;
+      margin-top: 20px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="mockup-title">Living Progress Card - Mockup</div>
+
+  <!-- State 1: 2 of 4 completed -->
+  <div id="card1" class="card">
+    <!-- Row 1: Header -->
+    <div class="header">
+      <div class="left-cluster">
+        <div class="avatar">M</div>
+        <div class="user-info">
+          <div class="username-row">
+            <span class="username">Marek</span>
+            <div class="online-dot"></div>
+          </div>
+          <div class="metadata">
+            Today <span class="highlight">2 of 4</span> &nbsp;50%
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Ring -->
+      <div class="progress-ring-container">
+        <svg class="progress-ring" width="60" height="60">
+          <circle
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.1)"
+            stroke-width="4"
+          />
+          <circle
+            class="progress-ring-circle"
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="#FFD700"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="163.36"
+            stroke-dashoffset="81.68"
+          />
+        </svg>
+        <div class="progress-percentage">50%</div>
+      </div>
+    </div>
+
+    <!-- Row 2: Just did pill -->
+    <div class="just-did-pill">
+      <span class="just-did-text">Just did: <span class="just-did-action">Run</span></span>
+      <span>✅</span>
+    </div>
+
+    <!-- Row 3: Actions Grid -->
+    <div class="actions-grid">
+      <div class="action-tile completed">
+        <div class="action-icon">📖</div>
+        <div class="action-label">Read</div>
+      </div>
+      <div class="action-tile completed newest">
+        <div class="action-icon">🏃</div>
+        <div class="action-label">Run</div>
+      </div>
+      <div class="action-tile completed">
+        <div class="action-icon">🧘</div>
+        <div class="action-label">Meditate</div>
+      </div>
+    </div>
+
+    <!-- Row 4: Footer -->
+    <div class="footer">
+      <span class="count">2 left:</span> Workout, Journal
+    </div>
+  </div>
+
+  <div class="state-label">State: 2 of 4 completed (50%)</div>
+
+  <!-- State 2: 4 of 4 completed (Perfect Day) -->
+  <div id="card2" class="card">
+    <div class="header">
+      <div class="left-cluster">
+        <div class="avatar">M</div>
+        <div class="user-info">
+          <div class="username-row">
+            <span class="username">Marek</span>
+            <div class="online-dot"></div>
+          </div>
+          <div class="metadata">
+            Today <span class="highlight">4 of 4</span> &nbsp;100%
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-ring-container">
+        <svg class="progress-ring" width="60" height="60">
+          <circle
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.1)"
+            stroke-width="4"
+          />
+          <circle
+            class="progress-ring-circle"
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="#06FFA5"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="163.36"
+            stroke-dashoffset="0"
+          />
+        </svg>
+        <div class="progress-percentage" style="color: #06FFA5;">100%</div>
+      </div>
+    </div>
+
+    <div class="just-did-pill" style="background: rgba(6, 255, 165, 0.15); border-color: #06FFA5; box-shadow: 0 0 16px rgba(6, 255, 165, 0.3);">
+      <span class="just-did-text">🎉 <span class="just-did-action" style="color: #06FFA5;">Perfect day!</span></span>
+    </div>
+
+    <div class="actions-grid">
+      <div class="action-tile completed">
+        <div class="action-icon">📖</div>
+        <div class="action-label">Read</div>
+      </div>
+      <div class="action-tile completed">
+        <div class="action-icon">🏃</div>
+        <div class="action-label">Run</div>
+      </div>
+      <div class="action-tile completed">
+        <div class="action-icon">🧘</div>
+        <div class="action-label">Meditate</div>
+      </div>
+      <div class="action-tile completed newest" style="border-color: #06FFA5; box-shadow: 0 0 20px rgba(6, 255, 165, 0.4);">
+        <div class="action-icon">💪</div>
+        <div class="action-label">Workout</div>
+      </div>
+    </div>
+
+    <div class="footer" style="color: #06FFA5;">
+      <span class="count">🔥 All done for today!</span>
+    </div>
+  </div>
+
+  <div class="state-label">State: 4 of 4 completed (100% - Perfect Day!)</div>
+
+  <!-- State 3: 1 of 4 completed -->
+  <div id="card3" class="card">
+    <div class="header">
+      <div class="left-cluster">
+        <div class="avatar">M</div>
+        <div class="user-info">
+          <div class="username-row">
+            <span class="username">Marek</span>
+            <div class="online-dot"></div>
+          </div>
+          <div class="metadata">
+            Today <span class="highlight">1 of 4</span> &nbsp;25%
+          </div>
+        </div>
+      </div>
+
+      <div class="progress-ring-container">
+        <svg class="progress-ring" width="60" height="60">
+          <circle
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.1)"
+            stroke-width="4"
+          />
+          <circle
+            class="progress-ring-circle"
+            cx="30"
+            cy="30"
+            r="26"
+            fill="none"
+            stroke="#FFD700"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="163.36"
+            stroke-dashoffset="122.52"
+          />
+        </svg>
+        <div class="progress-percentage">25%</div>
+      </div>
+    </div>
+
+    <div class="just-did-pill">
+      <span class="just-did-text">Just did: <span class="just-did-action">Meditate</span></span>
+      <span>✅</span>
+    </div>
+
+    <div class="actions-grid">
+      <div class="action-tile completed newest">
+        <div class="action-icon">🧘</div>
+        <div class="action-label">Meditate</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="count">3 left:</span> Read, Run, Workout
+    </div>
+  </div>
+
+  <div class="state-label">State: 1 of 4 completed (25%)</div>
+
+</body>
+</html>

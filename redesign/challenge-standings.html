@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=393, initial-scale=1.0">
+<title>Challenge Standings — Option A vs Option B</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    color: #fff;
+    display: flex;
+    gap: 40px;
+    padding: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .phone {
+    width: 393px;
+    min-height: 700px;
+    background: #000;
+    border-radius: 44px;
+    border: 3px solid #222;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .option-label {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #D4AF37;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .option-desc {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 20px;
+    max-width: 393px;
+  }
+
+  /* ===== SHARED STYLES ===== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 54px 20px 12px;
+  }
+  .logo { font-size: 24px; font-weight: 800; color: #FFD700; letter-spacing: 3px; }
+  .header-icon { width: 20px; height: 20px; }
+  .gold-line {
+    height: 1px;
+    margin: 0 20px;
+    background: linear-gradient(90deg, transparent, #FFD700, transparent);
+  }
+
+  /* Circle switcher */
+  .circle-switcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+  }
+  .circle-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #E7B43A, #FFD700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .circle-title { font-size: 16px; font-weight: 700; color: #fff; }
+  .circle-members { font-size: 12px; color: rgba(255,255,255,0.4); }
+  .circle-info { flex: 1; }
+  .chevron { color: #E7B43A; font-size: 14px; }
+  .settings-icon { color: rgba(255,255,255,0.6); font-size: 16px; }
+
+  /* Challenge cards */
+  .challenges-section { padding: 0 20px 16px; }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 10px; font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .section-link {
+    font-size: 11px; font-weight: 600;
+    color: #E7B43A;
+  }
+
+  .challenge-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .challenge-card:hover { background: rgba(255,255,255,0.06); }
+  .challenge-icon-sm {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .challenge-name { font-size: 14px; font-weight: 600; color: #fff; }
+  .challenge-meta { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+  .challenge-info { flex: 1; }
+
+  /* Standings icon on card (Option B) */
+  .standings-btn {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .standings-btn:hover {
+    background: rgba(212,175,55,0.2);
+    border-color: rgba(212,175,55,0.4);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 20px;
+    margin-bottom: 16px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  .tab.active {
+    color: #FFD700;
+    border-bottom-color: #FFD700;
+  }
+
+  /* ===== OPTION A: MODAL OVERLAY ===== */
+  .modal-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-container {
+    width: 340px;
+    background: #111;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 20px 20px 0;
+    text-align: center;
+  }
+  .modal-challenge-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .modal-challenge-info {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* Standings tabs inside modal */
+  .modal-tabs {
+    display: flex;
+    gap: 0;
+    margin: 0 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .modal-tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+  }
+  .modal-tab.active {
+    color: #D4AF37;
+    border-bottom: 2px solid #D4AF37;
+  }
+
+  /* Standings list */
+  .standings-list {
+    padding: 12px 20px 20px;
+    max-height: 380px;
+    overflow-y: auto;
+  }
+  .standing-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .standing-row:last-child { border-bottom: none; }
+  .standing-rank {
+    width: 24px;
+    font-size: 14px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .standing-rank.gold { color: #D4AF37; }
+  .standing-rank.silver { color: #C0C0C0; }
+  .standing-rank.bronze { color: #CD7F32; }
+  .standing-avatar {
+    width: 36px; height: 36px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    flex-shrink: 0;
+  }
+  .standing-avatar.first {
+    background: rgba(212,175,55,0.15);
+    color: #D4AF37;
+    border: 1.5px solid rgba(212,175,55,0.3);
+  }
+  .standing-info { flex: 1; min-width: 0; }
+  .standing-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .standing-name .crown { font-size: 12px; }
+  .standing-name .you {
+    font-size: 9px;
+    font-weight: 700;
+    color: #D4AF37;
+    background: rgba(212,175,55,0.12);
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .standing-streak {
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 2px;
+  }
+  .standing-progress-wrap {
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .standing-pct {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFC84A;
+  }
+  .standing-bar {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .standing-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #D4AF37, #FFD700);
+  }
+  .standing-bar-fill.low {
+    background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.25));
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px; height: 28px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ===== OPTION B: FULL SCREEN ===== */
+  .full-screen-standings {
+    padding: 0 0 20px;
+  }
+  .fs-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 54px 20px 16px;
+  }
+  .fs-back {
+    font-size: 18px;
+    color: #D4AF37;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .fs-title-section { flex: 1; }
+  .fs-challenge-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .fs-challenge-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 2px;
+  }
+
+  /* Stats bar */
+  .fs-stats-bar {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px;
+    margin-bottom: 20px;
+  }
+  .fs-stat {
+    flex: 1;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    text-align: center;
+  }
+  .fs-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFC84A;
+  }
+  .fs-stat-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* Podium */
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 20px 20px;
+  }
+  .podium-spot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .podium-spot.first { order: 0; }
+  .podium-avatar {
+    width: 48px; height: 48px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+    color: rgba(255,255,255,0.5);
+  }
+  .podium-avatar.gold {
+    width: 56px; height: 56px; border-radius: 28px;
+    background: rgba(212,175,55,0.15);
+    border: 2px solid rgba(212,175,55,0.4);
+    color: #D4AF37;
+    font-size: 18px;
+  }
+  .podium-avatar.silver {
+    background: rgba(192,192,192,0.1);
+    border: 1.5px solid rgba(192,192,192,0.25);
+    color: #C0C0C0;
+  }
+  .podium-avatar.bronze {
+    background: rgba(205,127,50,0.1);
+    border: 1.5px solid rgba(205,127,50,0.25);
+    color: #CD7F32;
+  }
+  .podium-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+  }
+  .podium-pct {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .podium-pct.gold { color: #D4AF37; }
+  .podium-pct.silver { color: #C0C0C0; }
+  .podium-pct.bronze { color: #CD7F32; }
+  .podium-rank {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .podium-rank.gold { color: #D4AF37; }
+  .podium-rank.silver { color: #C0C0C0; }
+  .podium-rank.bronze { color: #CD7F32; }
+  .podium-crown {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .podium-bar {
+    width: 80px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 8px;
+  }
+  .podium-bar.gold { height: 72px; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.2); border-bottom: none; }
+  .podium-bar.silver { height: 52px; background: rgba(192,192,192,0.08); border: 1px solid rgba(192,192,192,0.15); border-bottom: none; }
+  .podium-bar.bronze { height: 40px; background: rgba(205,127,50,0.08); border: 1px solid rgba(205,127,50,0.15); border-bottom: none; }
+
+  .fs-divider {
+    height: 1px;
+    margin: 0 20px 16px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  }
+
+  .fs-rest-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 0 20px;
+    margin-bottom: 8px;
+  }
+  .fs-standings-list {
+    padding: 0 20px;
+  }
+
+  /* Highlight current user */
+  .standing-row.current-user {
+    background: rgba(212,175,55,0.04);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 0 -12px;
+    border-bottom: none;
+  }
+
+  .content-area { padding: 16px 20px; }
+  .faded { color: rgba(255,255,255,0.2); font-size: 12px; text-align: center; padding: 40px; }
+</style>
+</head>
+<body>
+
+<!-- ============================= -->
+<!-- OPTION A: INSIDE DETAIL MODAL -->
+<!-- ============================= -->
+<div>
+  <div class="option-label">Option A — Modal Inside Challenge Detail</div>
+  <div class="option-desc">Tap challenge card → opens existing detail modal with standings tab. One tap, zero new screens.</div>
+
+  <div class="phone">
+    <!-- Background content (dimmed) -->
+    <div style="opacity: 0.3; pointer-events: none;">
+      <div class="header">
+        <div class="logo">UNITY</div>
+        <div style="color: rgba(255,255,255,0.5); font-size: 14px;">⊕</div>
+      </div>
+      <div class="gold-line"></div>
+      <div class="circle-switcher">
+        <div class="circle-icon">💪</div>
+        <div class="circle-info">
+          <div class="circle-title">Fitness Warriors</div>
+          <div class="circle-members">12 members</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay">
+      <div class="modal-container" style="position: relative;">
+        <div class="modal-close">✕</div>
+
+        <div class="modal-header">
+          <div class="modal-challenge-name">30-Day No Sugar</div>
+          <div class="modal-challenge-info">DAY 14 OF 30 • 8 PARTICIPANTS</div>
+        </div>
+
+        <div class="modal-tabs">
+          <div class="modal-tab">Details</div>
+          <div class="modal-tab active">Standings</div>
+          <div class="modal-tab">Activities</div>
+        </div>
+
+        <div class="standings-list">
+          <!-- 1st -->
+          <div class="standing-row">
+            <div class="standing-rank gold">1</div>
+            <div class="standing-avatar first">MH</div>
+            <div class="standing-info">
+              <div class="standing-name">Marcus H. <span class="crown">👑</span></div>
+              <div class="standing-streak">14 day streak 🔥</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">100%</div>
+              <div class="standing-bar"><div class="standing-bar-fill" style="width: 100%"></div></div>
+            </div>
+          </div>
+
+          <!-- 2nd -->
+          <div class="standing-row current-user">
+            <div class="standing-rank silver">2</div>
+            <div class="standing-avatar" style="background: rgba(192,192,192,0.1); border: 1.5px solid rgba(192,192,192,0.25); color: #C0C0C0;">JD</div>
+            <div class="standing-info">
+              <div class="standing-name">You <span class="you">YOU</span></div>
+              <div class="standing-streak">12 day streak 🔥</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">86%</div>
+              <div class="standing-bar"><div class="standing-bar-fill" style="width: 86%"></div></div>
+            </div>
+          </div>
+
+          <!-- 3rd -->
+          <div class="standing-row">
+            <div class="standing-rank bronze">3</div>
+            <div class="standing-avatar" style="background: rgba(205,127,50,0.1); border: 1.5px solid rgba(205,127,50,0.25); color: #CD7F32;">SK</div>
+            <div class="standing-info">
+              <div class="standing-name">Sarah K.</div>
+              <div class="standing-streak">10 day streak 🔥</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">71%</div>
+              <div class="standing-bar"><div class="standing-bar-fill" style="width: 71%"></div></div>
+            </div>
+          </div>
+
+          <!-- 4th -->
+          <div class="standing-row">
+            <div class="standing-rank">4</div>
+            <div class="standing-avatar">TW</div>
+            <div class="standing-info">
+              <div class="standing-name">Tyler W.</div>
+              <div class="standing-streak">8 day streak</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">57%</div>
+              <div class="standing-bar"><div class="standing-bar-fill" style="width: 57%"></div></div>
+            </div>
+          </div>
+
+          <!-- 5th -->
+          <div class="standing-row">
+            <div class="standing-rank">5</div>
+            <div class="standing-avatar">AL</div>
+            <div class="standing-info">
+              <div class="standing-name">Anna L.</div>
+              <div class="standing-streak">5 day streak</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">43%</div>
+              <div class="standing-bar"><div class="standing-bar-fill" style="width: 43%"></div></div>
+            </div>
+          </div>
+
+          <!-- 6th -->
+          <div class="standing-row">
+            <div class="standing-rank">6</div>
+            <div class="standing-avatar">RB</div>
+            <div class="standing-info">
+              <div class="standing-name">Ryan B.</div>
+              <div class="standing-streak">3 day streak</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">29%</div>
+              <div class="standing-bar"><div class="standing-bar-fill low" style="width: 29%"></div></div>
+            </div>
+          </div>
+
+          <!-- 7th -->
+          <div class="standing-row">
+            <div class="standing-rank">7</div>
+            <div class="standing-avatar">KP</div>
+            <div class="standing-info">
+              <div class="standing-name">Kim P.</div>
+              <div class="standing-streak">No streak</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">14%</div>
+              <div class="standing-bar"><div class="standing-bar-fill low" style="width: 14%"></div></div>
+            </div>
+          </div>
+
+          <!-- 8th -->
+          <div class="standing-row">
+            <div class="standing-rank">8</div>
+            <div class="standing-avatar">DM</div>
+            <div class="standing-info">
+              <div class="standing-name">David M.</div>
+              <div class="standing-streak">No streak</div>
+            </div>
+            <div class="standing-progress-wrap">
+              <div class="standing-pct">7%</div>
+              <div class="standing-bar"><div class="standing-bar-fill low" style="width: 7%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================= -->
+<!-- OPTION B: FULL SCREEN STANDALONE  -->
+<!-- ================================= -->
+<div>
+  <div class="option-label">Option B — Full Screen Standings</div>
+  <div class="option-desc">Trophy icon on each challenge card → opens dedicated standings screen. More room, podium visual.</div>
+
+  <div class="phone">
+    <div class="full-screen-standings">
+      <!-- Header with back -->
+      <div class="fs-header">
+        <div class="fs-back">← </div>
+        <div class="fs-title-section">
+          <div class="fs-challenge-name">30-Day No Sugar</div>
+          <div class="fs-challenge-meta">Day 14 of 30 • 8 participants</div>
+        </div>
+        <div class="challenge-icon-sm" style="width: 32px; height: 32px; font-size: 14px;">🎯</div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="fs-stats-bar">
+        <div class="fs-stat">
+          <div class="fs-stat-value">14</div>
+          <div class="fs-stat-label">Days In</div>
+        </div>
+        <div class="fs-stat">
+          <div class="fs-stat-value">8</div>
+          <div class="fs-stat-label">Active</div>
+        </div>
+        <div class="fs-stat">
+          <div class="fs-stat-value">58%</div>
+          <div class="fs-stat-label">Avg Rate</div>
+        </div>
+      </div>
+
+      <!-- Podium -->
+      <div class="podium">
+        <!-- 2nd -->
+        <div class="podium-spot">
+          <div class="podium-avatar silver">JD</div>
+          <div class="podium-name">You</div>
+          <div class="podium-bar silver">
+            <div class="podium-pct silver">86%</div>
+          </div>
+          <div class="podium-rank silver">2ND</div>
+        </div>
+
+        <!-- 1st -->
+        <div class="podium-spot first">
+          <div class="podium-crown">👑</div>
+          <div class="podium-avatar gold">MH</div>
+          <div class="podium-name">Marcus</div>
+          <div class="podium-bar gold">
+            <div class="podium-pct gold">100%</div>
+          </div>
+          <div class="podium-rank gold">1ST</div>
+        </div>
+
+        <!-- 3rd -->
+        <div class="podium-spot">
+          <div class="podium-avatar bronze">SK</div>
+          <div class="podium-name">Sarah</div>
+          <div class="podium-bar bronze">
+            <div class="podium-pct bronze">71%</div>
+          </div>
+          <div class="podium-rank bronze">3RD</div>
+        </div>
+      </div>
+
+      <div class="fs-divider"></div>
+      <div class="fs-rest-label">ALL PARTICIPANTS</div>
+
+      <div class="fs-standings-list">
+        <!-- 4th -->
+        <div class="standing-row">
+          <div class="standing-rank">4</div>
+          <div class="standing-avatar">TW</div>
+          <div class="standing-info">
+            <div class="standing-name">Tyler W.</div>
+            <div class="standing-streak">8 day streak</div>
+          </div>
+          <div class="standing-progress-wrap">
+            <div class="standing-pct">57%</div>
+            <div class="standing-bar"><div class="standing-bar-fill" style="width: 57%"></div></div>
+          </div>
+        </div>
+
+        <!-- 5th -->
+        <div class="standing-row">
+          <div class="standing-rank">5</div>
+          <div class="standing-avatar">AL</div>
+          <div class="standing-info">
+            <div class="standing-name">Anna L.</div>
+            <div class="standing-streak">5 day streak</div>
+          </div>
+          <div class="standing-progress-wrap">
+            <div class="standing-pct">43%</div>
+            <div class="standing-bar"><div class="standing-bar-fill" style="width: 43%"></div></div>
+          </div>
+        </div>
+
+        <!-- 6th -->
+        <div class="standing-row">
+          <div class="standing-rank">6</div>
+          <div class="standing-avatar">RB</div>
+          <div class="standing-info">
+            <div class="standing-name">Ryan B.</div>
+            <div class="standing-streak">3 day streak</div>
+          </div>
+          <div class="standing-progress-wrap">
+            <div class="standing-pct">29%</div>
+            <div class="standing-bar"><div class="standing-bar-fill low" style="width: 29%"></div></div>
+          </div>
+        </div>
+
+        <!-- 7th -->
+        <div class="standing-row">
+          <div class="standing-rank">7</div>
+          <div class="standing-avatar">KP</div>
+          <div class="standing-info">
+            <div class="standing-name">Kim P.</div>
+            <div class="standing-streak">No streak</div>
+          </div>
+          <div class="standing-progress-wrap">
+            <div class="standing-pct">14%</div>
+            <div class="standing-bar"><div class="standing-bar-fill low" style="width: 14%"></div></div>
+          </div>
+        </div>
+
+        <!-- 8th -->
+        <div class="standing-row">
+          <div class="standing-rank">8</div>
+          <div class="standing-avatar">DM</div>
+          <div class="standing-info">
+            <div class="standing-name">David M.</div>
+            <div class="standing-streak">No streak</div>
+          </div>
+          <div class="standing-progress-wrap">
+            <div class="standing-pct">7%</div>
+            <div class="standing-bar"><div class="standing-bar-fill low" style="width: 7%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Also show what the challenge card looks like with the trophy button -->
+  <div style="margin-top: 20px;">
+    <div class="option-desc" style="color: rgba(255,255,255,0.6);">↓ Challenge card with standings button</div>
+    <div style="width: 353px; padding: 0 20px;">
+      <div class="challenge-card">
+        <div class="challenge-icon-sm">🎯</div>
+        <div class="challenge-info">
+          <div class="challenge-name">30-Day No Sugar</div>
+          <div class="challenge-meta">30 days • 8 participants</div>
+        </div>
+        <div class="standings-btn">🏆</div>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-icon-sm" style="background: linear-gradient(135deg, #a855f7, #ec4899);">🧘</div>
+        <div class="challenge-info">
+          <div class="challenge-name">Morning Meditation</div>
+          <div class="challenge-meta">21 days • 5 participants</div>
+        </div>
+        <div class="standings-btn">🏆</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

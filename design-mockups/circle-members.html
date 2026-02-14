@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Members - Fitness Warriors</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .container { max-width: 420px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+        }
+
+        /* Main Container */
+        .members-page {
+            background: #0B0F12;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .page-header {
+            padding: 30px 20px 20px;
+            background: linear-gradient(180deg, rgba(231,180,58,0.05), transparent);
+        }
+        .header-subtitle {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Search & Filter */
+        .search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .search-bar {
+            width: 100%;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 40px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: rgba(255,255,255,0.4);
+        }
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
+        .filter-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .filter-pill.active {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        /* Sections */
+        .section {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        /* Member List */
+        .member-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .member-item:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(231,180,58,0.2);
+            transform: translateX(4px);
+        }
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 7px;
+            background: #22c55e;
+            border: 2px solid #0B0F12;
+        }
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .member-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .member-role-badge {
+            display: inline-block;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 6px;
+        }
+        .member-stats {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+        .member-action {
+            font-size: 16px;
+            color: rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+
+        /* Leaderboard Preview */
+        .leaderboard-item {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #E7B43A;
+            flex-shrink: 0;
+        }
+        .rank-badge.top {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            border: none;
+            font-size: 16px;
+        }
+        .points-badge {
+            background: rgba(231,180,58,0.15);
+            border: 1px solid rgba(231,180,58,0.3);
+            color: #E7B43A;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👥 Members</h1>
+
+        <div class="members-page">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="header-subtitle">52 members in Fitness Warriors</div>
+
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-bar" placeholder="Search members...">
+                </div>
+
+                <div class="filter-pills">
+                    <div class="filter-pill active">All</div>
+                    <div class="filter-pill">Admins</div>
+                    <div class="filter-pill">Online</div>
+                    <div class="filter-pill">Most Active</div>
+                </div>
+            </div>
+
+            <!-- Top Contributors -->
+            <div class="section">
+                <div class="section-title">Top Contributors</div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge top">🥇</div>
+                    <div class="member-avatar"></div>
+                    <div class="member-info">
+                        <div class="member-name">Sarah M.</div>
+                        <div class="member-stats">124 posts • 3 challenges</div>
+                    </div>
+                    <div class="points-badge">2,847 pts</div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge top">🥈</div>
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                    <div class="member-info">
+                        <div class="member-name">Mike T.</div>
+                        <div class="member-stats">98 posts • 4 challenges</div>
+                    </div>
+                    <div class="points-badge">2,341 pts</div>
+                </div>
+
+                <div class="leaderboard-item">
+                    <div class="rank-badge top">🥉</div>
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                    <div class="member-info">
+                        <div class="member-name">Alex R.</div>
+                        <div class="member-stats">87 posts • 2 challenges</div>
+                    </div>
+                    <div class="points-badge">1,982 pts</div>
+                </div>
+            </div>
+
+            <!-- All Members -->
+            <div class="section">
+                <div class="section-title">All Members</div>
+
+                <div class="member-item">
+                    <div class="member-avatar">
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="member-name">
+                            <span class="member-role-badge">Admin</span>
+                            Alex R.
+                        </div>
+                        <div class="member-stats">Joined 6 months ago • 847 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="member-name">Sarah M.</div>
+                        <div class="member-stats">Joined 5 months ago • 2,847 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                    <div class="member-info">
+                        <div class="member-name">Mike T.</div>
+                        <div class="member-stats">Joined 4 months ago • 2,341 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="member-name">Emma L.</div>
+                        <div class="member-stats">Joined 3 months ago • 1,234 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                    <div class="member-info">
+                        <div class="member-name">James K.</div>
+                        <div class="member-stats">Joined 2 months ago • 892 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #30cfd0, #330867);"></div>
+                    <div class="member-info">
+                        <div class="member-name">Lisa P.</div>
+                        <div class="member-stats">Joined 1 month ago • 567 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">
+                        <div class="online-indicator"></div>
+                    </div>
+                    <div class="member-info">
+                        <div class="member-name">Chris D.</div>
+                        <div class="member-stats">Joined 3 weeks ago • 234 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+
+                <div class="member-item">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                    <div class="member-info">
+                        <div class="member-name">Anna B.</div>
+                        <div class="member-stats">Joined 2 weeks ago • 156 points</div>
+                    </div>
+                    <div class="member-action">›</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

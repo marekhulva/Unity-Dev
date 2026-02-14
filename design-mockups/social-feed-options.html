@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Social Feed - 3 Design Options</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .option-wrapper {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 14px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feed-container {
+            background: #0B0F12;
+            border-radius: 20px;
+            padding: 20px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+
+        .feed-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .feed-container::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+        }
+        .feed-container::-webkit-scrollbar-thumb {
+            background: #E7B43A;
+            border-radius: 3px;
+        }
+
+        /* OPTION 1: Classic Timeline Feed */
+        .timeline-feed {
+            position: relative;
+            padding-left: 60px;
+        }
+        .timeline-feed::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A, rgba(231, 180, 58, 0.2));
+        }
+
+        .timeline-post {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-avatar {
+            position: absolute;
+            left: -60px;
+            top: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 3px solid #0B0F12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            z-index: 2;
+            box-shadow: 0 0 12px rgba(231, 180, 58, 0.3);
+        }
+
+        .timeline-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            padding: 12px;
+            transition: all 0.3s ease;
+        }
+        .timeline-card:hover {
+            transform: translateX(8px);
+            border-color: rgba(231,180,58,0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .username {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .timestamp {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+        .challenge-badge {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.3), rgba(128, 128, 128, 0.2));
+            border: 1px solid rgba(192, 192, 192, 0.4);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #C0C0C0;
+            text-transform: uppercase;
+        }
+        .goal-badge {
+            background: linear-gradient(135deg, rgba(231, 180, 58, 0.3), rgba(255, 215, 0, 0.2));
+            border: 1px solid rgba(231, 180, 58, 0.4);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+        }
+
+        .post-content {
+            margin-bottom: 8px;
+        }
+        .action-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .post-text {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.4;
+        }
+        .goal-context {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .post-media {
+            margin: 12px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .post-media img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .audio-player {
+            background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(126, 34, 206, 0.1));
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .play-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: #9333EA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .audio-info {
+            flex: 1;
+        }
+        .audio-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A78BFA;
+        }
+        .audio-duration {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .post-engagement {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .engagement-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .engagement-btn:hover {
+            color: #E7B43A;
+            transform: scale(1.05);
+        }
+        .engagement-btn.active {
+            color: #E7B43A;
+        }
+
+        .celebration-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(231, 180, 58, 0.1));
+            border: 1px solid rgba(231, 180, 58, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .celebration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #E7B43A, #FFD700, #E7B43A);
+        }
+        .celebration-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .celebration-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E7B43A;
+        }
+
+        /* OPTION 2: Staggered Glass Cards */
+        .staggered-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .staggered-post {
+            display: flex;
+            gap: 12px;
+        }
+        .staggered-post.left {
+            flex-direction: row;
+        }
+        .staggered-post.right {
+            flex-direction: row-reverse;
+        }
+
+        .staggered-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 20px rgba(231, 180, 58, 0.2);
+        }
+
+        .staggered-card {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(30px) saturate(200%);
+            -webkit-backdrop-filter: blur(30px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .staggered-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px rgba(231, 180, 58, 0.2);
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .meta-badges {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* OPTION 3: Unified Stream */
+        .stream-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .stream-post {
+            display: flex;
+            gap: 14px;
+        }
+
+        .stream-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 0 16px rgba(231, 180, 58, 0.25);
+        }
+
+        .stream-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stream-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+        .stream-card:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            border-color: rgba(231,180,58,0.25);
+        }
+
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .stream-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stream-username {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .stream-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Social Feed - 3 Design Options</div>
+
+    <div class="options-container">
+        <!-- OPTION 1: Classic Timeline Feed -->
+        <div class="option-wrapper">
+            <div class="option-label">Option 1: Classic Timeline Feed</div>
+            <div class="feed-container">
+                <div class="timeline-feed">
+                    <!-- Post 1: Check-in with Challenge -->
+                    <div class="timeline-post">
+                        <div class="timeline-avatar">🏃</div>
+                        <div class="timeline-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Alex Chen</div>
+                                    <div class="timestamp">2h ago</div>
+                                </div>
+                                <div class="challenge-badge">75 HARD</div>
+                            </div>
+                            <div class="post-content">
+                                <div class="action-title">Morning Run ✓</div>
+                                <div class="goal-context">
+                                    <span>45 min</span>
+                                    <span>•</span>
+                                    <span>🎯 Marathon Training</span>
+                                </div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn active">
+                                    <span>🔥</span>
+                                    <span>12</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2: Celebration -->
+                    <div class="timeline-post">
+                        <div class="timeline-avatar">💪</div>
+                        <div class="timeline-card celebration-card">
+                            <div class="celebration-icon">💯</div>
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Sarah Johnson</div>
+                                    <div class="timestamp">4h ago</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="celebration-text">100% Daily Complete</div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn active">
+                                    <span>🎉</span>
+                                    <span>24</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3: Photo Post -->
+                    <div class="timeline-post">
+                        <div class="timeline-avatar">🧘</div>
+                        <div class="timeline-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Mike Torres</div>
+                                    <div class="timestamp">6h ago</div>
+                                </div>
+                                <div class="goal-badge">Mindfulness</div>
+                            </div>
+                            <div class="post-content">
+                                <div class="action-title">Morning Meditation ✓</div>
+                                <div class="post-text">26 day streak 🔥</div>
+                            </div>
+                            <div class="post-media">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23667eea' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='white' font-size='20' font-family='system-ui'%3EMeditation Photo%3C/text%3E%3C/svg%3E" alt="Post">
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn">
+                                    <span>🔥</span>
+                                    <span>18</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 4: Audio Post -->
+                    <div class="timeline-post">
+                        <div class="timeline-avatar">🎤</div>
+                        <div class="timeline-card">
+                            <div class="post-header">
+                                <div class="user-info">
+                                    <div class="username">Emma Rodriguez</div>
+                                    <div class="timestamp">8h ago</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="post-text">Today's reflection 💭</div>
+                            </div>
+                            <div class="audio-player">
+                                <div class="play-btn">▶️</div>
+                                <div class="audio-info">
+                                    <div class="audio-label">Voice Note</div>
+                                    <div class="audio-duration">2:34</div>
+                                </div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn">
+                                    <span>🔥</span>
+                                    <span>7</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 2: Staggered Glass Cards -->
+        <div class="option-wrapper">
+            <div class="option-label">Option 2: Staggered Liquid Glass</div>
+            <div class="feed-container">
+                <div class="staggered-feed">
+                    <!-- Post 1: Left aligned -->
+                    <div class="staggered-post left">
+                        <div class="staggered-avatar">🏃</div>
+                        <div class="staggered-card">
+                            <div class="post-meta">
+                                <div class="user-info">
+                                    <div class="username">Alex Chen</div>
+                                    <div class="timestamp">2 hours ago</div>
+                                </div>
+                                <div class="meta-badges">
+                                    <div class="challenge-badge">75 HARD</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="action-title">Morning Run Complete ✓</div>
+                                <div class="post-text">45 min • 🎯 Marathon Training</div>
+                                <div class="goal-context">
+                                    <span>🎯</span>
+                                    <span>Marathon Training</span>
+                                </div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn active">
+                                    <span>🔥</span>
+                                    <span>12</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2: Right aligned -->
+                    <div class="staggered-post right">
+                        <div class="staggered-avatar">💪</div>
+                        <div class="staggered-card celebration-card">
+                            <div class="celebration-icon">💯</div>
+                            <div class="post-meta">
+                                <div class="user-info">
+                                    <div class="username">Sarah Johnson</div>
+                                    <div class="timestamp">4 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="celebration-text">100% Daily Complete</div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn active">
+                                    <span>🎉</span>
+                                    <span>24</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3: Left aligned with photo -->
+                    <div class="staggered-post left">
+                        <div class="staggered-avatar">🧘</div>
+                        <div class="staggered-card">
+                            <div class="post-meta">
+                                <div class="user-info">
+                                    <div class="username">Mike Torres</div>
+                                    <div class="timestamp">6 hours ago</div>
+                                </div>
+                                <div class="meta-badges">
+                                    <div class="goal-badge">Mindfulness</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="action-title">Morning Meditation</div>
+                                <div class="post-text">26 day streak 🔥</div>
+                            </div>
+                            <div class="post-media">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%23764ba2' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='white' font-size='20' font-family='system-ui'%3EMeditation Photo%3C/text%3E%3C/svg%3E" alt="Post">
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn">
+                                    <span>🔥</span>
+                                    <span>18</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 4: Right aligned with audio -->
+                    <div class="staggered-post right">
+                        <div class="staggered-avatar">🎤</div>
+                        <div class="staggered-card">
+                            <div class="post-meta">
+                                <div class="user-info">
+                                    <div class="username">Emma Rodriguez</div>
+                                    <div class="timestamp">8 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                <div class="post-text">Today's reflection 💭</div>
+                            </div>
+                            <div class="audio-player">
+                                <div class="play-btn">▶️</div>
+                                <div class="audio-info">
+                                    <div class="audio-label">Voice Note</div>
+                                    <div class="audio-duration">2:34</div>
+                                </div>
+                            </div>
+                            <div class="post-engagement">
+                                <div class="engagement-btn">
+                                    <span>🔥</span>
+                                    <span>7</span>
+                                </div>
+                                <div class="engagement-btn">
+                                    <span>💬</span>
+                                    <span>2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 3: Unified Stream -->
+        <div class="option-wrapper">
+            <div class="option-label">Option 3: Unified Stream</div>
+            <div class="feed-container">
+                <div class="stream-feed">
+                    <!-- Post 1 -->
+                    <div class="stream-post">
+                        <div class="stream-avatar">🏃</div>
+                        <div class="stream-content">
+                            <div class="stream-card">
+                                <div class="stream-header">
+                                    <div class="stream-user">
+                                        <div class="stream-username">Alex Chen</div>
+                                        <div class="stream-time">· 2h</div>
+                                    </div>
+                                    <div class="challenge-badge">75 HARD</div>
+                                </div>
+                                <div class="post-content">
+                                    <div class="action-title">Morning Run Complete ✓</div>
+                                    <div class="post-text">45 min • 🎯 Marathon Training</div>
+                                    <div class="goal-context">
+                                        <span>🎯</span>
+                                        <span>Marathon Training</span>
+                                    </div>
+                                </div>
+                                <div class="post-engagement">
+                                    <div class="engagement-btn active">
+                                        <span>🔥</span>
+                                        <span>12</span>
+                                    </div>
+                                    <div class="engagement-btn">
+                                        <span>💬</span>
+                                        <span>3</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 2: Celebration -->
+                    <div class="stream-post">
+                        <div class="stream-avatar">💪</div>
+                        <div class="stream-content">
+                            <div class="stream-card celebration-card">
+                                <div class="celebration-icon">💯</div>
+                                <div class="stream-header">
+                                    <div class="stream-user">
+                                        <div class="stream-username">Sarah Johnson</div>
+                                        <div class="stream-time">· 4h</div>
+                                    </div>
+                                </div>
+                                <div class="post-content">
+                                    <div class="celebration-text">100% Daily Complete</div>
+                                </div>
+                                <div class="post-engagement">
+                                    <div class="engagement-btn active">
+                                        <span>🎉</span>
+                                        <span>24</span>
+                                    </div>
+                                    <div class="engagement-btn">
+                                        <span>💬</span>
+                                        <span>8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 3: Photo -->
+                    <div class="stream-post">
+                        <div class="stream-avatar">🧘</div>
+                        <div class="stream-content">
+                            <div class="stream-card">
+                                <div class="stream-header">
+                                    <div class="stream-user">
+                                        <div class="stream-username">Mike Torres</div>
+                                        <div class="stream-time">· 6h</div>
+                                    </div>
+                                    <div class="goal-badge">Mindfulness</div>
+                                </div>
+                                <div class="post-content">
+                                    <div class="action-title">Morning Meditation</div>
+                                    <div class="post-text">26 day streak 🔥</div>
+                                </div>
+                                <div class="post-media">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect fill='%234facfe' width='400' height='200'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='white' font-size='20' font-family='system-ui'%3EMeditation Photo%3C/text%3E%3C/svg%3E" alt="Post">
+                                </div>
+                                <div class="post-engagement">
+                                    <div class="engagement-btn">
+                                        <span>🔥</span>
+                                        <span>18</span>
+                                    </div>
+                                    <div class="engagement-btn">
+                                        <span>💬</span>
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Post 4: Audio -->
+                    <div class="stream-post">
+                        <div class="stream-avatar">🎤</div>
+                        <div class="stream-content">
+                            <div class="stream-card">
+                                <div class="stream-header">
+                                    <div class="stream-user">
+                                        <div class="stream-username">Emma Rodriguez</div>
+                                        <div class="stream-time">· 8h</div>
+                                    </div>
+                                </div>
+                                <div class="post-content">
+                                    <div class="post-text">Today's reflection 💭 and challenges</div>
+                                </div>
+                                <div class="audio-player">
+                                    <div class="play-btn">▶️</div>
+                                    <div class="audio-info">
+                                        <div class="audio-label">Voice Note</div>
+                                        <div class="audio-duration">2:34</div>
+                                    </div>
+                                </div>
+                                <div class="post-engagement">
+                                    <div class="engagement-btn">
+                                        <span>🔥</span>
+                                        <span>7</span>
+                                    </div>
+                                    <div class="engagement-btn">
+                                        <span>💬</span>
+                                        <span>2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

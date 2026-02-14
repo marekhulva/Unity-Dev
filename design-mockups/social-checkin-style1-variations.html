@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Style 1 - 5 Variations (2 Rectangular)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .option-wrapper {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 14px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feed-container {
+            background: #0B0F12;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* VARIATION 1: Modern Sectioned (Square-ish) */
+        .v1-checkin {
+            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        .v1-checkin::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(231,180,58,0.4), transparent);
+        }
+
+        .v1-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .v1-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .v1-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .v1-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .v1-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .v1-badge {
+            background: linear-gradient(135deg, rgba(192,192,192,0.3), rgba(128,128,128,0.2));
+            border: 1px solid rgba(192,192,192,0.4);
+            color: #C0C0C0;
+            padding: 4px 10px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 6px;
+        }
+
+        .v1-content {
+            padding: 24px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .v1-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .v1-action {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .v1-goal {
+            font-size: 13px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v1-metrics {
+            display: flex;
+            justify-content: space-around;
+            padding: 18px;
+            gap: 12px;
+        }
+
+        .v1-metric {
+            text-align: center;
+            flex: 1;
+        }
+
+        .v1-metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .v1-metric-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .v1-reactions {
+            display: flex;
+            gap: 20px;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .v1-reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.2s ease;
+        }
+
+        .v1-reaction-btn:hover {
+            color: #E7B43A;
+            background: rgba(231,180,58,0.1);
+        }
+
+        /* VARIATION 2: Horizontal Compact (RECTANGULAR) */
+        .v2-checkin {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 18px;
+            align-items: center;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+
+        .v2-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .v2-icon-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.15), rgba(255,215,0,0.08));
+            border: 1.5px solid rgba(231,180,58,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            position: relative;
+        }
+
+        .v2-checkmark {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(231,180,58,0.5);
+        }
+
+        .v2-center {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .v2-top-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .v2-avatar-small {
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .v2-user-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .v2-time {
+            font-size: 10px;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .v2-challenge-tag {
+            background: rgba(192,192,192,0.2);
+            color: #C0C0C0;
+            padding: 2px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .v2-action-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+            margin-bottom: 2px;
+        }
+
+        .v2-goal-text {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v2-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: flex-end;
+            padding-left: 18px;
+            border-left: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .v2-metric-inline {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .v2-metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .v2-metric-unit {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .v2-reactions-inline {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .v2-reaction-mini {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* VARIATION 3: Minimal Elevated (Square-ish) */
+        .v3-checkin {
+            background: rgba(11,15,18,0.95);
+            border: 1px solid rgba(231,180,58,0.15);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.4),
+                        0 0 0 1px rgba(231,180,58,0.1) inset,
+                        0 20px 60px rgba(231,180,58,0.08);
+            position: relative;
+        }
+
+        .v3-checkin::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.3), transparent, rgba(231,180,58,0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .v3-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .v3-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .v3-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .v3-user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .v3-user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .v3-timestamp {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .v3-challenge-pill {
+            background: linear-gradient(135deg, rgba(192,192,192,0.25), rgba(128,128,128,0.15));
+            border: 1px solid rgba(192,192,192,0.35);
+            color: #C0C0C0;
+            padding: 6px 12px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 8px;
+        }
+
+        .v3-activity {
+            margin-bottom: 20px;
+        }
+
+        .v3-icon-large {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .v3-action-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            letter-spacing: -0.6px;
+        }
+
+        .v3-goal-link {
+            font-size: 13px;
+            color: rgba(255,255,255,0.55);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .v3-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .v3-stat {
+            text-align: center;
+        }
+
+        .v3-stat-value {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .v3-stat-label {
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .v3-footer {
+            display: flex;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .v3-action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .v3-action-btn:hover {
+            background: rgba(231,180,58,0.12);
+            border-color: rgba(231,180,58,0.3);
+            color: #E7B43A;
+        }
+
+        /* VARIATION 4: Wide Ribbon (RECTANGULAR) */
+        .v4-checkin {
+            background: linear-gradient(90deg, rgba(231,180,58,0.08) 0%, rgba(255,255,255,0.03) 50%, rgba(231,180,58,0.08) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(231,180,58,0.2);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 20px rgba(231,180,58,0.1);
+        }
+
+        .v4-icon-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(231,180,58,0.2), rgba(255,215,0,0.1));
+            border: 1px solid rgba(231,180,58,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .v4-check {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            box-shadow: 0 2px 6px rgba(231,180,58,0.6);
+        }
+
+        .v4-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .v4-info {
+            flex: 1;
+        }
+
+        .v4-user-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .v4-avatar-tiny {
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .v4-username {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .v4-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .v4-time-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .v4-challenge-mini {
+            background: rgba(192,192,192,0.2);
+            color: #C0C0C0;
+            padding: 2px 6px;
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 4px;
+        }
+
+        .v4-action-line {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .v4-goal-inline {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v4-metrics-inline {
+            display: flex;
+            gap: 20px;
+            padding: 0 16px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+
+        .v4-metric-compact {
+            text-align: center;
+        }
+
+        .v4-metric-num {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .v4-metric-text {
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+        }
+
+        .v4-reactions-row {
+            display: flex;
+            gap: 12px;
+            padding-left: 16px;
+            border-left: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
+        }
+
+        .v4-reaction-icon {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* VARIATION 5: Stacked Glass (Square-ish) */
+        .v5-checkin {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(60px) saturate(250%);
+            -webkit-backdrop-filter: blur(60px) saturate(250%);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 16px 64px rgba(0,0,0,0.5),
+                        0 0 0 1px rgba(231,180,58,0.08) inset;
+        }
+
+        .v5-glass-header {
+            background: linear-gradient(135deg, rgba(231,180,58,0.12), rgba(255,215,0,0.05));
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .v5-user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .v5-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 21px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .v5-user-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .v5-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .v5-time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .v5-challenge-tag {
+            background: rgba(192,192,192,0.3);
+            border: 1px solid rgba(192,192,192,0.5);
+            color: #C0C0C0;
+            padding: 6px 14px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .v5-glass-body {
+            padding: 26px 20px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .v5-icon-display {
+            font-size: 40px;
+            margin-bottom: 14px;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(231,180,58,0.3));
+        }
+
+        .v5-action-text {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 10px;
+            letter-spacing: -0.8px;
+            line-height: 1.1;
+        }
+
+        .v5-goal-text {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .v5-glass-metrics {
+            background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(231,180,58,0.06));
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .v5-metric-box {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .v5-metric-number {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+
+        .v5-metric-name {
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .v5-glass-footer {
+            background: rgba(0,0,0,0.4);
+            padding: 16px 20px;
+            display: flex;
+            gap: 18px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .v5-react-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .v5-react-btn:hover {
+            background: rgba(231,180,58,0.15);
+            border-color: rgba(231,180,58,0.4);
+            color: #E7B43A;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-title">Style 1 - 5 Variations</div>
+
+    <div class="options-container">
+
+        <!-- VARIATION 1: Modern Sectioned (Square-ish) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 1: Modern Sectioned (Square)</div>
+            <div class="feed-container">
+                <div class="v1-checkin">
+                    <div class="v1-header">
+                        <div class="v1-user">
+                            <div class="v1-avatar">👤</div>
+                            <div class="v1-name">Alex Chen</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="v1-time">2h ago</div>
+                            <div class="v1-badge">75 HARD</div>
+                        </div>
+                    </div>
+                    <div class="v1-content">
+                        <div class="v1-icon">🏃</div>
+                        <div class="v1-action">Morning Run</div>
+                        <div class="v1-goal">🎯 Marathon Training</div>
+                    </div>
+                    <div class="v1-metrics">
+                        <div class="v1-metric">
+                            <span class="v1-metric-value">45</span>
+                            <div class="v1-metric-label">Minutes</div>
+                        </div>
+                        <div class="v1-metric">
+                            <span class="v1-metric-value">6.2</span>
+                            <div class="v1-metric-label">Miles</div>
+                        </div>
+                        <div class="v1-metric">
+                            <span class="v1-metric-value">12</span>
+                            <div class="v1-metric-label">Day Streak</div>
+                        </div>
+                    </div>
+                    <div class="v1-reactions">
+                        <div class="v1-reaction-btn">🔥 <span>24</span></div>
+                        <div class="v1-reaction-btn">💪 <span>18</span></div>
+                        <div class="v1-reaction-btn">💬 <span>3</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 2: Horizontal Compact (RECTANGULAR) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 2: Horizontal Compact (Rectangular)</div>
+            <div class="feed-container">
+                <div class="v2-checkin">
+                    <div class="v2-left">
+                        <div class="v2-icon-circle">
+                            🏃
+                            <div class="v2-checkmark">✓</div>
+                        </div>
+                    </div>
+                    <div class="v2-center">
+                        <div class="v2-top-row">
+                            <div class="v2-avatar-small">👤</div>
+                            <div class="v2-user-name">Alex Chen</div>
+                            <div class="v2-time">2h ago</div>
+                            <div class="v2-challenge-tag">75 HARD</div>
+                        </div>
+                        <div class="v2-action-name">Morning Run</div>
+                        <div class="v2-goal-text">🎯 Marathon Training</div>
+                    </div>
+                    <div class="v2-right">
+                        <div class="v2-metric-inline">
+                            <span class="v2-metric-value">45</span>
+                            <span class="v2-metric-unit">min</span>
+                        </div>
+                        <div class="v2-metric-inline">
+                            <span class="v2-metric-value">6.2</span>
+                            <span class="v2-metric-unit">mi</span>
+                        </div>
+                        <div class="v2-metric-inline">
+                            <span class="v2-metric-value">12</span>
+                            <span class="v2-metric-unit">day</span>
+                        </div>
+                        <div class="v2-reactions-inline">
+                            <span class="v2-reaction-mini">🔥 24</span>
+                            <span class="v2-reaction-mini">💪 18</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 3: Minimal Elevated (Square-ish) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 3: Minimal Elevated (Square)</div>
+            <div class="feed-container">
+                <div class="v3-checkin">
+                    <div class="v3-header-row">
+                        <div class="v3-user-info">
+                            <div class="v3-avatar">👤</div>
+                            <div class="v3-user-details">
+                                <div class="v3-user-name">Alex Chen</div>
+                                <div class="v3-timestamp">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="v3-challenge-pill">75 HARD</div>
+                    </div>
+                    <div class="v3-activity">
+                        <span class="v3-icon-large">🏃</span>
+                        <div class="v3-action-title">Morning Run</div>
+                        <div class="v3-goal-link">🎯 Marathon Training</div>
+                    </div>
+                    <div class="v3-stats-grid">
+                        <div class="v3-stat">
+                            <span class="v3-stat-value">45</span>
+                            <div class="v3-stat-label">Minutes</div>
+                        </div>
+                        <div class="v3-stat">
+                            <span class="v3-stat-value">6.2</span>
+                            <div class="v3-stat-label">Miles</div>
+                        </div>
+                        <div class="v3-stat">
+                            <span class="v3-stat-value">12</span>
+                            <div class="v3-stat-label">Day Streak</div>
+                        </div>
+                    </div>
+                    <div class="v3-footer">
+                        <div class="v3-action-btn">🔥 <span>24</span></div>
+                        <div class="v3-action-btn">💪 <span>18</span></div>
+                        <div class="v3-action-btn">💬 <span>3</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 4: Wide Ribbon (RECTANGULAR) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 4: Wide Ribbon (Rectangular)</div>
+            <div class="feed-container">
+                <div class="v4-checkin">
+                    <div class="v4-icon-badge">
+                        🏃
+                        <div class="v4-check">✓</div>
+                    </div>
+                    <div class="v4-main">
+                        <div class="v4-info">
+                            <div class="v4-user-line">
+                                <div class="v4-avatar-tiny">👤</div>
+                                <span class="v4-username">Alex Chen</span>
+                                <div class="v4-dot"></div>
+                                <span class="v4-time-text">2h ago</span>
+                                <div class="v4-challenge-mini">75 HARD</div>
+                            </div>
+                            <div class="v4-action-line">
+                                Morning Run
+                                <span class="v4-goal-inline">• 🎯 Marathon Training</span>
+                            </div>
+                        </div>
+                        <div class="v4-metrics-inline">
+                            <div class="v4-metric-compact">
+                                <span class="v4-metric-num">45</span>
+                                <div class="v4-metric-text">min</div>
+                            </div>
+                            <div class="v4-metric-compact">
+                                <span class="v4-metric-num">6.2</span>
+                                <div class="v4-metric-text">mi</div>
+                            </div>
+                            <div class="v4-metric-compact">
+                                <span class="v4-metric-num">12</span>
+                                <div class="v4-metric-text">streak</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="v4-reactions-row">
+                        <span class="v4-reaction-icon">🔥 24</span>
+                        <span class="v4-reaction-icon">💪 18</span>
+                        <span class="v4-reaction-icon">💬 3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VARIATION 5: Stacked Glass (Square-ish) -->
+        <div class="option-wrapper">
+            <div class="option-label">Variation 5: Stacked Glass (Square)</div>
+            <div class="feed-container">
+                <div class="v5-checkin">
+                    <div class="v5-glass-header">
+                        <div class="v5-user-section">
+                            <div class="v5-avatar">👤</div>
+                            <div class="v5-user-text">
+                                <div class="v5-name">Alex Chen</div>
+                                <div class="v5-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="v5-challenge-tag">75 HARD</div>
+                    </div>
+                    <div class="v5-glass-body">
+                        <span class="v5-icon-display">🏃</span>
+                        <div class="v5-action-text">Morning Run</div>
+                        <div class="v5-goal-text">🎯 Marathon Training</div>
+                    </div>
+                    <div class="v5-glass-metrics">
+                        <div class="v5-metric-box">
+                            <span class="v5-metric-number">45</span>
+                            <div class="v5-metric-name">Minutes</div>
+                        </div>
+                        <div class="v5-metric-box">
+                            <span class="v5-metric-number">6.2</span>
+                            <div class="v5-metric-name">Miles</div>
+                        </div>
+                        <div class="v5-metric-box">
+                            <span class="v5-metric-number">12</span>
+                            <div class="v5-metric-name">Streak</div>
+                        </div>
+                    </div>
+                    <div class="v5-glass-footer">
+                        <div class="v5-react-btn">🔥 <span>24</span></div>
+                        <div class="v5-react-btn">💪 <span>18</span></div>
+                        <div class="v5-react-btn">💬 <span>3</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

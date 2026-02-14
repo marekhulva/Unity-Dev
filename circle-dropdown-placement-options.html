@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Dropdown Placement Analysis - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #D4AF37, #C9A050, #B8860B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            color: rgba(255, 215, 0, 0.6);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .option-card {
+            background: rgba(10, 10, 10, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .option-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #FFD700;
+            margin-bottom: 8px;
+        }
+
+        .option-description {
+            font-size: 12px;
+            color: rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .phone-mockup {
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 30%, #000000 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Common elements */
+        .header {
+            padding: 16px 16px 0 16px;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #FFD700;
+            margin-bottom: 12px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 0;
+        }
+
+        .tab {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            padding-bottom: 12px;
+        }
+
+        .tab.active {
+            color: #FFFFFF;
+            position: relative;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #D4AF37, #C9A050, #B8860B);
+        }
+
+        .gold-line {
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(201, 160, 80, 0.6),
+                rgba(184, 134, 11, 0.6),
+                rgba(160, 121, 10, 0.6),
+                rgba(184, 134, 11, 0.6),
+                rgba(201, 160, 80, 0.6),
+                rgba(212, 175, 55, 0.6));
+        }
+
+        .pinned-card {
+            margin: 20px 16px;
+            padding: 16px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pinned-card::before,
+        .pinned-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .pinned-card::before { top: 0; }
+        .pinned-card::after { bottom: 0; }
+
+        .pinned-card-border-left,
+        .pinned-card-border-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0.75px;
+            background: linear-gradient(180deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .pinned-card-border-left { left: 0; }
+        .pinned-card-border-right { right: 0; }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+        }
+
+        .placeholder {
+            color: rgba(255, 215, 0, 0.7);
+            font-size: 13px;
+            flex: 1;
+        }
+
+        .icons {
+            display: flex;
+            gap: 12px;
+            color: rgba(255, 215, 0, 0.8);
+            font-size: 18px;
+        }
+
+        .feed-item {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* CURRENT STYLE - Dropdown as card */
+        .dropdown-card {
+            margin: 12px 16px 0 16px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+        }
+
+        .dropdown-card::before,
+        .dropdown-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .dropdown-card::before { top: 0; }
+        .dropdown-card::after { bottom: 0; }
+
+        .dropdown-border-left,
+        .dropdown-border-right {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 0.75px;
+            background: linear-gradient(180deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .dropdown-border-left { left: 0; }
+        .dropdown-border-right { right: 0; }
+
+        .dropdown-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-text {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #FFFFFF;
+        }
+
+        .dropdown-arrow {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+        }
+
+        /* OPTION B - Subtle underline replacement */
+        .selector-bar {
+            padding: 0 16px 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selector-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        .selector-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .selector-arrow-small {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* OPTION C - Floating pill */
+        .floating-pill {
+            margin: 12px 16px 0 16px;
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 0.75px solid rgba(212, 175, 55, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pill-text {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* OPTION D - Instagram story style */
+        .story-selector {
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .story-selector::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-item {
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .story-ring {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .story-ring.active {
+            border-color: rgba(212, 175, 55, 0.9);
+            border-width: 2.5px;
+        }
+
+        .story-initial {
+            font-size: 18px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .story-name {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .story-item.active .story-name {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* OPTION E - Minimal text only */
+        .text-selector {
+            padding: 8px 16px;
+            text-align: center;
+        }
+
+        .text-selector-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .text-selector-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        /* OPTION F - Integrated into pinned card */
+        .integrated-card {
+            margin: 20px 16px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: transparent;
+            position: relative;
+        }
+
+        .integrated-card::before,
+        .integrated-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 0.75px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.6),
+                rgba(184, 134, 11, 0.6));
+        }
+
+        .integrated-card::before { top: 0; }
+        .integrated-card::after { bottom: 0; }
+
+        .card-section {
+            padding: 8px 0;
+        }
+
+        .card-divider {
+            height: 0.5px;
+            background: rgba(255, 215, 0, 0.1);
+            margin: 8px 0;
+        }
+
+        .small-dropdown {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+        }
+
+        .small-dropdown-text {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .pros-cons {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .pros-cons h4 {
+            font-size: 11px;
+            color: rgba(100, 255, 100, 0.7);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .pros-cons ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .pros-cons li {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 4px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .pros-cons li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: rgba(100, 255, 100, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CIRCLE DROPDOWN PLACEMENT</h1>
+        <p class="subtitle">Visual Analysis & Options</p>
+
+        <div class="options-grid">
+            <!-- CURRENT (Problem) -->
+            <div class="option-card">
+                <div class="option-title">CURRENT (PROBLEM)</div>
+                <div class="option-description">Two stacked gold-bordered rectangles compete visually and create redundancy</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Circle selector as card -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-border-left"></div>
+                        <div class="dropdown-border-right"></div>
+                        <div class="dropdown-content">
+                            <span class="dropdown-text">BASKETBALL</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>ISSUES</h4>
+                    <ul>
+                        <li style="color: rgba(255, 100, 100, 0.7);">✗ Two similar cards feel heavy</li>
+                        <li style="color: rgba(255, 100, 100, 0.7);">✗ Takes up vertical space</li>
+                        <li style="color: rgba(255, 100, 100, 0.7);">✗ Visual hierarchy unclear</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION A: Replace gold underline -->
+            <div class="option-card">
+                <div class="option-title">OPTION A: INLINE SELECTOR</div>
+                <div class="option-description">Replace gold underline with subtle circle selector - minimal and integrated</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+
+                    <!-- Selector replaces gold line -->
+                    <div class="selector-bar">
+                        <span class="selector-label">VIEWING:</span>
+                        <span class="selector-value">BASKETBALL</span>
+                        <span class="selector-arrow-small">▼</span>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Minimal - doesn't feel like card</li>
+                        <li>Integrated into header flow</li>
+                        <li>Keeps pinned card special</li>
+                        <li>Takes less vertical space</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION B: Floating pill -->
+            <div class="option-card">
+                <div class="option-title">OPTION B: FLOATING PILL</div>
+                <div class="option-description">Small pill with subtle border - less card-like, more filter-like</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Floating pill -->
+                    <div style="padding: 0 16px; margin-top: 12px;">
+                        <div class="floating-pill">
+                            <span class="pill-text">BASKETBALL</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                    </div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Feels like a filter, not card</li>
+                        <li>Visually distinct from pinned card</li>
+                        <li>Modern and minimal</li>
+                        <li>Doesn't compete for attention</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION C: Story-style rings -->
+            <div class="option-card">
+                <div class="option-title">OPTION C: STORY RINGS</div>
+                <div class="option-description">Instagram-style story rings with initials - very visual and swipeable</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Story selector -->
+                    <div class="story-selector">
+                        <div class="story-item">
+                            <div class="story-ring">
+                                <div class="story-initial">ALL</div>
+                            </div>
+                            <div class="story-name">All</div>
+                        </div>
+                        <div class="story-item active">
+                            <div class="story-ring active">
+                                <div class="story-initial">BB</div>
+                            </div>
+                            <div class="story-name">BBall</div>
+                        </div>
+                        <div class="story-item">
+                            <div class="story-ring">
+                                <div class="story-initial">FIT</div>
+                            </div>
+                            <div class="story-name">Fitness</div>
+                        </div>
+                        <div class="story-item">
+                            <div class="story-ring">
+                                <div class="story-initial">ST</div>
+                            </div>
+                            <div class="story-name">Startup</div>
+                        </div>
+                    </div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Very visual and engaging</li>
+                        <li>Familiar Instagram pattern</li>
+                        <li>Shows all circles at once</li>
+                        <li>Swipe gesture feels natural</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION D: Text only (ultra minimal) -->
+            <div class="option-card">
+                <div class="option-title">OPTION D: TEXT ONLY</div>
+                <div class="option-description">Just text, no borders - disappears when not needed</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Text only selector -->
+                    <div class="text-selector">
+                        <div class="text-selector-label">VIEWING</div>
+                        <div class="text-selector-value">BASKETBALL ▼</div>
+                    </div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Ultra minimal - almost invisible</li>
+                        <li>Zero visual weight</li>
+                        <li>Maximum space for content</li>
+                        <li>Clean and professional</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION E: Integrated into pinned card -->
+            <div class="option-card">
+                <div class="option-title">OPTION E: INTEGRATED</div>
+                <div class="option-description">Combine circle selector with pinned card - one element instead of two</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div class="logo">UNITY</div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Combined card -->
+                    <div class="integrated-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+
+                        <!-- Circle selector section -->
+                        <div class="card-section">
+                            <div class="small-dropdown">
+                                <span class="small-dropdown-text">BASKETBALL</span>
+                                <span class="dropdown-arrow">▼</span>
+                            </div>
+                        </div>
+
+                        <div class="card-divider"></div>
+
+                        <!-- Share section -->
+                        <div class="card-section" style="display: flex; align-items: center; gap: 12px; padding: 8px 0;">
+                            <div class="avatar"></div>
+                            <span class="placeholder">Share your victory...</span>
+                            <div class="icons">📷 🖼️ 🎤</div>
+                        </div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>One card instead of two</li>
+                        <li>Logically grouped together</li>
+                        <li>Saves vertical space</li>
+                        <li>Gold border feels special</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- OPTION F: Above header -->
+            <div class="option-card">
+                <div class="option-title">OPTION F: HEADER CHIP</div>
+                <div class="option-description">Move to header row with UNITY logo - always visible, part of navigation</div>
+                <div class="phone-mockup">
+                    <div class="header">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div class="logo">UNITY</div>
+                            <div class="floating-pill" style="margin: 0;">
+                                <span class="pill-text" style="font-size: 11px;">BASKETBALL</span>
+                                <span class="dropdown-arrow" style="font-size: 10px;">▼</span>
+                            </div>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active">CIRCLE</div>
+                            <div class="tab">EXPLORE</div>
+                        </div>
+                    </div>
+                    <div class="gold-line"></div>
+
+                    <!-- Pinned card -->
+                    <div class="pinned-card">
+                        <div class="pinned-card-border-left"></div>
+                        <div class="pinned-card-border-right"></div>
+                        <div class="avatar"></div>
+                        <span class="placeholder">Share your victory...</span>
+                        <div class="icons">📷 🖼️ 🎤</div>
+                    </div>
+
+                    <div class="feed-item">Feed content here...</div>
+                </div>
+                <div class="pros-cons">
+                    <h4>PROS</h4>
+                    <ul>
+                        <li>Part of navigation system</li>
+                        <li>Always visible when scrolling</li>
+                        <li>Balances UNITY logo</li>
+                        <li>Feels like app settings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 30px; border-radius: 16px; background: rgba(212, 175, 55, 0.05);">
+            <p style="color: rgba(255, 215, 0, 0.6); font-size: 13px; letter-spacing: 1px; line-height: 1.8;">
+                <strong style="color: #FFD700;">MY RECOMMENDATION:</strong><br>
+                <strong>Option B (Floating Pill)</strong> or <strong>Option E (Integrated)</strong><br><br>
+
+                <span style="font-size: 12px;">
+                <strong>Option B</strong> keeps them separate but visually distinct - the pill doesn't compete with the pinned card<br>
+                <strong>Option E</strong> combines them into one logical unit - cleaner and saves space<br><br>
+
+                Avoid: Current style (too heavy), Option C (too casual for Unity's luxury feel)
+                </span>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

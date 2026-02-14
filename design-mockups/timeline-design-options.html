@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Design Options</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 40px 20px;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 50px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 40px;
+        }
+
+        .option-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .option-label {
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .preview-container {
+            background: #0a0a0a;
+            border-radius: 16px;
+            padding: 30px 20px;
+            min-height: 400px;
+            overflow: auto;
+        }
+
+        /* Option 1: Classic Vertical */
+        .timeline-1 {
+            position: relative;
+            padding-left: 60px;
+        }
+        .timeline-1::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #E7B43A, rgba(231, 180, 58, 0.3));
+        }
+        .timeline-1 .item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .timeline-1 .time {
+            position: absolute;
+            left: -60px;
+            top: 0;
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+        }
+        .timeline-1 .dot {
+            position: absolute;
+            left: -54px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #E7B43A;
+            border: 2px solid #0a0a0a;
+            box-shadow: 0 0 8px rgba(231, 180, 58, 0.5);
+        }
+        .timeline-1 .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+        .timeline-1 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .timeline-1 .meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 2: Card Stack */
+        .timeline-2 {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .timeline-2 .item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            border-left: 4px solid #E7B43A;
+            transition: all 0.2s ease;
+        }
+        .timeline-2 .item:hover {
+            transform: translateX(8px);
+            border-left-width: 6px;
+        }
+        .timeline-2 .time {
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .timeline-2 .title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .timeline-2 .meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 3: Horizontal Scroll */
+        .timeline-3 {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .timeline-3::-webkit-scrollbar {
+            height: 6px;
+        }
+        .timeline-3::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 3px;
+        }
+        .timeline-3::-webkit-scrollbar-thumb {
+            background: #E7B43A;
+            border-radius: 3px;
+        }
+        .timeline-3 .item {
+            min-width: 180px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+        }
+        .timeline-3 .time {
+            font-size: 16px;
+            color: #E7B43A;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .timeline-3 .title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .timeline-3 .meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 4: Progress Steps */
+        .timeline-4 {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .timeline-4 .item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+        }
+        .timeline-4 .number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E7B43A, #FFD700);
+            color: #000;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .timeline-4 .content {
+            flex: 1;
+        }
+        .timeline-4 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .timeline-4 .meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        .timeline-4 .time {
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Option 5: Subway/Metro Style */
+        .timeline-5 {
+            position: relative;
+            padding-left: 50px;
+        }
+        .timeline-5::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 8px;
+            background: rgba(231, 180, 58, 0.2);
+            border-radius: 4px;
+        }
+        .timeline-5 .item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-5 .station {
+            position: absolute;
+            left: -45px;
+            top: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E7B43A;
+            border: 4px solid #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #000;
+        }
+        .timeline-5 .card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            padding: 14px 16px;
+        }
+        .timeline-5 .time {
+            font-size: 11px;
+            color: #E7B43A;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .timeline-5 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Option 6: Floating Bubbles */
+        .timeline-6 {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .timeline-6 .item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            max-width: 85%;
+        }
+        .timeline-6 .item:nth-child(even) {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .timeline-6 .bubble {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(231, 180, 58, 0.2), rgba(255, 215, 0, 0.1));
+            border: 2px solid #E7B43A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #E7B43A;
+            flex-shrink: 0;
+        }
+        .timeline-6 .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+        }
+        .timeline-6 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .timeline-6 .meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 7: Kanban Columns */
+        .timeline-7 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .timeline-7 .column {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .timeline-7 .column-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #E7B43A;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .timeline-7 .item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        .timeline-7 .time {
+            font-size: 10px;
+            color: #E7B43A;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .timeline-7 .title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Option 8: Wave/Curve Line */
+        .timeline-8 {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline-8 .wave-line {
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg,
+                #E7B43A 0%, transparent 20%,
+                transparent 30%, #E7B43A 50%,
+                transparent 70%, transparent 80%,
+                #E7B43A 100%
+            );
+        }
+        .timeline-8 .item {
+            position: relative;
+            padding-left: 70px;
+            margin-bottom: 24px;
+        }
+        .timeline-8 .dot {
+            position: absolute;
+            left: 27px;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #E7B43A;
+            box-shadow: 0 0 12px rgba(231, 180, 58, 0.6);
+        }
+        .timeline-8 .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 14px;
+        }
+        .timeline-8 .time {
+            font-size: 11px;
+            color: #E7B43A;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .timeline-8 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Option 9: Minimalist Dots */
+        .timeline-9 {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .timeline-9 .item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .timeline-9 .dot-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 6px;
+        }
+        .timeline-9 .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #E7B43A;
+            box-shadow: 0 0 8px rgba(231, 180, 58, 0.5);
+        }
+        .timeline-9 .content {
+            flex: 1;
+        }
+        .timeline-9 .time {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .timeline-9 .title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .timeline-9 .meta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Option 10: Schedule Grid */
+        .timeline-10 {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .timeline-10 .item {
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            background: rgba(255,255,255,0.04);
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .timeline-10 .item:hover {
+            background: rgba(255,255,255,0.06);
+            border-left-color: #E7B43A;
+        }
+        .timeline-10 .time {
+            padding: 12px;
+            font-size: 12px;
+            color: #E7B43A;
+            font-weight: 700;
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .timeline-10 .content {
+            padding: 12px 16px;
+        }
+        .timeline-10 .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .timeline-10 .meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-title">10 Timeline Design Options</div>
+
+        <div class="options-grid">
+            <!-- Option 1: Classic Vertical -->
+            <div class="option-card">
+                <div class="option-label">Option 1: Classic Vertical Line</div>
+                <div class="preview-container">
+                    <div class="timeline-1">
+                        <div class="item">
+                            <div class="time">6:00</div>
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="title">Morning Meditation</div>
+                                <div class="meta">15 min • Mindfulness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="time">7:30</div>
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="title">Workout Session</div>
+                                <div class="meta">45 min • Fitness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="time">13:00</div>
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="title">Read Book</div>
+                                <div class="meta">30 min • Learning</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 2: Card Stack -->
+            <div class="option-card">
+                <div class="option-label">Option 2: Card Stack with Left Accent</div>
+                <div class="preview-container">
+                    <div class="timeline-2">
+                        <div class="item">
+                            <div class="time">6:00 AM</div>
+                            <div class="title">Morning Meditation</div>
+                            <div class="meta">15 min • Mindfulness</div>
+                        </div>
+                        <div class="item">
+                            <div class="time">7:30 AM</div>
+                            <div class="title">Workout Session</div>
+                            <div class="meta">45 min • Fitness</div>
+                        </div>
+                        <div class="item">
+                            <div class="time">1:00 PM</div>
+                            <div class="title">Read Professional Book</div>
+                            <div class="meta">30 min • Learning</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 3: Horizontal Scroll -->
+            <div class="option-card">
+                <div class="option-label">Option 3: Horizontal Scroll Timeline</div>
+                <div class="preview-container">
+                    <div class="timeline-3">
+                        <div class="item">
+                            <div class="time">6:00 AM</div>
+                            <div class="title">Morning Meditation</div>
+                            <div class="meta">15 min</div>
+                        </div>
+                        <div class="item">
+                            <div class="time">7:30 AM</div>
+                            <div class="title">Workout Session</div>
+                            <div class="meta">45 min</div>
+                        </div>
+                        <div class="item">
+                            <div class="time">1:00 PM</div>
+                            <div class="title">Read Book</div>
+                            <div class="meta">30 min</div>
+                        </div>
+                        <div class="item">
+                            <div class="time">8:00 PM</div>
+                            <div class="title">Gratitude Journal</div>
+                            <div class="meta">10 min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 4: Progress Steps -->
+            <div class="option-card">
+                <div class="option-label">Option 4: Numbered Progress Steps</div>
+                <div class="preview-container">
+                    <div class="timeline-4">
+                        <div class="item">
+                            <div class="number">1</div>
+                            <div class="content">
+                                <div class="title">Morning Meditation</div>
+                                <div class="meta">Mindfulness</div>
+                            </div>
+                            <div class="time">6:00</div>
+                        </div>
+                        <div class="item">
+                            <div class="number">2</div>
+                            <div class="content">
+                                <div class="title">Workout Session</div>
+                                <div class="meta">Fitness</div>
+                            </div>
+                            <div class="time">7:30</div>
+                        </div>
+                        <div class="item">
+                            <div class="number">3</div>
+                            <div class="content">
+                                <div class="title">Read Professional Book</div>
+                                <div class="meta">Learning</div>
+                            </div>
+                            <div class="time">13:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 5: Subway Style -->
+            <div class="option-card">
+                <div class="option-label">Option 5: Subway/Metro Line Style</div>
+                <div class="preview-container">
+                    <div class="timeline-5">
+                        <div class="item">
+                            <div class="station">🌅</div>
+                            <div class="card">
+                                <div class="time">6:00 AM</div>
+                                <div class="title">Morning Meditation</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="station">💪</div>
+                            <div class="card">
+                                <div class="time">7:30 AM</div>
+                                <div class="title">Workout Session</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="station">📚</div>
+                            <div class="card">
+                                <div class="time">1:00 PM</div>
+                                <div class="title">Read Book</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 6: Floating Bubbles -->
+            <div class="option-card">
+                <div class="option-label">Option 6: Floating Bubble Timeline</div>
+                <div class="preview-container">
+                    <div class="timeline-6">
+                        <div class="item">
+                            <div class="bubble">6:00</div>
+                            <div class="card">
+                                <div class="title">Morning Meditation</div>
+                                <div class="meta">15 min • Mindfulness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="bubble">7:30</div>
+                            <div class="card">
+                                <div class="title">Workout Session</div>
+                                <div class="meta">45 min • Fitness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="bubble">13:00</div>
+                            <div class="card">
+                                <div class="title">Read Book</div>
+                                <div class="meta">30 min • Learning</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 7: Kanban Columns -->
+            <div class="option-card">
+                <div class="option-label">Option 7: Kanban Column Layout</div>
+                <div class="preview-container">
+                    <div class="timeline-7">
+                        <div class="column">
+                            <div class="column-title">Morning</div>
+                            <div class="item">
+                                <div class="time">6:00</div>
+                                <div class="title">Meditation</div>
+                            </div>
+                            <div class="item">
+                                <div class="time">7:30</div>
+                                <div class="title">Workout</div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="column-title">Afternoon</div>
+                            <div class="item">
+                                <div class="time">13:00</div>
+                                <div class="title">Read Book</div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="column-title">Evening</div>
+                            <div class="item">
+                                <div class="time">20:00</div>
+                                <div class="title">Journal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 8: Wave Line -->
+            <div class="option-card">
+                <div class="option-label">Option 8: Wave/Gradient Line</div>
+                <div class="preview-container">
+                    <div class="timeline-8">
+                        <div class="wave-line"></div>
+                        <div class="item">
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="time">6:00 AM</div>
+                                <div class="title">Morning Meditation</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="time">7:30 AM</div>
+                                <div class="title">Workout Session</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="dot"></div>
+                            <div class="card">
+                                <div class="time">1:00 PM</div>
+                                <div class="title">Read Book</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 9: Minimalist Dots -->
+            <div class="option-card">
+                <div class="option-label">Option 9: Ultra Minimalist Dots</div>
+                <div class="preview-container">
+                    <div class="timeline-9">
+                        <div class="item">
+                            <div class="dot-container">
+                                <div class="dot"></div>
+                            </div>
+                            <div class="content">
+                                <div class="time">6:00 AM</div>
+                                <div class="title">Morning Meditation</div>
+                                <div class="meta">15 min • Mindfulness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="dot-container">
+                                <div class="dot"></div>
+                            </div>
+                            <div class="content">
+                                <div class="time">7:30 AM</div>
+                                <div class="title">Workout Session</div>
+                                <div class="meta">45 min • Fitness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="dot-container">
+                                <div class="dot"></div>
+                            </div>
+                            <div class="content">
+                                <div class="time">1:00 PM</div>
+                                <div class="title">Read Professional Book</div>
+                                <div class="meta">30 min • Learning</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Option 10: Schedule Grid -->
+            <div class="option-card">
+                <div class="option-label">Option 10: Schedule Grid/Table</div>
+                <div class="preview-container">
+                    <div class="timeline-10">
+                        <div class="item">
+                            <div class="time">6:00</div>
+                            <div class="content">
+                                <div class="title">Morning Meditation</div>
+                                <div class="meta">15 min • Mindfulness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="time">7:30</div>
+                            <div class="content">
+                                <div class="title">Workout Session</div>
+                                <div class="meta">45 min • Fitness</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="time">13:00</div>
+                            <div class="content">
+                                <div class="title">Read Professional Book</div>
+                                <div class="meta">30 min • Learning</div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="time">20:00</div>
+                            <div class="content">
+                                <div class="title">Gratitude Journal</div>
+                                <div class="meta">10 min • Reflection</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

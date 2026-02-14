@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Switcher - Option A: Dropdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: #000;
+            padding: 20px 0 0;
+            z-index: 10;
+        }
+
+        /* Circle Switcher Dropdown */
+        .circle-selector {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(231,180,58,0.3);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .circle-selector:active {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .circle-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .circle-emoji {
+            font-size: 32px;
+        }
+
+        .circle-details {
+            flex: 1;
+        }
+
+        .circle-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .circle-members {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .dropdown-icon {
+            font-size: 20px;
+            color: rgba(231,180,58,0.8);
+        }
+
+        .circle-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(231,180,58,0.3);
+            background: rgba(231,180,58,0.1);
+            color: #E7B43A;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(231,180,58,0.2);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .tab.active {
+            background: rgba(231,180,58,0.2);
+            color: #E7B43A;
+        }
+
+        /* Dropdown Menu (shown when clicked) */
+        .dropdown-menu {
+            position: absolute;
+            top: 90px;
+            left: 20px;
+            right: 20px;
+            background: rgba(20,20,20,0.98);
+            border: 1px solid rgba(231,180,58,0.3);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+            z-index: 100;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .dropdown-item.active {
+            background: rgba(231,180,58,0.15);
+        }
+
+        .dropdown-item-emoji {
+            font-size: 28px;
+        }
+
+        .dropdown-item-info {
+            flex: 1;
+        }
+
+        .dropdown-item-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .dropdown-item-meta {
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .check-icon {
+            color: #E7B43A;
+            font-size: 20px;
+        }
+
+        .label {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #E7B43A;
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            z-index: 100;
+        }
+
+        .content {
+            padding-top: 20px;
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="label">OPTION A: Dropdown</div>
+
+    <div class="header">
+        <!-- Clickable Circle Selector -->
+        <div class="circle-selector">
+            <div class="circle-info">
+                <div class="circle-emoji">⚡</div>
+                <div class="circle-details">
+                    <div class="circle-name">Warriors</div>
+                    <div class="circle-members">47 members</div>
+                </div>
+            </div>
+            <div class="dropdown-icon">▼</div>
+        </div>
+
+        <div class="circle-actions">
+            <button class="btn">Invite</button>
+            <button class="btn">Settings</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active">Overview</div>
+            <div class="tab">Community</div>
+        </div>
+    </div>
+
+    <!-- Dropdown Menu (appears when clicking selector) -->
+    <div class="dropdown-menu">
+        <div class="dropdown-item active">
+            <div class="dropdown-item-emoji">⚡</div>
+            <div class="dropdown-item-info">
+                <div class="dropdown-item-name">Warriors</div>
+                <div class="dropdown-item-meta">47 members • 5 active challenges</div>
+            </div>
+            <div class="check-icon">✓</div>
+        </div>
+        <div class="dropdown-item">
+            <div class="dropdown-item-emoji">🎯</div>
+            <div class="dropdown-item-info">
+                <div class="dropdown-item-name">Daily Discipline</div>
+                <div class="dropdown-item-meta">23 members • 3 active challenges</div>
+            </div>
+        </div>
+        <div class="dropdown-item">
+            <div class="dropdown-item-emoji">🏃</div>
+            <div class="dropdown-item-info">
+                <div class="dropdown-item-name">Morning Athletes</div>
+                <div class="dropdown-item-meta">15 members • 2 active challenges</div>
+            </div>
+        </div>
+        <div class="dropdown-item">
+            <div class="dropdown-item-emoji">📚</div>
+            <div class="dropdown-item-info">
+                <div class="dropdown-item-name">Book Club</div>
+                <div class="dropdown-item-meta">8 members • 1 active challenge</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <p>👆 Tap the circle name above to switch</p>
+        <p style="margin-top: 8px; font-size: 12px;">Dropdown shows all your circles</p>
+    </div>
+
+</body>
+</html>

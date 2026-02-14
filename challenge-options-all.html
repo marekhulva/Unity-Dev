@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Implementation Options - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            background: #000000;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.3);
+            color: rgba(255, 215, 0, 0.8);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.1) 100%);
+            border-color: rgba(255, 215, 0, 0.4);
+            color: #FFD700;
+        }
+
+        .option-container {
+            display: none;
+        }
+
+        .option-container.active {
+            display: block;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100vh - 120px);
+            border: none;
+            background: #000;
+        }
+
+        .description {
+            text-align: center;
+            padding: 15px 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .description strong {
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-title">🏆 Challenge Implementation Options</div>
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showOption('a')">Option A: Dedicated Tab</div>
+            <div class="nav-tab" onclick="showOption('b')">Option B: Social Integrated</div>
+            <div class="nav-tab" onclick="showOption('c')">Option C: Hybrid (Recommended)</div>
+            <div class="nav-tab" onclick="showOption('d')">Option D: Quests/RPG</div>
+            <div class="nav-tab" onclick="showOption('circle')">⭐ Circle Integration</div>
+        </div>
+    </div>
+
+    <div class="option-container active" id="option-a">
+        <div class="description">
+            <strong>Option A: Dedicated Challenges Tab</strong> - NEW 4th main tab, clean separation, click challenge cards to see detail view with tabs
+        </div>
+        <iframe src="challenge-option-a-dedicated-tab.html"></iframe>
+    </div>
+
+    <div class="option-container" id="option-b">
+        <div class="description">
+            <strong>Option B: Social Integrated</strong> - Challenges as view mode in Social, carousel at top, tabs: Posts/Challenges/Leaderboards
+        </div>
+        <iframe src="challenge-option-b-social-integrated.html"></iframe>
+    </div>
+
+    <div class="option-container" id="option-c">
+        <div class="description">
+            <strong>Option C: Hybrid Approach (Recommended)</strong> - Shows all 3 pages side-by-side. Daily=action, Social=discovery, Progress=stats
+        </div>
+        <iframe src="challenge-option-c-hybrid.html"></iframe>
+    </div>
+
+    <div class="option-container" id="option-d">
+        <div class="description">
+            <strong>Option D: Quests Model</strong> - Game-like RPG approach with XP/levels, quest board, difficulty tiers, rewards system
+        </div>
+        <iframe src="challenge-option-d-quests.html"></iframe>
+    </div>
+
+    <div class="option-container" id="option-circle">
+        <div class="description">
+            <strong>⭐ Circle Integration</strong> - Shows how Circle page integrates with challenges (tabs: Overview/Challenges/Members)
+        </div>
+        <iframe src="challenge-option-with-circle-integration.html"></iframe>
+    </div>
+
+    <script>
+        function showOption(option) {
+            // Hide all containers
+            document.querySelectorAll('.option-container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            // Deactivate all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected container
+            document.getElementById('option-' + option).classList.add('active');
+
+            // Activate selected tab
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

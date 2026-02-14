@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abstinence Action Modal - Design Options</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 60px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .option-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #D4AF37;
+    margin-bottom: 20px;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 340px;
+    height: 640px;
+    background: #000;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dimmed background to simulate overlay */
+  .overlay-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  /* Modal card */
+  .modal {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    z-index: 2;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .modal-center {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .modal-inner {
+    padding: 32px 24px;
+    position: relative;
+  }
+
+  /* Gradient backgrounds */
+  .modal-bg-dark {
+    background: linear-gradient(180deg, #1A1A1A 0%, #0A0A0A 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .modal-bg-gold-subtle {
+    background: linear-gradient(180deg, #141210 0%, #0A0A0A 100%);
+    border: 1px solid rgba(212,175,55,0.15);
+  }
+  .modal-bg-minimal {
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ============================================ */
+  /* OPTION A: CLAIM YOUR WIN                     */
+  /* ============================================ */
+
+  .opt-a .action-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+  }
+
+  .opt-a .action-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .opt-a .headline {
+    font-size: 15px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 32px;
+  }
+
+  .opt-a .btn-primary {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #D4AF37, #B8962E);
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+
+  .opt-a .btn-secondary {
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ============================================ */
+  /* OPTION B: STRAIGHT & DIRECT                  */
+  /* ============================================ */
+
+  .opt-b .top-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .opt-b .action-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .opt-b .action-emoji {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .opt-b .action-info {
+    flex: 1;
+  }
+
+  .opt-b .action-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .opt-b .action-goal {
+    font-size: 12px;
+    color: rgba(212,175,55,0.7);
+    font-weight: 500;
+  }
+
+  .opt-b .question {
+    font-size: 24px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  .opt-b .buttons-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .opt-b .btn-yes {
+    flex: 1;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.3);
+    font-size: 15px;
+    font-weight: 700;
+    color: #D4AF37;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .opt-b .btn-no {
+    flex: 1;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ============================================ */
+  /* OPTION C: QUIET DISCIPLINE                   */
+  /* ============================================ */
+
+  .opt-c .shield-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+    background: rgba(212,175,55,0.06);
+    border: 1px solid rgba(212,175,55,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 24px;
+  }
+
+  .opt-c .action-name {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .opt-c .mantra {
+    font-size: 13px;
+    font-weight: 400;
+    text-align: center;
+    color: rgba(212,175,55,0.6);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .opt-c .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+    margin: 20px 0 28px;
+  }
+
+  .opt-c .streak-info {
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 28px;
+  }
+  .opt-c .streak-info strong {
+    color: #D4AF37;
+    font-weight: 700;
+  }
+
+  .opt-c .btn-confirm {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.25);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+  }
+
+  .opt-c .btn-broke {
+    width: 100%;
+    padding: 12px;
+    border-radius: 16px;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* ============================================ */
+  /* OPTION D: TWO-STATE TOGGLE                   */
+  /* ============================================ */
+
+  .opt-d .emoji-large {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .opt-d .action-name {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .opt-d .goal-label {
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    color: rgba(212,175,55,0.6);
+    margin-bottom: 28px;
+  }
+
+  .opt-d .toggle-container {
+    display: flex;
+    background: rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 4px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .opt-d .toggle-option {
+    flex: 1;
+    padding: 14px;
+    border-radius: 13px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .opt-d .toggle-active {
+    background: rgba(212,175,55,0.15);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: #D4AF37;
+  }
+
+  .opt-d .toggle-inactive {
+    background: transparent;
+    border: 1px solid transparent;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .opt-d .confirm-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.1));
+    border: 1px solid rgba(212,175,55,0.2);
+    font-size: 15px;
+    font-weight: 600;
+    color: #D4AF37;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* Description under each option */
+  .option-desc {
+    max-width: 340px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.3);
+    line-height: 1.6;
+  }
+  .option-desc strong {
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+  }
+
+  /* Fake status bar content for realism */
+  .fake-cards {
+    padding: 20px;
+    opacity: 0.15;
+  }
+  .fake-card {
+    height: 60px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<h1>ABSTINENCE ACTION MODAL</h1>
+<p class="subtitle">What pops up when you check off "No Social Media" or "No Alcohol"</p>
+
+<div class="options-grid">
+
+  <!-- OPTION A: CLAIM YOUR WIN -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION A &mdash; CLAIM YOUR WIN</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal modal-center modal-bg-gold-subtle opt-a">
+        <div class="modal-inner">
+          <div class="action-icon">📵</div>
+          <div class="action-name">No Social Media</div>
+          <div class="headline">Lock it in.</div>
+          <button class="btn-primary">Held the line 🔒</button>
+          <button class="btn-secondary">Didn't make it</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Bold, confident.</strong> You're claiming a win. Gold primary button feels earned. Secondary button is low-key, no shame.
+    </div>
+  </div>
+
+  <!-- OPTION B: STRAIGHT & DIRECT -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION B &mdash; STRAIGHT ACCOUNTABILITY</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal modal-center modal-bg-dark opt-b">
+        <div class="modal-inner">
+          <div class="top-bar"></div>
+          <div class="action-row">
+            <div class="action-emoji">📵</div>
+            <div class="action-info">
+              <div class="action-name">No Social Media</div>
+              <div class="action-goal">Mental Clarity</div>
+            </div>
+          </div>
+          <div class="question">Still standing?</div>
+          <div class="buttons-row">
+            <button class="btn-yes">All day 💪</button>
+            <button class="btn-no">Broke it</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Direct, no fluff.</strong> Shows action + goal context. The question is simple. Two equal buttons — honest either way.
+    </div>
+  </div>
+
+  <!-- OPTION C: QUIET DISCIPLINE -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION C &mdash; QUIET DISCIPLINE</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal modal-center modal-bg-minimal opt-c">
+        <div class="modal-inner">
+          <div class="shield-icon">🛡️</div>
+          <div class="action-name">No Social Media</div>
+          <div class="mantra">Discipline over impulse</div>
+          <div class="divider"></div>
+          <div class="streak-info">You've held this for <strong>12 days straight</strong></div>
+          <button class="btn-confirm">✦ CONFIRM</button>
+          <button class="btn-broke">I didn't hold it today</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>Editorial, minimal.</strong> Shield icon, motivational line, streak context. The "broke it" option is barely visible — it's there but doesn't compete.
+    </div>
+  </div>
+
+  <!-- OPTION D: TOGGLE STYLE -->
+  <div class="option-wrapper">
+    <div class="option-label">OPTION D &mdash; TOGGLE SELECTOR</div>
+    <div class="phone">
+      <div class="fake-cards">
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+        <div class="fake-card"></div>
+      </div>
+      <div class="overlay-bg"></div>
+      <div class="modal modal-center modal-bg-dark opt-d">
+        <div class="modal-inner">
+          <div class="emoji-large">📵</div>
+          <div class="action-name">No Social Media</div>
+          <div class="goal-label">Mental Clarity</div>
+          <div class="toggle-container">
+            <div class="toggle-option toggle-active">Stayed clean ✓</div>
+            <div class="toggle-option toggle-inactive">Slipped</div>
+          </div>
+          <button class="confirm-btn">Log it</button>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <strong>iOS toggle feel.</strong> Segmented control lets you pick state before confirming. Default is "Stayed clean" — optimistic. Single confirm button.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

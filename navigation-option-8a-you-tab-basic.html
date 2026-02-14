@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option 8A: "You" Tab - Basic Merge - Unity 2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .phone-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background: #000;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            height: 844px;
+            position: relative;
+            border: 8px solid #1a1a1a;
+        }
+
+        .screen {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #0a0a0a;
+        }
+
+        .hero-section {
+            padding: 60px 20px 20px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            text-align: center;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 32px;
+            border: 3px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .profile-bio {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFD700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 12px 20px 0;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: #0a0a0a;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: #FFD700;
+            border-bottom-color: #FFD700;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFD700;
+            padding: 15px 20px 10px;
+        }
+
+        .goal-card {
+            margin: 8px 20px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .goal-title {
+            font-size: 14px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .goal-privacy {
+            padding: 3px 8px;
+            background: rgba(255, 215, 0, 0.15);
+            border-radius: 8px;
+            font-size: 10px;
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .goal-privacy.private {
+            background: rgba(128, 128, 128, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .goal-progress {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+        }
+
+        .post-card {
+            margin: 8px 20px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .post-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .post-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-author {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .post-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .post-content {
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .view-toggle {
+            margin: 15px 20px;
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .toggle-btn.active {
+            background: rgba(255, 215, 0, 0.2);
+            color: #FFD700;
+        }
+
+        .private-notice {
+            margin: 12px 20px;
+            padding: 10px;
+            background: rgba(128, 128, 128, 0.1);
+            border: 1px solid rgba(128, 128, 128, 0.2);
+            border-radius: 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="screen">
+            <!-- Hero Profile Section -->
+            <div class="hero-section">
+                <div class="avatar">JD</div>
+                <div class="profile-name">John Doe</div>
+                <div class="profile-bio">Building my best self, one day at a time ✨</div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Days</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">Consistency</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Toggle: My View vs Public View -->
+            <div class="view-toggle">
+                <button class="toggle-btn active" onclick="showView('my')">My View</button>
+                <button class="toggle-btn" onclick="showView('public')">Public View</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('goals')">Goals</div>
+                <div class="tab" onclick="showTab('posts')">Posts</div>
+                <div class="tab" onclick="showTab('stats')">Stats</div>
+            </div>
+
+            <div class="content">
+                <!-- My View Goals -->
+                <div id="my-view-goals">
+                    <div class="section-title">All My Goals (6)</div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🎯 Fitness Master</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">4 commitments • 92% consistency</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🧘 Mindfulness</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">3 commitments • 87% consistency</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">💼 Career Growth</div>
+                            <div class="goal-privacy private">Private</div>
+                        </div>
+                        <div class="goal-progress">2 commitments • 78% consistency</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">📚 Reading Challenge</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">12/12 books • 100% complete</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Public View Goals -->
+                <div id="public-view-goals" style="display: none;">
+                    <div class="private-notice">
+                        This is what others see when viewing your profile. Private goals are hidden.
+                    </div>
+
+                    <div class="section-title">Public Goals (3)</div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🎯 Fitness Master</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">4 commitments • 92% consistency</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">🧘 Mindfulness</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">3 commitments • 87% consistency</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="goal-card">
+                        <div class="goal-header">
+                            <div class="goal-title">📚 Reading Challenge</div>
+                            <div class="goal-privacy">Public</div>
+                        </div>
+                        <div class="goal-progress">12/12 books • 100% complete</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Posts Tab -->
+                <div id="tab-posts" style="display: none;">
+                    <div class="section-title">Recent Posts</div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">JD</div>
+                            <div class="post-info">
+                                <div class="post-author">John Doe</div>
+                                <div class="post-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Just finished my morning workout! Feeling energized 💪
+                        </div>
+                    </div>
+
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">JD</div>
+                            <div class="post-info">
+                                <div class="post-author">John Doe</div>
+                                <div class="post-time">1 day ago</div>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Day 23 of meditation streak! The consistency is really paying off 🧘
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Tab -->
+                <div id="tab-stats" style="display: none;">
+                    <div class="section-title">Weekly Progress</div>
+
+                    <div class="goal-card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="font-size: 13px; font-weight: 600;">Daily Actions</span>
+                            <span style="font-size: 12px; color: #FFD700; font-weight: 700;">6/7 days</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 86%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Achievements</div>
+
+                    <div class="goal-card">
+                        <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Today's Wins</div>
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.6);">
+                            ✓ Morning meditation<br>
+                            ✓ Workout completed<br>
+                            ✓ Healthy breakfast
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-label">Social</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">✓</div>
+                    <div class="nav-label">Daily</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👥</div>
+                    <div class="nav-label">Circle</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">🏆</div>
+                    <div class="nav-label">Challenges</div>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-label">You</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentView = 'my';
+        let currentTab = 'goals';
+
+        function showView(view) {
+            currentView = view;
+            document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update goals display based on view
+            if (currentTab === 'goals') {
+                document.getElementById('my-view-goals').style.display = view === 'my' ? 'block' : 'none';
+                document.getElementById('public-view-goals').style.display = view === 'public' ? 'block' : 'none';
+            }
+        }
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Hide all content
+            document.getElementById('my-view-goals').style.display = 'none';
+            document.getElementById('public-view-goals').style.display = 'none';
+            document.getElementById('tab-posts').style.display = 'none';
+            document.getElementById('tab-stats').style.display = 'none';
+
+            // Show selected tab
+            if (tab === 'goals') {
+                document.getElementById(currentView === 'my' ? 'my-view-goals' : 'public-view-goals').style.display = 'block';
+            } else {
+                document.getElementById('tab-' + tab).style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
