@@ -1,328 +1,233 @@
-# Freestyle - Social Goal Tracking App
+# Unity Dev - Development/Staging Environment
 
-## 📖 NEW TO THIS PROJECT? 
-**Start here → [DOCUMENTATION_INDEX.md](./DOCUMENTATION_INDEX.md)**  
-Complete guide to all documentation and quick debugging!
+🚧 **This is the DEVELOPMENT environment** - NOT production!
 
-## 🎯 Overview
-Freestyle is a social goal tracking app that combines personal productivity with social accountability through two distinct social layers: intimate "Circles" and broader "Following" networks.
+## 🎯 Purpose
 
-### Latest Updates (Aug 2025)
-- ✅ Challenge system with activity times
-- ✅ Fixed race condition in challenge join flow
-- ✅ Complete documentation overhaul
-- ✅ Activity linking to existing habits
-- ✅ Leaderboard and progress tracking
+Safe testing environment for Unity Vision app:
+- **Isolated database**: Separate from production users
+- **No risk**: Test fixes without affecting live users
+- **Fresh start**: Clean slate for bug fixes and features
 
-## 📱 Architecture Overview
-
-### Tech Stack
-- **Frontend**: React Native (Expo)
-- **Backend**: Supabase (PostgreSQL + Auth)
-- **Deployment**: TestFlight (iOS), Expo EAS
-- **State Management**: Zustand
-- **Styling**: React Native StyleSheet with luxury theme system
-
-### Core Features
-1. **Daily Actions**: Track daily habits and goals
-2. **Goals**: Long-term goal setting with milestones
-3. **Social Circles**: Small, intimate groups (teams, clubs)
-4. **Following Network**: Broader social connections
-5. **Progress Tracking**: Visual progress and streaks
-6. **Profile**: Personal stats and achievements
-
-## 🏗️ Project Structure
+## 📂 Project Structure
 
 ```
-DeployTestFlight/
-├── src/
-│   ├── features/          # Feature-based modules
-│   │   ├── daily/         # Daily actions screen
-│   │   ├── social/        # Social feed (Circle/Following)
-│   │   │   ├── SocialScreen.tsx
-│   │   │   ├── CircleMembersModal.tsx
-│   │   │   └── JoinCircleModal.tsx
-│   │   ├── progress/      # Progress tracking
-│   │   └── profile/       # User profile
-│   ├── services/          
-│   │   ├── supabase.service.ts  # Supabase API wrapper
-│   │   └── backend.service.ts   # Unified backend interface
-│   ├── state/            
-│   │   ├── rootStore.ts  # Zustand root store
-│   │   └── slices/        # State slices (auth, goals, social)
-│   └── ui/                # Reusable UI components
-├── database/              # Database migrations and test data
-│   ├── migrations/        # SQL migration files
-│   └── test_data/         # Test data scripts
-├── docs/                  # Documentation
-│   ├── CIRCLES_AND_FOLLOWING.md
-│   └── archive/           # Historical docs
-├── app.json               # Expo configuration
-├── eas.json              # EAS Build configuration
-└── package.json          # Dependencies
+Unity-Dev/           ← You are here (Development/Staging)
+Unity-vision/        ← Production (Live users - DON'T touch!)
 ```
 
-## 🗄️ Database Schema
+## 🔧 Environment
 
-### Core Tables
-```sql
--- Users & Authentication
-users (id, email, name, avatar, circle_id)
-profiles (id, name, username, avatar_url)
+### Backend: Supabase "Unity Dev" Project
+- **Project URL**: `https://fkzfnxumxnnlidfyztef.supabase.co`
+- **Database**: Copy of production (as of Feb 14, 2026)
+- **Storage**: Separate buckets (initially empty)
+- **Dashboard**: https://supabase.com/dashboard/project/fkzfnxumxnnlidfyztef
 
--- Circles (Groups) - Phase 1: Single circle per user
-circles (id, name, code, created_by)
-circle_members (circle_id, user_id, joined_at)
+### Frontend: React Native (Expo)
+- **Port**: 8081
+- **Environment**: Connected to Unity Dev backend
+- **GitHub**: https://github.com/marekhulva/Unity-Dev
 
--- Social Following
-follows (follower_id, following_id, created_at)
+## 🚀 Quick Start
 
--- Content
-goals (id, user_id, title, metric, deadline, category)
-actions (id, user_id, goal_id, title, date, completed)
-posts (id, user_id, type, visibility, content, media_url)
-reactions (post_id, user_id, emoji)
-```
-
-## 🔐 Social System Architecture
-
-### Current Implementation (Phase 1)
-- **Your Circle**: Single private group per user
-- **Following**: Public follow system for broader network
-
-### Visibility Logic
-```javascript
-// Post visibility types
-visibility: 'circle' | 'follow' | 'public'
-
-// Circle posts: Only visible to circle members
-// Follow posts: Visible to followers
-// Public posts: Visible to all (future)
-```
-
-### Future Architecture (Phase 2)
-- Multiple circles per user
-- Group roles and permissions
-- Cross-circle discovery
-
-## 🚀 Getting Started
-
-### Prerequisites
+### 1. Install Dependencies
 ```bash
-node >= 18.0.0
-npm >= 9.0.0
-expo-cli
-eas-cli (for deployment)
-```
-
-### Local Development
-```bash
-# Install dependencies
+cd /home/marek/Unity-Dev
 npm install
-
-# Start development server
-npm start
-# or
-npx expo start --port 8090
-
-# Run on iOS simulator
-npx expo run:ios
-
-# Run on Android
-npx expo run:android
 ```
 
-### Environment Setup
-```javascript
-// src/services/supabase.service.ts
-const SUPABASE_URL = 'your-project-url'
-const SUPABASE_ANON_KEY = 'your-anon-key'
-```
-
-## 📲 Deployment
-
-### TestFlight Deployment
+### 2. Start Development Server
 ```bash
-# Increment build number in app.json
-# Build and submit to TestFlight
-eas build --platform ios --auto-submit
+npm start
 ```
 
-See [TESTFLIGHT_DEPLOYMENT.md](./TESTFLIGHT_DEPLOYMENT.md) for detailed instructions.
+App runs on `http://localhost:8081` connected to Unity Dev backend.
 
-## 🔑 Key Implementation Details
-
-### State Management (Zustand)
-```typescript
-// Root store combines all slices
-const useStore = create<RootState>()(
-  devtools((...a) => ({
-    ...createAuthSlice(...a),
-    ...createGoalsSlice(...a),
-    ...createSocialSlice(...a),
-    ...createDailySlice(...a),
-  }))
-)
+### 3. Verify Environment
+Check console output - should see:
+```
+✅ Supabase URL: https://fkzfnxumxnnlidfyztef.supabase.co
 ```
 
-### API Service Pattern
-```typescript
-// Unified backend service switches between Supabase and custom backend
-const backendService = {
-  // Switches based on USE_SUPABASE flag
-  signIn: () => USE_SUPABASE ? supabaseService.signIn() : apiService.signIn()
-}
+**NOT** the production URL: `https://ojusijzhshvviqjeyhyn.supabase.co`
+
+## ⚠️ CRITICAL - Don't Mix Environments!
+
+| Environment | Folder | Backend | Users |
+|-------------|--------|---------|-------|
+| **Development** | `/home/marek/Unity-Dev` | Unity Dev Supabase | Test/Copy data |
+| **Production** | `/home/marek/Unity-vision` | Production Supabase | LIVE USERS |
+
+### Safety Rules:
+- ❌ **NEVER** test with production backend
+- ❌ **NEVER** commit Unity Dev changes directly to production
+- ❌ **NEVER** run fixes in production first
+- ✅ **ALWAYS** test in Unity Dev first
+- ✅ **ALWAYS** verify which environment you're in
+- ✅ **ALWAYS** copy tested fixes to production
+
+## 🧪 Testing Workflow
+
+1. **Make changes** in `/home/marek/Unity-Dev`
+2. **Test locally** (npm start in Unity-Dev)
+3. **Verify** database changes in Unity Dev Supabase dashboard
+4. **Confirm** fixes work (no errors, correct behavior)
+5. **Copy to production**:
+   ```bash
+   # Copy specific file
+   cp /home/marek/Unity-Dev/src/path/file.tsx /home/marek/Unity-vision/src/path/file.tsx
+
+   # Or copy entire directory
+   rsync -av /home/marek/Unity-Dev/src/features/daily/ /home/marek/Unity-vision/src/features/daily/
+   ```
+6. **Test in production** (quick smoke test)
+7. **Deploy** if needed
+
+## 📊 Database
+
+### Unity Dev Supabase Dashboard
+https://supabase.com/dashboard/project/fkzfnxumxnnlidfyztef
+
+**Contents** (as of Feb 14, 2026):
+- ✅ Full schema (all tables, functions, RLS)
+- ✅ Production data copy (all users, posts, challenges)
+- ⚠️ Storage buckets empty (copy files if needed)
+
+### Making Database Changes
+
+If you need to run SQL migrations:
+
+1. **Test in Unity Dev first**:
+   - Unity Dev Supabase → SQL Editor
+   - Run migration
+   - Verify it works
+
+2. **Then apply to production**:
+   - Production Supabase → SQL Editor
+   - Run same migration
+   - Verify it works
+
+## 🔐 Environment Variables
+
+`.env` file contains Unity Dev credentials (already configured):
+
+```bash
+SUPABASE_URL=https://fkzfnxumxnnlidfyztef.supabase.co
+EXPO_PUBLIC_SUPABASE_URL=https://fkzfnxumxnnlidfyztef.supabase.co
+
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+DATABASE_URL=postgresql://postgres:Inoshatan1994!@db.fkzfnxumxnnlidfyztef...
 ```
 
-### Field Mapping Strategy
-```typescript
-// Frontend uses camelCase, Supabase uses snake_case
-// Mapping happens in service layer
-const { mediaUrl, actionTitle, ...data } = post;
-return {
-  media_url: mediaUrl,
-  action_title: actionTitle,
-  ...data
-}
+✅ `.env` is in `.gitignore` (won't be committed)
+❌ **NEVER commit .env to git!**
+
+## 🐛 Bug Fixing Priority
+
+Start with the audit reports in this folder:
+
+1. **MASTER_BUG_AUDIT_COMPLETE.md** - Overview of 244+ bugs
+2. **BUG_AUDIT_ROUND_3_SUMMARY.md** - Security/database issues
+3. **COMPLETE_BUG_AUDIT_ROUNDS_1-2.md** - Detailed findings
+
+### Top Priority Fixes (Start Here):
+1. Fix `current_day` calculation inconsistency
+2. Add missing RLS policies (notifications, push_tokens, daily_reviews)
+3. Fix timezone handling (use local timezone only)
+4. Wrap console.log with `__DEV__` (134 instances)
+5. Fix database schema mismatch
+
+## 🔍 Debugging
+
+### Check Which Environment You're In
+
+```bash
+# Look at console output when app starts
+# Unity Dev: https://fkzfnxumxnnlidfyztef.supabase.co
+# Production: https://ojusijzhshvviqjeyhyn.supabase.co
 ```
 
-## 🎨 Design System
-
-### Theme Structure
-- **Luxury Theme**: Gold accents, dark backgrounds
-- **Color System**: Primary (Gold), Secondary (Platinum), Tertiary (Rose Gold)
-- **Safe Areas**: Dynamic iOS safe area handling with SafeAreaView
-
-### Component Patterns
-- Glass morphism effects
-- Particle animations
-- Haptic feedback
-- Spring animations
-
-## 🐛 Recent Fixes (Last 48 Hours)
-
-### Complete Supabase Migration (Jan 2025)
-- **Problem**: Railway backend crashing, needed stable solution
-- **Solution**: Migrated entire backend to Supabase
-- **Files Changed**: 
-  - Created `src/services/supabase.service.ts` - Complete Supabase wrapper
-  - Created `src/services/backend.service.ts` - Unified backend interface
-  - Updated all state slices to use new backend service
-
-### Database Permission Fixes
-- **Problem**: "permission denied for table actions/goals"
-- **Solution**: Grant ALL privileges to anon/authenticated roles
-- **SQL Scripts Created**:
-  - `grant-permissions.sql` - Fixed role permissions
-  - `ensure-user-profiles.sql` - Create missing profiles
-  - `add-missing-columns.sql` - Added frequency, duration fields
-
-### Field Name Mapping Issues
-- **Problem**: Frontend uses camelCase, Supabase uses snake_case
-- **Specific Fixes**:
-  - `goalId` → `goal_id` in actions table
-  - `mediaUrl` → `media_url` in posts table
-  - `actionTitle` → `action_title` in posts
-  - `createdAt` → `created_at` throughout
-- **Solution**: Added mapping layer in supabase.service.ts
-
-### Photo Posts Disappearing
-- **Problem**: Photos would post then immediately disappear
-- **Root Cause**: Field names not mapped back from snake_case after creation
-- **Fix**: Return proper camelCase fields from createPost method
-
-### iOS Safe Area Issues (Jan 22, 2025)
-- **Problem**: Components cut off by notch/Dynamic Island
-- **Solution**: 
-  - Added SafeAreaProvider to root App.tsx
-  - Wrapped all screens in SafeAreaView with edges={['top']}
-  - Used `useSafeAreaInsets()` for dynamic spacing
-  - Fixed Social tab selector positioning with `top: insets.top`
-
-### Daily Actions Date Filtering
-- **Problem**: Daily actions not loading for current day
-- **Original Code**: Complex date range with timezone
-- **Fix**: Simple date equality check
+Or add to your code:
 ```javascript
-// Before: Complex range query
-.gte('date', startOfDay).lt('date', endOfDay)
-// After: Simple equality
-.eq('date', today) // YYYY-MM-DD format
+console.log('ENV:', process.env.EXPO_PUBLIC_SUPABASE_URL);
 ```
 
-### Authentication Session Issues
-- **Problem**: Users couldn't sign up or sign in
-- **Solutions Applied**:
-  1. Disabled email verification in Supabase dashboard
-  2. Added fallback test user for local development
-  3. Fixed AsyncStorage null value handling
-  4. Proper session persistence configuration
+### Common Issues
 
-## 📚 Documentation
+**"Can't connect to database"**
+- Check `.env` file exists
+- Verify Supabase URL is Unity Dev (fkzfnxumxnnlidfyztef)
+- Restart Expo: `npm start`
 
-### Essential Docs
-- **[Complete Documentation](./COMPLETE_DOCUMENTATION.md)** - START HERE! Simple guide to everything
-- **[TestFlight Deployment](./TESTFLIGHT_DEPLOYMENT.md)** - How to deploy to TestFlight
+**"Seeing wrong data"**
+- Check Supabase URL in console
+- Make sure you're in `/home/marek/Unity-Dev` folder
+- Not `/home/marek/Unity-vision`
 
-### Reference Docs
-- [Backend Progress](./BACKEND_PROGRESS.md) - Feature completion status
-- [Future Features](./FUTURE_FEATURES.md) - Planned features
-- [Visual Design Specs](./docs/SOCIAL_V2_VISUALS.md) - UI enhancement details
+**"Changes not appearing"**
+- Clear cache: `npx expo start -c`
+- Restart Metro bundler
+- Hard refresh browser
 
-### Outdated (For Historical Reference Only)
-- ~~[Migration Status](./MIGRATION_STATUS.md)~~ - Migration complete, now fully on Supabase
-- ~~[Backend Deployment](./BACKEND_DEPLOYMENT.md)~~ - Old Railway deployment (deprecated)
+## 📱 GitHub Repository
 
-## 🤝 Contributing
+**Repo**: https://github.com/marekhulva/Unity-Dev
 
-### Code Style
-- TypeScript with relaxed strict mode
-- Functional components with hooks
-- Feature-based file organization
+- Separate from production repo
+- Push development work here
+- Keep in sync with fixes
 
 ### Git Workflow
+
 ```bash
+cd /home/marek/Unity-Dev
+
+# Make changes, test them
+
+# Commit and push
 git add .
-git commit -m "feat: description"
+git commit -m "Fix: description of fix
+
+🤖 Generated with Claude Code
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
 git push origin master
 ```
 
-## 📈 Current Status
+## 🎯 Next Steps
 
-**Latest Build**: #5 (Live on TestFlight - Jan 22, 2025)
-**Backend**: Supabase (Production)
-**Features**: 71% complete (see BACKEND_PROGRESS.md)
+1. ✅ Install dependencies: `cd /home/marek/Unity-Dev && npm install`
+2. ✅ Start dev server: `npm start`
+3. ✅ Verify Unity Dev backend connection (check console)
+4. ✅ Read bug audit reports
+5. ✅ Start fixing bugs!
 
-### Recent Deployment History
-- **Build #5** (Jan 22, 2025): All Supabase fixes, iOS safe areas, field mappings
-- **Build #4** (Jan 21, 2025): Initial Supabase migration attempt
-- **Build #3** (Jan 20, 2025): Last Railway backend version
-- **Previous**: Railway backend (deprecated - was crashing)
+## 📋 Important Files
 
-## 🔮 Roadmap
-
-### Phase 1 (Current)
-- [x] Core authentication
-- [x] Goals and actions
-- [x] Single circle system
-- [x] Following system
-- [x] Basic social feed
-
-### Phase 2 (Next)
-- [ ] Multiple circles
-- [ ] Circle discovery
-- [ ] Advanced analytics
-- [ ] Push notifications
-- [ ] Media uploads
-
-## 📞 Support
-
-For issues or questions, check:
-1. This README
-2. Documentation folder
-3. GitHub Issues
-4. TestFlight feedback
+- `.env` - Unity Dev credentials (DON'T commit!)
+- `MASTER_BUG_AUDIT_COMPLETE.md` - Bug overview
+- `BUG_AUDIT_ROUND_3_SUMMARY.md` - Security issues
+- `CLAUDE.md` - Development guidelines
 
 ---
 
-Built with ❤️ using React Native and Supabase
+## 🆘 Need Help?
+
+**Remember:**
+- This is Unity **Dev** (development)
+- Production is in `/home/marek/Unity-vision`
+- Always test here first!
+- Then copy fixes to production
+
+**Happy bug fixing!** 🐛🔧
+
+---
+
+**Production project**: `/home/marek/Unity-vision`
+**This project**: `/home/marek/Unity-Dev` ← You are here
