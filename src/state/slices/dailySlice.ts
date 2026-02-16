@@ -333,6 +333,14 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
             if (__DEV__) console.error('🔴 [ACTIONS] Failed to refetch challenges:', err);
           });
 
+          // Refetch leaderboard so challenge dashboard shows updated rankings
+          if (action.challengeId) {
+            if (__DEV__) console.log('🔄 [ACTIONS] Refetching leaderboard after challenge completion...');
+            (get() as any).loadLeaderboard(action.challengeId).catch(err => {
+              if (__DEV__) console.error('🔴 [ACTIONS] Failed to refetch leaderboard:', err);
+            });
+          }
+
           // Refetch Social feed to show updated Living Progress Card
           if (__DEV__) console.log('🔄 [ACTIONS] Refetching Social feed to update Living Progress Card...');
           const socialSlice = (get() as any);
@@ -383,6 +391,14 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
             (get() as any).fetchMyActiveChallenges().catch(err => {
               if (__DEV__) console.error('🔴 [ACTIONS] Failed to refetch challenges:', err);
             });
+
+            // Refetch leaderboard so challenge dashboard shows updated rankings
+            if (action.challengeId) {
+              if (__DEV__) console.log('🔄 [ACTIONS] Refetching leaderboard after linked action completion...');
+              (get() as any).loadLeaderboard(action.challengeId).catch(err => {
+                if (__DEV__) console.error('🔴 [ACTIONS] Failed to refetch leaderboard:', err);
+              });
+            }
           }
 
           // Refetch goals to update consistency in Profile

@@ -168,7 +168,7 @@ export const LivingProgressCard: React.FC<LivingProgressCardProps> = ({
       )}
 
       {/* Challenge Name Header */}
-      {displayChallengeName && (
+      {!!displayChallengeName && (
         <View style={styles.challengeHeader}>
           <Text style={styles.challengeHeaderText}>{displayChallengeName}</Text>
           {displayDay && displayTotal && (

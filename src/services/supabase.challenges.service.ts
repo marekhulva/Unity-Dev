@@ -610,13 +610,13 @@ class SupabaseChallengeService {
 
     const { filter = 'all', sort = 'rank', limit = 100 } = options || {};
 
-    // Fetch challenge duration_days for capping current_day
     const { data: challengeData } = await supabase
       .from('challenges')
-      .select('duration_days')
+      .select('duration_days, predetermined_activities')
       .eq('id', challengeId)
       .single();
     const durationDays = challengeData?.duration_days || 30;
+    const predActivities = (challengeData as any)?.predetermined_activities || [];
 
     let query = supabase
       .from('challenge_participants')
@@ -626,6 +626,7 @@ class SupabaseChallengeService {
         completed_days,
         current_day,
         personal_start_date,
+        selected_activity_ids,
         current_streak,
         days_taken,
         "rank",
@@ -672,19 +673,6 @@ class SupabaseChallengeService {
       }
     }
 
-    switch (sort) {
-      case 'fastest':
-        query = query.order('days_taken', { ascending: true }).order('completion_percentage', { ascending: false });
-        break;
-      case 'perfect':
-        query = query.order('completion_percentage', { ascending: false }).order('days_taken', { ascending: true });
-        break;
-      case 'rank':
-      default:
-        query = query.order('completion_percentage', { ascending: false }).order('days_taken', { ascending: true });
-        break;
-    }
-
     query = query.limit(limit);
 
     const { data, error } = await query;
@@ -694,11 +682,30 @@ class SupabaseChallengeService {
       throw error;
     }
 
+    if (!data || data.length === 0) return [];
+
+    const userIds = data.map((e: any) => e.user_id);
+    const { data: allCompletions } = await supabase
+      .from('challenge_completions')
+      .select('user_id, completion_date, challenge_activity_id')
+      .eq('challenge_id', challengeId)
+      .in('user_id', userIds);
+
+    const completionsByUser = new Map<string, Set<string>>();
+    const datesByUser = new Map<string, Set<string>>();
+    if (allCompletions) {
+      for (const c of allCompletions) {
+        if (!completionsByUser.has(c.user_id)) completionsByUser.set(c.user_id, new Set());
+        completionsByUser.get(c.user_id)!.add(`${c.challenge_activity_id}-${c.completion_date}`);
+        if (!datesByUser.has(c.user_id)) datesByUser.set(c.user_id, new Set());
+        datesByUser.get(c.user_id)!.add(c.completion_date);
+      }
+    }
+
     const now = new Date();
     const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    const leaderboard: LeaderboardEntry[] = (data || []).map((entry: any, index: number) => {
-      // Calculate current_day from dates (stored value goes stale if user skips a day)
+    const leaderboard: LeaderboardEntry[] = (data || []).map((entry: any) => {
       let calculatedDay = entry.current_day || 0;
       if (entry.personal_start_date) {
         const start = parseLocalDateString(entry.personal_start_date);
@@ -708,20 +715,51 @@ class SupabaseChallengeService {
         );
       }
 
+      const selectedIds = new Set((entry.selected_activity_ids || []).map(String));
+      let expectedActivities = 0;
+      for (let day = 1; day <= calculatedDay; day++) {
+        for (const act of predActivities) {
+          if (selectedIds.size > 0 && !selectedIds.has(String(act.id))) continue;
+          const startDay = act.start_day || 1;
+          const endDay = act.end_day || durationDays;
+          if (day >= startDay && day <= endDay) expectedActivities++;
+        }
+      }
+
+      const uniqueCompletions = completionsByUser.get(entry.user_id)?.size || 0;
+      const freshPercentage = expectedActivities > 0
+        ? Math.min(100, Math.round((uniqueCompletions / expectedActivities) * 100))
+        : 0;
+
+      if (__DEV__) {
+        console.log(`🎯 [Challenge LB] ${entry.profiles?.name || entry.user_id}: ${uniqueCompletions}/${expectedActivities} = ${freshPercentage}% (stored: ${entry.completion_percentage}%)`);
+      }
+
+      const uniqueDates = datesByUser.get(entry.user_id)?.size || 0;
+
       return {
         user_id: entry.user_id,
         username: entry.profiles?.name || 'Unknown',
         name: entry.profiles?.name,
         avatar_url: entry.profiles?.avatar_url,
-        completion_percentage: entry.completion_percentage || 0,
-        completed_days: entry.completed_days || 0,
+        completion_percentage: freshPercentage,
+        completed_days: uniqueDates,
         current_day: calculatedDay,
         current_streak: entry.current_streak || 0,
         days_taken: entry.days_taken,
-        rank: index + 1,
+        rank: 0,
         percentile: entry.percentile,
       };
     });
+
+    leaderboard.sort((a, b) => {
+      if (sort === 'fastest') {
+        return (a.days_taken || 0) - (b.days_taken || 0) || b.completion_percentage - a.completion_percentage;
+      }
+      return b.completion_percentage - a.completion_percentage || (a.days_taken || 0) - (b.days_taken || 0);
+    });
+
+    leaderboard.forEach((entry, i) => { entry.rank = i + 1; });
 
     return leaderboard;
   }

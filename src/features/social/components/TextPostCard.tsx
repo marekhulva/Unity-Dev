@@ -172,7 +172,7 @@ export const TextPostCard: React.FC<TextPostCardProps> = ({
         <View style={styles.postMeta}>
           <View style={styles.userRow}>
             <Text style={styles.username}>{user || 'User'}</Text>
-            {goal && (
+            {!!goal && (
               <View style={styles.goalTag}>
                 <Text style={styles.goalTagText}>{goal}</Text>
               </View>
@@ -187,7 +187,7 @@ export const TextPostCard: React.FC<TextPostCardProps> = ({
       </View>
 
       {/* Check-in Card (Optional) */}
-      {isCheckin && actionTitle && (
+      {isCheckin && !!actionTitle && (
         <View style={styles.checkinCard}>
           <LinearGradient
             colors={['#D4AF37', 'transparent']}
@@ -214,7 +214,7 @@ export const TextPostCard: React.FC<TextPostCardProps> = ({
       )}
 
       {/* Post Content */}
-      {content && !isPhoto && (
+      {!!content && !isPhoto && (
         <View style={styles.contentSection}>
           <Text style={styles.postContent}>{parseContent(content)}</Text>
         </View>
@@ -228,7 +228,7 @@ export const TextPostCard: React.FC<TextPostCardProps> = ({
             style={styles.media}
             resizeMode="cover"
           />
-          {content && <Text style={styles.caption}>{content}</Text>}
+          {!!content && <Text style={styles.caption}>{content}</Text>}
         </View>
       )}
 
