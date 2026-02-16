@@ -44,6 +44,7 @@ import * as Haptics from 'expo-haptics';
 import { supabaseChallengeService } from '../../services/supabase.challenges.service';
 import { supabase } from '../../services/supabase.service';
 import { useStore } from '../../state/rootStore';
+import { getLocalDateString } from '../../utils/dateUtils';
 import { ActivityLinkingModal } from './ActivityLinkingModal';
 import { TimeSetupModal } from './TimeSetupModal';
 
@@ -287,7 +288,7 @@ export const JoinChallengeModal: React.FC<JoinChallengeModalProps> = ({
                 frequency: 'daily',
                 challenge_ids: [challenge.id],
                 user_id: participant.user_id,
-                date: new Date().toISOString().split('T')[0],
+                date: getLocalDateString(),
                 completed: false,
                 visibility: 'public'
               })

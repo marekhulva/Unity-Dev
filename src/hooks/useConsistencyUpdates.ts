@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useStore } from '../state/rootStore';
 import { calculateConsistency } from '../utils/consistencyCalculator';
+import { getLocalDateString } from '../utils/dateUtils';
 import { DayProgress } from '../types/progress';
 
 interface UseConsistencyUpdatesOptions {
@@ -47,7 +48,7 @@ export const useConsistencyUpdates = (options: UseConsistencyUpdatesOptions = {}
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       date.setHours(0, 0, 0, 0);
-      const dateStr = date.toISOString().split('T')[0];
+      const dateStr = getLocalDateString(date);
       last30Days.push(dateStr);
       dayProgressMap.set(dateStr, {
         date: dateStr,
@@ -64,7 +65,7 @@ export const useConsistencyUpdates = (options: UseConsistencyUpdatesOptions = {}
           let isCompleted = false;
           
           // Check today's completion
-          const todayStr = new Date().toISOString().split('T')[0];
+          const todayStr = getLocalDateString();
           if (dateStr === todayStr && action.done) {
             isCompleted = true;
           }
@@ -74,7 +75,7 @@ export const useConsistencyUpdates = (options: UseConsistencyUpdatesOptions = {}
             if (goalId && ca.goalId !== goalId) return false;
             if (actionIds && !actionIds.includes(ca.actionId)) return false;
             
-            const completedDateStr = new Date(ca.completedAt).toISOString().split('T')[0];
+            const completedDateStr = getLocalDateString(new Date(ca.completedAt));
             return completedDateStr === dateStr && 
                    (ca.actionId === action.id || ca.title === action.title);
           });

@@ -110,6 +110,7 @@ export const CircleScreenVision = () => {
     challengesLoading,
     posts,
     fetchPosts,
+    lastCompletionAt,
   } = useStore();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -243,6 +244,13 @@ export const CircleScreenVision = () => {
       calculateMemberStats();
     }
   }, [circleMembers, calculateMemberStats]);
+
+  // Recalculate stats when user completes an action (from any tab)
+  useEffect(() => {
+    if (lastCompletionAt > 0 && circleMembers.length > 0) {
+      calculateMemberStats();
+    }
+  }, [lastCompletionAt]);
 
   useEffect(() => {
     if (circleChallenges.length === 0 || !user) return;

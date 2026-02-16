@@ -38,7 +38,7 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
   const {
     leaderboard,
     myParticipation: myParticipationStore,
-    recordActivity,
+    recordCompletion,
     getTodayCompletions
   } = useStore();
 
@@ -61,7 +61,7 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
       if (participantId) {
         const completions = await getTodayCompletions(participantId);
         if (completions && Array.isArray(completions)) {
-          const completedIds = completions.map((c: any) => c.activity_id);
+          const completedIds = completions.map((c: any) => String(c.challenge_activity_id));
           setTodayCompleted(new Set(completedIds));
           if (__DEV__) console.log('📊 [CHALLENGE] Loaded today\'s completions:', completedIds);
         }
@@ -77,26 +77,26 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
   }, [participantId, selectedTab, getTodayCompletions]);
   
   const handleActivityToggle = async (activityId: string) => {
-    if (todayCompleted.has(activityId)) {
+    if (todayCompleted.has(String(activityId))) {
       // Can't uncomplete for now
       return;
     }
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
-    const success = await recordActivity(participantId, activityId);
+
+    const success = await recordCompletion(participantId, String(activityId));
     if (success) {
-      setTodayCompleted(prev => new Set([...prev, activityId]));
+      setTodayCompleted(prev => new Set([...prev, String(activityId)]));
     }
   };
   
   const getSelectedActivities = () => {
-    if (!myParticipation?.selected_activity_ids || !challenge?.challenge_activities) {
+    if (!myParticipation?.selected_activity_ids || !challenge?.predetermined_activities) {
       return [];
     }
-    
-    return challenge.challenge_activities.filter((act: any) => 
-      myParticipation.selected_activity_ids.includes(act.id)
+
+    return challenge.predetermined_activities.filter((act: any) =>
+      myParticipation.selected_activity_ids.map(String).includes(String(act.id))
     );
   };
   
@@ -104,7 +104,7 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
     const selected = getSelectedActivities();
     if (selected.length === 0) return 0;
     
-    const completed = selected.filter((act: any) => todayCompleted.has(act.id)).length;
+    const completed = selected.filter((act: any) => todayCompleted.has(String(act.id))).length;
     const required = challenge?.config?.required_daily || 3;
     
     return Math.min(100, (completed / required) * 100);
@@ -140,7 +140,7 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
             style={StyleSheet.absoluteFillObject}
           />
           <TrendingUp size={20} color="#FFD700" />
-          <Text style={styles.statValue}>{myParticipation?.consistency_percentage || 0}%</Text>
+          <Text style={styles.statValue}>{myParticipation?.completion_percentage || 0}%</Text>
           <Text style={styles.statLabel}>Consistency</Text>
         </Animated.View>
         
@@ -219,7 +219,7 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
                       </Text>
                       <View style={styles.leaderboardStats}>
                         <Text style={styles.leaderboardStat}>
-                          {participant.consistency_percentage || 0}% consistent
+                          {participant.completion_percentage || 0}% consistent
                         </Text>
                         <Text style={styles.leaderboardDot}>•</Text>
                         <Text style={styles.leaderboardStat}>
@@ -281,8 +281,8 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
                   // There's someone ahead of us or tied with us
                   const nextPerson = leaderboard[myIndex - 1];
                   const gap = nextPerson.total_completions - myCompletions;
-                  const activitiesLeftToday = selectedActivities.filter((act: any) => 
-                    !todayCompleted.has(act.id)
+                  const activitiesLeftToday = selectedActivities.filter((act: any) =>
+                    !todayCompleted.has(String(act.id))
                   ).length;
                   
                   if (__DEV__) console.log('🎯 [MOTIVATIONAL] Behind/tied with someone:', {
@@ -353,14 +353,14 @@ export const ChallengeDashboard: React.FC<ChallengeDashboardProps> = ({
               >
                 <Pressable
                   style={styles.activityItem}
-                  onPress={() => handleActivityToggle(activity.id)}
+                  onPress={() => handleActivityToggle(String(activity.id))}
                 >
                   <View style={styles.activityLeft}>
                     <Text style={styles.activityIcon}>{activity.icon}</Text>
                     <Text style={styles.activityTitle}>{activity.title}</Text>
                   </View>
-                  
-                  {todayCompleted.has(activity.id) ? (
+
+                  {todayCompleted.has(String(activity.id)) ? (
                     <CheckCircle size={24} color="#4CAF50" />
                   ) : (
                     <Circle size={24} color="rgba(255,255,255,0.3)" />

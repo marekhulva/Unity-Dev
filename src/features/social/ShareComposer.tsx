@@ -55,7 +55,8 @@ export const ShareComposer: React.FC = () => {
       const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        quality: 0.9
+        quality: 0.7,
+        base64: true,
       };
 
       // Only add presentationStyle for iOS
@@ -64,8 +65,12 @@ export const ShareComposer: React.FC = () => {
       }
 
       const res = await ImagePicker.launchImageLibraryAsync(options);
-      if (!res.canceled && res.assets?.[0]?.uri) {
-        setPhotoUri(res.assets[0].uri);
+      if (!res.canceled && res.assets?.[0]) {
+        const asset = res.assets[0];
+        const photoData = asset.base64
+          ? `data:image/jpeg;base64,${asset.base64}`
+          : asset.uri;
+        setPhotoUri(photoData);
       }
     } catch (error) {
       if (__DEV__) console.error('Failed to pick image:', error);

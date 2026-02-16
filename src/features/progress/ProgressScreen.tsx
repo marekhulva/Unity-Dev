@@ -22,6 +22,7 @@ import {
   Gamepad2, TrendingUp, X, Check, Minus, Edit3, MoreVertical, Plus
 } from 'lucide-react-native';
 import { useStore } from '../../state/rootStore';
+import { getLocalDateString } from '../../utils/dateUtils';
 import { LuxuryTheme } from '../../design/luxuryTheme';
 import Svg, { Circle as SvgCircle, Defs, LinearGradient as SvgGradient, Stop, G, Line, Text as SvgText } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
@@ -122,7 +123,7 @@ export const ProgressScreen = ({ navigation }: any) => {
           const checkDate = new Date();
           checkDate.setDate(checkDate.getDate() - i);
           checkDate.setHours(0, 0, 0, 0);
-          const checkDateStr = checkDate.toISOString().split('T')[0];
+          const checkDateStr = getLocalDateString(checkDate);
 
           // Count actions that existed on this day
           const dayActions = userActions.filter(action => {
@@ -136,7 +137,7 @@ export const ProgressScreen = ({ navigation }: any) => {
           dayActions.forEach(action => {
             if (action.completed_at) {
               const completedDate = new Date(action.completed_at);
-              const completedDateStr = completedDate.toISOString().split('T')[0];
+              const completedDateStr = getLocalDateString(completedDate);
               if (completedDateStr === checkDateStr) {
                 completedTasks++;
               }
@@ -180,8 +181,9 @@ export const ProgressScreen = ({ navigation }: any) => {
     fetchWeeklyConsistency();
   }, [user?.id, actions, completedToday, totalToday]);
 
-  // Use the fetched overall stats from action_completions table
-  overallConsistency = overallStats.percentage || weeklyStats.percentage;
+  // Use the fetched overall stats (includes both regular actions + challenge activities)
+  // Use ?? instead of || so that 0% is treated as a valid value, not falsy
+  overallConsistency = overallStats.expected > 0 ? overallStats.percentage : weeklyStats.percentage;
   
   const completedThisWeek = actions.filter(a => a.done).length;
   
@@ -352,8 +354,8 @@ export const ProgressScreen = ({ navigation }: any) => {
 
     try {
       const { supabase } = await import('../../services/supabase.service');
-      const today = new Date().toISOString().split('T')[0];
-      const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+      const today = getLocalDateString();
+      const tomorrow = getLocalDateString(new Date(Date.now() + 86400000));
 
       if (goalId) {
         // Fetch for specific goal

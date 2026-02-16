@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
 
   media: {
     width: '100%',
-    height: 240,
+    aspectRatio: 4 / 5,
     backgroundColor: 'rgba(255, 255, 255, 0.03)',
   },
 

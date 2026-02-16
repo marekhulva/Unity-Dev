@@ -37,6 +37,7 @@ export type ChallengeSlice = {
   ) => Promise<boolean>;
   leaveChallenge: (participantId: string, keepActivities: boolean) => Promise<boolean>;
   recordCompletion: (participantId: string, activityId: string, linkedActionId?: string, photoUrl?: string) => Promise<boolean>;
+  getTodayCompletions: (participantId: string) => Promise<any[]>;
   clearCompletionModal: () => void;
   clearChallengeData: () => void;
 };
@@ -271,7 +272,18 @@ export const createChallengeSlice: StateCreator<ChallengeSlice> = (set, get) => 
     }
   },
 
+  _recordingCompletions: new Set<string>(),
+
   recordCompletion: async (participantId: string, activityId: string, linkedActionId?: string, photoUrl?: string) => {
+    // Prevent double-tap: skip if this activity is already being recorded
+    const key = `${participantId}-${activityId}`;
+    const recording = get()._recordingCompletions;
+    if (recording.has(key)) {
+      if (__DEV__) console.log('⏳ [STORE] Already recording, skipping:', key);
+      return false;
+    }
+    recording.add(key);
+
     if (__DEV__) console.log('✅ [STORE] Recording completion:', {
       participantId,
       activityId,
@@ -310,6 +322,7 @@ export const createChallengeSlice: StateCreator<ChallengeSlice> = (set, get) => 
         }
 
         if (__DEV__) console.log('🟢 [STORE] Completion recorded successfully');
+        set({ lastCompletionAt: Date.now() } as any);
         return true;
       } else {
         if (__DEV__) console.log('⚠️ [STORE]', result.error);
@@ -318,6 +331,18 @@ export const createChallengeSlice: StateCreator<ChallengeSlice> = (set, get) => 
     } catch (error: any) {
       if (__DEV__) console.error('🔴 [STORE] Error recording completion:', error);
       return false;
+    } finally {
+      get()._recordingCompletions.delete(key);
+    }
+  },
+
+  getTodayCompletions: async (participantId: string) => {
+    try {
+      const completions = await supabaseChallengeService.getTodayUserCompletions();
+      return completions.filter((c: any) => c.participant_id === participantId);
+    } catch (error) {
+      if (__DEV__) console.error('🔴 [STORE] Error fetching today completions:', error);
+      return [];
     }
   },
 

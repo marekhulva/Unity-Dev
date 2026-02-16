@@ -18,6 +18,7 @@ import {
   ChevronDown, Edit3, Plus
 } from 'lucide-react-native';
 import { useStore } from '../../../state/rootStore';
+import { getLocalDateString } from '../../../utils/dateUtils';
 import { LuxuryTheme } from '../../../design/luxuryTheme';
 import Svg, { Circle as SvgCircle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
@@ -97,7 +98,7 @@ export const ProgressTab = () => {
           const checkDate = new Date();
           checkDate.setDate(checkDate.getDate() - i);
           checkDate.setHours(0, 0, 0, 0);
-          const checkDateStr = checkDate.toISOString().split('T')[0];
+          const checkDateStr = getLocalDateString(checkDate);
 
           const dayActions = userActions.filter(action => {
             const createdDate = new Date(action.created_at);
@@ -109,7 +110,7 @@ export const ProgressTab = () => {
           dayActions.forEach(action => {
             if (action.completed_at) {
               const completedDate = new Date(action.completed_at);
-              const completedDateStr = completedDate.toISOString().split('T')[0];
+              const completedDateStr = getLocalDateString(completedDate);
               if (completedDateStr === checkDateStr) {
                 completedTasks++;
               }
@@ -137,7 +138,7 @@ export const ProgressTab = () => {
     fetchWeeklyConsistency();
   }, [user?.id, actions, completedToday, totalToday]);
 
-  overallConsistency = overallStats.percentage || weeklyStats.percentage;
+  overallConsistency = overallStats.expected > 0 ? overallStats.percentage : weeklyStats.percentage;
 
   const completedThisWeek = actions.filter(a => a.done).length;
   const topStreak = Math.max(0, ...actions.map(a => a.streak || 0));
@@ -280,8 +281,8 @@ export const ProgressTab = () => {
 
     try {
       const { supabase } = await import('../../../services/supabase.service');
-      const today = new Date().toISOString().split('T')[0];
-      const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+      const today = getLocalDateString();
+      const tomorrow = getLocalDateString(new Date(Date.now() + 86400000));
 
       if (goalId) {
         const { data, error } = await supabase

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Modal, StyleSheet, Pressable, Dimensions, Platform, Animated, TextInput, Image, Alert, Keyboard, ScrollView } from 'react-native';
+import { View, Text, Modal, StyleSheet, Pressable, Dimensions, Platform, Animated, TextInput, Image, Alert, Keyboard, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Camera, Mic, MessageSquare, Check, Globe, Lock, X, MapPin, Users } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
@@ -123,18 +123,19 @@ export const PrivacySelectionModal: React.FC<PrivacySelectionModalProps> = ({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [1, 1],
-        quality: Platform.OS === 'ios' ? 0.5 : 0.8,
-        base64: false,
+        aspect: [4, 5],
+        quality: 0.7,
+        base64: true,
         exif: false,
       });
 
-      if (!result.canceled && result.assets[0]) {
-        let photoUri = result.assets[0].uri;
-        if (Platform.OS === 'ios' && __DEV__) {
-          console.log('iOS Photo URI:', photoUri);
-        }
-        setPhotoUri(photoUri);
+      if (!result.canceled && result.assets?.[0]) {
+        const asset = result.assets[0];
+        const photoData = asset.base64
+          ? `data:image/jpeg;base64,${asset.base64}`
+          : asset.uri;
+        if (__DEV__) console.log('📸 Photo selected, using:', asset.base64 ? 'base64' : 'uri');
+        setPhotoUri(photoData);
         setSelectedMedia('photo');
       }
     }
@@ -353,11 +354,20 @@ export const PrivacySelectionModal: React.FC<PrivacySelectionModalProps> = ({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View style={styles.overlay}>
-        <Pressable style={styles.backdrop} onPress={handleClose} />
-        
-        <View style={styles.modalContainer}>
-          <View style={styles.modal}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.overlay}>
+          <Pressable style={styles.backdrop} onPress={() => { Keyboard.dismiss(); handleClose(); }} />
+
+          <View style={styles.modalContainer}>
+            <ScrollView
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.modal}>
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.subtitle}>{actionTitle}</Text>
@@ -591,8 +601,7 @@ export const PrivacySelectionModal: React.FC<PrivacySelectionModalProps> = ({
               </Text>
             </View>
 
-            {/* Action Buttons - Hide when keyboard is visible */}
-            {!isKeyboardVisible && (
+            {/* Action Buttons */}
               <View style={styles.actions}>
                 <Pressable
                   onPress={handleClose}
@@ -602,7 +611,7 @@ export const PrivacySelectionModal: React.FC<PrivacySelectionModalProps> = ({
                   <Text style={styles.cancelText}>Cancel</Text>
                 </Pressable>
                 <Pressable
-                  onPress={handleConfirm}
+                  onPress={() => { Keyboard.dismiss(); handleConfirm(); }}
                   style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
                   disabled={isSubmitting}
                 >
@@ -611,10 +620,11 @@ export const PrivacySelectionModal: React.FC<PrivacySelectionModalProps> = ({
                   </Text>
                 </Pressable>
               </View>
-            )}
-          </View>
+            </View>
+          </ScrollView>
         </View>
       </View>
+    </KeyboardAvoidingView>
 
       {/* iOS Keyboard Toolbar */}
       {Platform.OS === 'ios' && (

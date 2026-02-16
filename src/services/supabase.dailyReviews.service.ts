@@ -1,4 +1,5 @@
 import { supabase } from './supabase.service';
+import { getLocalDateString, parseLocalDateString } from '../utils/dateUtils';
 
 export interface DailyReview {
   id?: string;
@@ -36,7 +37,7 @@ class DailyReviewService {
    */
   async getOrCreateTodayReview(userId: string): Promise<DailyReview | null> {
     try {
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const today = getLocalDateString();
       
       if (__DEV__) console.log('📝 [REVIEW] Getting review for user:', userId, 'date:', today);
       
@@ -287,8 +288,7 @@ class DailyReviewService {
       today.setHours(0, 0, 0, 0);
       
       for (let i = 0; i < reviews.length; i++) {
-        const reviewDate = new Date(reviews[i].review_date);
-        reviewDate.setHours(0, 0, 0, 0);
+        const reviewDate = parseLocalDateString(reviews[i].review_date);
         
         const expectedDate = new Date(today);
         expectedDate.setDate(expectedDate.getDate() - i);
@@ -302,7 +302,7 @@ class DailyReviewService {
       }
       
       // Update today's review with the streak
-      const todayStr = today.toISOString().split('T')[0];
+      const todayStr = getLocalDateString(today);
       await supabase
         .from('daily_reviews')
         .update({ streak_day: streak })

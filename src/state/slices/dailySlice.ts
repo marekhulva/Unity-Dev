@@ -55,6 +55,7 @@ export type DailySlice = {
   addCompletedAction: (ca: CompletedAction) => void;
   clearCompletedActions: () => void;
   createCelebrationPost: () => Promise<void>;
+  lastCompletionAt: number;
   clearDailyData: () => void;
 };
 
@@ -63,6 +64,7 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
   completedActions: [],
   actionsLoading: false,
   actionsError: null,
+  lastCompletionAt: 0,
   
   fetchDailyActions: async () => {
     if (__DEV__) console.log('🟦 [ACTIONS] fetchDailyActions called');
@@ -174,7 +176,7 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
 
         // Use already-fetched completion data
         const completionMap = new Map(
-          (todayCompletions.data || []).map((c: any) => [c.challenge_activity_id, c.completed_at])
+          (todayCompletions.data || []).map((c: any) => [String(c.challenge_activity_id), c.completed_at])
         );
         if (__DEV__) console.log('✅ [ACTIONS] Already completed today:', [...completionMap.keys()]);
 
@@ -214,8 +216,8 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
             frequency: 'Daily',
             time: scheduledTime, // Use the time from activity_times mapping
             streak: 0,
-            done: completionMap.has(activity.id), // Check if already done today
-            completed_at: completionMap.get(activity.id) || null,
+            done: completionMap.has(String(activity.id)), // Check if already done today
+            completed_at: completionMap.get(String(activity.id)) || null,
             // Challenge-specific fields
             isFromChallenge: true,
             challengeId: activity.challengeId,
@@ -251,13 +253,24 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
     }
   },
   
+  _togglingActions: new Set<string>(),
+
   toggleAction: async (id, failed?: boolean, failureReason?: string) => {
     if (__DEV__) console.log('🟦 [ACTIONS] toggleAction called for ID:', id, { failed, failureReason });
+
+    // Prevent double-tap: skip if this action is already being toggled
+    const toggling = get()._togglingActions;
+    if (toggling.has(id)) {
+      if (__DEV__) console.log('⏳ [ACTIONS] Already toggling, skipping:', id);
+      return;
+    }
+    toggling.add(id);
 
     // Find the action to check if it's from a challenge
     const action = get().actions.find(a => a.id === id);
     if (!action) {
       if (__DEV__) console.error('🔴 [ACTIONS] Action not found:', id);
+      toggling.delete(id);
       return;
     }
 
@@ -306,6 +319,7 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
             )
           }));
           if (__DEV__) console.log('🟢 [ACTIONS] Challenge activity completed successfully');
+          set({ lastCompletionAt: Date.now() });
 
           // Refetch goals to update consistency in Profile
           if (__DEV__) console.log('🔄 [ACTIONS] Refetching goals to update consistency...');
@@ -354,6 +368,7 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
             return { actions: updatedActions };
           });
           if (__DEV__) console.log('🟢 [ACTIONS] Action marked as done locally');
+          set({ lastCompletionAt: Date.now() });
 
           // If this regular action is linked to a challenge activity, complete that too
           if (action.challengeParticipantId && action.challengeActivityId) {
@@ -381,9 +396,11 @@ export const createDailySlice: StateCreator<DailySlice> = (set, get) => ({
       }
     } catch (error) {
       if (__DEV__) console.error('🔴 [ACTIONS] Failed to toggle action:', error);
+    } finally {
+      get()._togglingActions.delete(id);
     }
   },
-  
+
   addAction: async (actionData) => {
     if (__DEV__) console.log('🟦 [ACTIONS] addAction called:', actionData.title);
     try {

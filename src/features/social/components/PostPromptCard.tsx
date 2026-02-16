@@ -677,12 +677,17 @@ export const PostPromptCard: React.FC<PostPromptCardProps> = ({ onOpenComposer }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
+      aspect: [4, 5],
+      quality: 0.7,
+      base64: true,
     });
 
-    if (!result.canceled) {
-      setPhotoUri(result.assets[0].uri);
+    if (!result.canceled && result.assets?.[0]) {
+      const asset = result.assets[0];
+      const photoData = asset.base64
+        ? `data:image/jpeg;base64,${asset.base64}`
+        : asset.uri;
+      setPhotoUri(photoData);
     }
   };
 

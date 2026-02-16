@@ -698,8 +698,8 @@ class BackendService {
   
   async getTodayCompletions(participantId: string) {
     if (isSupabaseBackend()) {
-      const completions = await supabaseChallengeService.getTodayCompletions(participantId);
-      return { success: true, data: completions };
+      const completions = await supabaseChallengeService.getTodayUserCompletions();
+      return { success: true, data: completions.filter((c: any) => c.participant_id === participantId) };
     } else {
       throw new Error('Challenges not implemented in custom backend');
     }

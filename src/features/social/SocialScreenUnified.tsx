@@ -216,13 +216,17 @@ export const SocialScreenUnified = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        quality: 0.8,
+        quality: 0.7,
+        base64: true,
       });
 
-      if (!result.canceled && result.assets[0]) {
-        const uri = result.assets[0].uri;
-        if (__DEV__) console.log('📸 [IMAGE-PICKER] Selected image:', uri);
-        setPostPhoto(uri);
+      if (!result.canceled && result.assets?.[0]) {
+        const asset = result.assets[0];
+        const photoData = asset.base64
+          ? `data:image/jpeg;base64,${asset.base64}`
+          : asset.uri;
+        if (__DEV__) console.log('📸 [IMAGE-PICKER] Selected image, using:', asset.base64 ? 'base64' : 'uri');
+        setPostPhoto(photoData);
         setComposerExpanded(true);
       } else {
         if (__DEV__) console.log('📸 [IMAGE-PICKER] Image selection canceled');

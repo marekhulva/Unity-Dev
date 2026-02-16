@@ -27,6 +27,7 @@ import { supabaseService, supabase } from '../../services/supabase.service';
 import { supabaseChallengeService } from '../../services/supabase.challenges.service';
 import { featureFlags } from '../../services/featureFlags.service';
 import { backendService } from '../../services/backend.service';
+import { parseLocalDateString } from '../../utils/dateUtils';
 import { FeedSkeleton } from '../../components/SkeletonLoader';
 import { rescheduleAll } from '../../services/notification.local';
 import { LoadingSpinner } from '../../ui/LoadingSpinner';
@@ -189,7 +190,10 @@ export const DailyScreenOption2 = () => {
   const currentDay = (() => {
     const startDate = activeChallenge?.my_participation?.personal_start_date;
     if (!startDate) return activeChallenge?.my_participation?.current_day || 1;
-    const daysSinceStart = Math.floor((Date.now() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const startDateLocal = parseLocalDateString(startDate);
+    const now = new Date();
+    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const daysSinceStart = Math.floor((todayLocal.getTime() - startDateLocal.getTime()) / 86400000) + 1;
     return Math.min(Math.max(daysSinceStart, 1), totalDays);
   })();
   const challengeProgress = activeChallenge ? Math.round((currentDay / totalDays) * 100) : 0;

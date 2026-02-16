@@ -1,4 +1,5 @@
 import { supabase } from './supabase.service';
+import { getLocalDateString, parseLocalDateString } from '../utils/dateUtils';
 import type {
   Challenge,
   ChallengeWithDetails,
@@ -15,17 +16,12 @@ import type {
 class SupabaseChallengeService {
   supabase = supabase;
 
-  private getLocalDateString(date?: Date): string {
-    const d = date || new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  }
-
   // Ensure activities have IDs (generate from title hash if missing)
   private ensureActivityIds(activities: any[]): any[] {
     if (!activities || !Array.isArray(activities)) return [];
     return activities.map((activity, index) => ({
       ...activity,
-      id: activity.id || `activity-${index}-${activity.title?.replace(/\s+/g, '-').toLowerCase() || index}`,
+      id: String(activity.id || `activity-${index}-${activity.title?.replace(/\s+/g, '-').toLowerCase() || index}`),
     }));
   }
 
@@ -199,13 +195,24 @@ class SupabaseChallengeService {
 
     const { data, error } = await supabase
       .from('challenge_participants')
-      .select('*')
+      .select('*, challenges!inner(duration_days)')
       .eq('challenge_id', challengeId)
       .eq('user_id', user.id)
       .single();
 
     if (error && error.code !== 'PGRST116') {
       if (__DEV__) console.error('🔴 [CHALLENGES] Error getting participation:', error);
+    }
+
+    if (data && data.personal_start_date) {
+      const now = new Date();
+      const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const start = parseLocalDateString(data.personal_start_date);
+      const durationDays = data.challenges?.duration_days || 30;
+      data.current_day = Math.min(
+        Math.max(Math.floor((todayLocal.getTime() - start.getTime()) / 86400000) + 1, 0),
+        durationDays
+      );
     }
 
     return data;
@@ -341,8 +348,7 @@ class SupabaseChallengeService {
       .single();
 
     if (challengeCheck && participant.personal_start_date) {
-      const startDate = new Date(participant.personal_start_date);
-      const startDateLocal = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const startDateLocal = parseLocalDateString(participant.personal_start_date);
 
       const now = new Date();
       const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -354,7 +360,7 @@ class SupabaseChallengeService {
       }
     }
 
-    const today = this.getLocalDateString();
+    const today = getLocalDateString();
 
     const { data: existing, count } = await supabase
       .from('challenge_completions')
@@ -423,9 +429,8 @@ class SupabaseChallengeService {
     const totalDays = challenge.duration_days;
 
     // Calculate current day (days since personal start)
-    // Normalize both dates to local midnight to avoid timezone issues
-    const startDate = new Date(participant.personal_start_date);
-    const startDateLocal = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    // Parse date string as local date (not UTC) to avoid timezone issues
+    const startDateLocal = parseLocalDateString(participant.personal_start_date);
 
     const now = new Date();
     const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -450,7 +455,7 @@ class SupabaseChallengeService {
       .eq('challenge_id', challengeId);
 
     // Count all completions including today for real-time updates
-    const today = this.getLocalDateString(new Date());
+    const today = getLocalDateString(new Date());
     const pastCompletions = allCompletions || [];
 
     // Count UNIQUE (activity_id, date) pairs to handle any duplicates
@@ -459,6 +464,12 @@ class SupabaseChallengeService {
     );
     const totalCompletions = uniqueCompletions.size;
 
+    if (__DEV__) {
+      console.log(`🎯 [Challenge Leaderboard] User ${userId}:`);
+      console.log(`   - Raw completion rows: ${pastCompletions.length}`);
+      console.log(`   - After deduplication: ${totalCompletions}`);
+    }
+
     // Calculate expected activities accounting for day-specific ones (including today)
     const predActivities = challenge.predetermined_activities || [];
     const selectedIds = new Set(participant.selected_activity_ids || []);
@@ -466,7 +477,7 @@ class SupabaseChallengeService {
     let expectedActivities = 0;
     for (let day = 1; day <= currentDay; day++) {
       for (const act of predActivities) {
-        if (selectedIds.size > 0 && !selectedIds.has(act.id)) continue;
+        if (selectedIds.size > 0 && !selectedIds.has(String(act.id))) continue;
         const startDay = act.start_day || 1;
         const endDay = act.end_day || totalDays;
         if (day >= startDay && day <= endDay) expectedActivities++;
@@ -476,6 +487,11 @@ class SupabaseChallengeService {
     const completionPercentage = expectedActivities > 0
       ? Math.min(100, Math.round((totalCompletions / expectedActivities) * 100))
       : 0;
+
+    if (__DEV__) {
+      console.log(`   - Expected: ${expectedActivities}`);
+      console.log(`   - Percentage: ${completionPercentage}%`);
+    }
 
     if (__DEV__) console.log(`📊 Challenge consistency: ${totalCompletions}/${expectedActivities} activities (${currentDay} days including today) = ${completionPercentage}%`);
 
@@ -510,7 +526,7 @@ class SupabaseChallengeService {
     for (let i = 0; i < uniqueDates.length; i++) {
       const expected = new Date();
       expected.setDate(expected.getDate() - i);
-      const expectedStr = this.getLocalDateString(expected);
+      const expectedStr = getLocalDateString(expected);
       if (uniqueDates[i] === expectedStr) {
         currentStreak++;
       } else {
@@ -594,6 +610,14 @@ class SupabaseChallengeService {
 
     const { filter = 'all', sort = 'rank', limit = 100 } = options || {};
 
+    // Fetch challenge duration_days for capping current_day
+    const { data: challengeData } = await supabase
+      .from('challenges')
+      .select('duration_days')
+      .eq('id', challengeId)
+      .single();
+    const durationDays = challengeData?.duration_days || 30;
+
     let query = supabase
       .from('challenge_participants')
       .select(`
@@ -601,6 +625,7 @@ class SupabaseChallengeService {
         completion_percentage,
         completed_days,
         current_day,
+        personal_start_date,
         current_streak,
         days_taken,
         "rank",
@@ -669,19 +694,34 @@ class SupabaseChallengeService {
       throw error;
     }
 
-    const leaderboard: LeaderboardEntry[] = (data || []).map((entry: any, index: number) => ({
-      user_id: entry.user_id,
-      username: entry.profiles?.name || 'Unknown',
-      name: entry.profiles?.name,
-      avatar_url: entry.profiles?.avatar_url,
-      completion_percentage: entry.completion_percentage || 0,
-      completed_days: entry.completed_days || 0,
-      current_day: entry.current_day || 0,
-      current_streak: entry.current_streak || 0,
-      days_taken: entry.days_taken,
-      rank: index + 1,
-      percentile: entry.percentile,
-    }));
+    const now = new Date();
+    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const leaderboard: LeaderboardEntry[] = (data || []).map((entry: any, index: number) => {
+      // Calculate current_day from dates (stored value goes stale if user skips a day)
+      let calculatedDay = entry.current_day || 0;
+      if (entry.personal_start_date) {
+        const start = parseLocalDateString(entry.personal_start_date);
+        calculatedDay = Math.min(
+          Math.max(Math.floor((todayLocal.getTime() - start.getTime()) / 86400000) + 1, 0),
+          durationDays
+        );
+      }
+
+      return {
+        user_id: entry.user_id,
+        username: entry.profiles?.name || 'Unknown',
+        name: entry.profiles?.name,
+        avatar_url: entry.profiles?.avatar_url,
+        completion_percentage: entry.completion_percentage || 0,
+        completed_days: entry.completed_days || 0,
+        current_day: calculatedDay,
+        current_streak: entry.current_streak || 0,
+        days_taken: entry.days_taken,
+        rank: index + 1,
+        percentile: entry.percentile,
+      };
+    });
 
     return leaderboard;
   }
@@ -755,13 +795,27 @@ class SupabaseChallengeService {
       return [];
     }
 
+    const now = new Date();
+    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
     const challenges: ChallengeWithDetails[] = await Promise.all(
       (participations || []).map(async (p: any) => {
         const participantCount = await this.getParticipantCount(p.challenges.id);
+
+        // Calculate current_day from dates (stored value goes stale if user skips a day)
+        let calculatedDay = p.current_day || 0;
+        if (p.personal_start_date) {
+          const start = parseLocalDateString(p.personal_start_date);
+          calculatedDay = Math.min(
+            Math.max(Math.floor((todayLocal.getTime() - start.getTime()) / 86400000) + 1, 0),
+            p.challenges.duration_days || 30
+          );
+        }
+
         return {
           ...p.challenges,
           participant_count: participantCount,
-          my_participation: p,
+          my_participation: { ...p, current_day: calculatedDay },
         };
       })
     );
@@ -774,6 +828,7 @@ class SupabaseChallengeService {
       .from('challenge_participants')
       .select(`
         current_day,
+        personal_start_date,
         completion_percentage,
         challenges!inner (
           id,
@@ -786,12 +841,25 @@ class SupabaseChallengeService {
 
     if (error || !participations) return [];
 
-    return participations.map((p: any) => ({
-      id: p.challenges.id,
-      title: p.challenges.name,
-      subtitle: `Day ${p.current_day}/${p.challenges.duration_days}`,
-      consistency: p.completion_percentage || 0,
-    }));
+    const now = new Date();
+    const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    return participations.map((p: any) => {
+      let calculatedDay = p.current_day || 0;
+      if (p.personal_start_date) {
+        const start = parseLocalDateString(p.personal_start_date);
+        calculatedDay = Math.min(
+          Math.max(Math.floor((todayLocal.getTime() - start.getTime()) / 86400000) + 1, 0),
+          p.challenges.duration_days || 30
+        );
+      }
+      return {
+        id: p.challenges.id,
+        title: p.challenges.name,
+        subtitle: `Day ${calculatedDay}/${p.challenges.duration_days}`,
+        consistency: p.completion_percentage || 0,
+      };
+    });
   }
 
   async getMyCompletedChallenges(): Promise<ChallengeWithDetails[]> {
@@ -992,9 +1060,8 @@ class SupabaseChallengeService {
       const linkedIds = participation.linked_action_ids || [];
 
       // Calculate current day of challenge for day-specific filtering
-      // Normalize both dates to local midnight to avoid timezone issues
-      const startDate = new Date(participation.personal_start_date);
-      const startDateLocal = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      // Parse date string as local date (not UTC) to avoid timezone issues
+      const startDateLocal = parseLocalDateString(participation.personal_start_date);
 
       const now = new Date();
       const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1036,7 +1103,7 @@ class SupabaseChallengeService {
         for (const activityId of selectedIds) {
           if (linkedIds.includes(activityId)) continue;
 
-          const activity = predeterminedActivities.find((a: any) => a.id === activityId);
+          const activity = predeterminedActivities.find((a: any) => String(a.id) === String(activityId));
           if (activity) {
             // Check if activity should show today (day-specific filtering)
             const startDay = activity.start_day || 1;
@@ -1044,7 +1111,7 @@ class SupabaseChallengeService {
 
             if (currentDay >= startDay && currentDay <= endDay) {
               const activityTime = (participation.activity_times || []).find(
-                (t: any) => t.activity_id === activityId && !t.is_link
+                (t: any) => String(t.activity_id) === String(activityId) && !t.is_link
               );
 
               activities.push({
@@ -1074,7 +1141,7 @@ class SupabaseChallengeService {
 
           if (currentDay >= startDay && currentDay <= endDay) {
             const activityTime = (participation.activity_times || []).find(
-              (t: any) => t.activity_id === activity.id && !t.is_link
+              (t: any) => String(t.activity_id) === String(activity.id) && !t.is_link
             );
 
             activities.push({
@@ -1148,7 +1215,7 @@ class SupabaseChallengeService {
     if (!user) return [];
 
     // Use LOCAL date string to match user's timezone
-    const today = this.getLocalDateString();
+    const today = getLocalDateString();
 
     const { data, error } = await supabase
       .from('challenge_completions')
@@ -1221,8 +1288,7 @@ class SupabaseChallengeService {
       .single();
 
     if (challengeCheck && participant.personal_start_date) {
-      const startDate = new Date(participant.personal_start_date);
-      const startDateLocal = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+      const startDateLocal = parseLocalDateString(participant.personal_start_date);
 
       const now = new Date();
       const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1234,7 +1300,7 @@ class SupabaseChallengeService {
       }
     }
 
-    const today = this.getLocalDateString();
+    const today = getLocalDateString();
 
     const { data: existing, count } = await supabase
       .from('challenge_completions')
@@ -1351,7 +1417,7 @@ class SupabaseChallengeService {
 
     const activityTimes = participant.activity_times || [];
     const existingIndex = activityTimes.findIndex(
-      (t: any) => t.activity_id === activityId && !t.is_link
+      (t: any) => String(t.activity_id) === String(activityId) && !t.is_link
     );
 
     if (existingIndex >= 0) {

@@ -458,7 +458,7 @@ export const createSocialSlice: StateCreator<
             
             return {
               circleFeed: [...state.circleFeed, ...uniqueNewPosts],
-              circleOffset: state.circleFeed.length + uniqueNewPosts.length,
+              circleOffset: state.circleOffset + newPosts.length,
               circleHasMore: uniqueNewPosts.length > 0 ? (response.hasMore || false) : false,
               loadingMore: false
             };
@@ -473,7 +473,7 @@ export const createSocialSlice: StateCreator<
             
             return {
               followFeed: [...state.followFeed, ...uniqueNewPosts],
-              followOffset: state.followFeed.length + uniqueNewPosts.length,
+              followOffset: state.followOffset + newPosts.length,
               followHasMore: uniqueNewPosts.length > 0 ? (response.hasMore || false) : false,
               loadingMore: false
             };
@@ -669,7 +669,7 @@ export const createSocialSlice: StateCreator<
 
         set(s => ({
           unifiedFeed: [...s.unifiedFeed, ...uniquePosts],
-          unifiedOffset: s.unifiedFeed.length + uniquePosts.length,
+          unifiedOffset: s.unifiedOffset + newPosts.length,
           unifiedHasMore: uniquePosts.length > 0 ? (response.hasMore || false) : false,
           loadingMore: false
         }));

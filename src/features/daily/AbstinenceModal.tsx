@@ -11,6 +11,8 @@ import {
   Image,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import { Camera, X, Check } from 'lucide-react-native';
 import * as Haptics from 'expo-haptics';
@@ -108,12 +110,17 @@ export const AbstinenceModal: React.FC<AbstinenceModalProps> = ({
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ['images'],
         allowsEditing: true,
-        quality: 0.8,
+        quality: 0.7,
+        base64: true,
       });
 
-      if (!result.canceled && result.assets[0]) {
-        setPhotoUri(result.assets[0].uri);
-        if (__DEV__) console.log('[AbstinenceModal] Photo selected:', result.assets[0].uri);
+      if (!result.canceled && result.assets?.[0]) {
+        const asset = result.assets[0];
+        const photoData = asset.base64
+          ? `data:image/jpeg;base64,${asset.base64}`
+          : asset.uri;
+        setPhotoUri(photoData);
+        if (__DEV__) console.log('[AbstinenceModal] Photo selected, using:', asset.base64 ? 'base64' : 'uri');
       }
     } catch (error) {
       if (__DEV__) console.error('[AbstinenceModal] Photo picker error:', error);
@@ -229,11 +236,20 @@ export const AbstinenceModal: React.FC<AbstinenceModalProps> = ({
       animationType="fade"
       onRequestClose={handleClose}
     >
-      <View style={styles.overlay}>
-        <Pressable style={styles.backdrop} onPress={handleClose} />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.overlay}>
+          <Pressable style={styles.backdrop} onPress={() => { Keyboard.dismiss(); handleClose(); }} />
 
-        <View style={styles.modalContainer}>
-          <View style={styles.modal}>
+          <View style={styles.modalContainer}>
+            <ScrollView
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.modal}>
             {/* Header */}
             <View style={styles.header}>
               <Text style={styles.actionName}>{actionTitle}</Text>
@@ -286,6 +302,8 @@ export const AbstinenceModal: React.FC<AbstinenceModalProps> = ({
                 onChangeText={setCommentText}
                 multiline
                 maxLength={200}
+                returnKeyType="done"
+                blurOnSubmit={true}
               />
               <Pressable style={styles.cameraButton} onPress={handlePhotoPress}>
                 <Camera size={14} color="rgba(255,255,255,0.35)" />
@@ -372,7 +390,7 @@ export const AbstinenceModal: React.FC<AbstinenceModalProps> = ({
                 selectedAnswer === 'yes' && styles.submitButtonYes,
                 selectedAnswer === 'no' && styles.submitButtonNo,
               ]}
-              onPress={handleSubmit}
+              onPress={() => { Keyboard.dismiss(); handleSubmit(); }}
               disabled={!selectedAnswer || isSubmitting}
             >
               <Text
@@ -391,9 +409,11 @@ export const AbstinenceModal: React.FC<AbstinenceModalProps> = ({
                   : 'Post'}
               </Text>
             </Pressable>
-          </View>
+            </View>
+          </ScrollView>
         </View>
       </View>
+    </KeyboardAvoidingView>
     </Modal>
   );
 };

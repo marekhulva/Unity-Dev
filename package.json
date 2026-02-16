@@ -19,6 +19,7 @@
     "@react-navigation/native-stack": "^7.3.10",
     "@react-navigation/stack": "^7.4.7",
     "@supabase/supabase-js": "^2.57.4",
+    "base64-arraybuffer": "^1.0.2",
     "date-fns": "^4.1.0",
     "expo": "~53.0.25",
     "expo-audio": "~0.4.9",

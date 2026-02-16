@@ -1,11 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { decode as decodeBase64 } from 'base64-arraybuffer';
 import ChallengeDebugV2 from '../utils/challengeDebugV2';
+import { getLocalDateString, parseLocalDateString } from '../utils/dateUtils';
 
 // Supabase project configuration
 // Fallback to hardcoded values if env vars not set (for EAS builds)
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://ojusijzhshvviqjeyhyn.supabase.co';
-const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qdXNpanpoc2h2dmlxamV5aHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU1NjU3MjQsImV4cCI6MjA3MTE0MTcyNH0.rlQ9lIGzoaLTOW-5-W0G1J1A0WwvqZMnhGHW-FwV8GQ';
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://fkzfnxumxnnlidfyztef.supabase.co';
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZremZueHVteG5ubGlkZnl6dGVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExMDUxMjMsImV4cCI6MjA4NjY4MTEyM30.9GcTJ21gC1T1XJqcyd4QF7XgLcgnE_noY1uIyoESDPw';
 
 // Log which database we're using
 if (__DEV__) {
@@ -337,7 +339,7 @@ class SupabaseService {
       .insert({
         ...actionData,
         user_id: user.id,
-        date: new Date().toISOString().split('T')[0],  // Creation date for tracking
+        date: getLocalDateString(),  // Creation date for tracking
         completed: false,
         goal_id: goalId,  // Map goalId to goal_id
         frequency: action.frequency || 'daily',
@@ -974,19 +976,35 @@ class SupabaseService {
         .select('action_id, user_id')
         .in('action_id', allActionIds);
 
-      // Fetch challenge participations with stored completion percentages
+      // Fetch challenge participations
       const { data: allParticipants, error: participantsError } = await supabase
         .from('challenge_participants')
-        .select('user_id, completion_percentage, completed_days, days_taken, challenges(duration_days, predetermined_activities), selected_activity_ids, joined_at')
+        .select('user_id, challenge_id, completion_percentage, completed_days, days_taken, challenges(duration_days, predetermined_activities), selected_activity_ids, personal_start_date')
         .in('user_id', userIds)
-        .neq('status', 'left');  // Include active AND completed challenges
+        .in('status', ['active', 'completed']);
 
-      console.log('🔍 [DEBUG] Query userIds:', userIds);
-      console.log('🔍 [DEBUG] Challenge participants found:', allParticipants?.length || 0);
-      console.log('🔍 [DEBUG] Participants data:', JSON.stringify(allParticipants, null, 2));
+      // Fetch challenge completions
+      const { data: challengeCompletionCounts } = await supabase
+        .from('challenge_completions')
+        .select('user_id')
+        .in('user_id', userIds);
+
+      const challengeCompletionsByUser = new Map<string, number>();
+      if (challengeCompletionCounts) {
+        for (const c of challengeCompletionCounts) {
+          challengeCompletionsByUser.set(c.user_id, (challengeCompletionsByUser.get(c.user_id) || 0) + 1);
+        }
+      }
+
+      if (__DEV__) {
+        console.log('🔍 [DEBUG] Query userIds:', userIds);
+        console.log('🔍 [DEBUG] Challenge participants found:', allParticipants?.length || 0);
+        console.log('🔍 [DEBUG] Raw challenge completion rows fetched:', challengeCompletionCounts?.length || 0);
+        console.log('🔍 [DEBUG] Challenge completions by user:', Object.fromEntries(challengeCompletionsByUser));
+        console.log('🔍 [DEBUG] Participants data:', JSON.stringify(allParticipants, null, 2));
+      }
       if (participantsError) {
         console.error('🔴 [ERROR] Error fetching participants:', participantsError);
-        console.error('🔴 [ERROR] Error details:', JSON.stringify(participantsError, null, 2));
       }
 
       // Calculate stats for each user
@@ -999,7 +1017,7 @@ class SupabaseService {
         let totalExpected = 0;
         let totalCompleted = 0;
 
-        // Calculate regular action stats (if user has any)
+        // Calculate regular action stats
         if (userActions.length > 0) {
           for (const action of userActions) {
             const actionCreatedAt = new Date(action.created_at);
@@ -1030,8 +1048,8 @@ class SupabaseService {
             totalExpected += expectedForAction;
           }
 
-          const userActionIds = userActions.map(a => a.id);
-          totalCompleted = allCompletions?.filter(c => userActionIds.includes(c.action_id)).length || 0;
+          const actionIds = userActions.map(a => a.id);
+          totalCompleted = allCompletions?.filter(c => actionIds.includes(c.action_id)).length || 0;
         }
 
         // Calculate weighted average with stored challenge percentages
@@ -1042,38 +1060,42 @@ class SupabaseService {
         const regularCompleted = totalCompleted;
         const regularPercentage = regularExpected > 0 ? Math.round((regularCompleted / regularExpected) * 100) : 0;
 
-        // Get challenge stats from stored database values
+        // Get challenge stats using actual completions + start_day/end_day logic
         let challengeTotalExpected = 0;
-        let challengeWeightedCompleted = 0;
+
+        const now = new Date();
+        const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
         for (const participant of userParticipants) {
           const challenge = participant.challenges as any;
           const durationDays = challenge?.duration_days || 0;
+          const predActivities = challenge?.predetermined_activities || [];
+          const selectedIds = new Set((participant.selected_activity_ids || []).map(String));
+          if (selectedIds.size === 0) continue;
 
-          // Calculate days since participant joined
-          const joinedDate = new Date(participant.joined_at);
-          const today = new Date();
-          const daysSinceJoin = Math.floor((today.getTime() - joinedDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-          const daysToCount = Math.min(daysSinceJoin, durationDays);
+          const startDate = parseLocalDateString(participant.personal_start_date);
+          const daysSinceStart = Math.floor(
+            (todayLocal.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          const currentDay = Math.min(Math.max(daysSinceStart + 1, 0), durationDays);
 
-          let activitiesPerDay = 0;
-          if (participant.selected_activity_ids && participant.selected_activity_ids.length > 0) {
-            activitiesPerDay = participant.selected_activity_ids.length;
-          } else if (challenge?.predetermined_activities) {
-            activitiesPerDay = challenge.predetermined_activities.length;
+          if (currentDay >= 1) {
+            for (let day = 1; day <= currentDay; day++) {
+              for (const act of predActivities) {
+                if (!selectedIds.has(String(act.id))) continue;
+                const actStartDay = act.start_day || 1;
+                const actEndDay = act.end_day || durationDays;
+                if (day >= actStartDay && day <= actEndDay) challengeTotalExpected++;
+              }
+            }
           }
+        }
 
-          const challengeExpected = activitiesPerDay * daysToCount;
-          challengeTotalExpected += challengeExpected;
+        // Use actual completion count, not back-calculated from percentage
+        const challengeWeightedCompleted = challengeCompletionsByUser.get(userId) || 0;
 
-          // Use STORED completion_percentage from database
-          const storedPercentage = participant.completion_percentage || 0;
-          const challengeCompleted = Math.round((challengeExpected * storedPercentage) / 100);
-          challengeWeightedCompleted += challengeCompleted;
-
-          if (__DEV__) {
-            console.log(`📊 [Circle] Challenge: ${storedPercentage}% (DB stored) = ${challengeCompleted}/${challengeExpected} weighted`);
-          }
+        if (__DEV__ && challengeTotalExpected > 0) {
+          console.log(`📊 [Circle] Challenge: ${challengeWeightedCompleted}/${challengeTotalExpected} actual completions`);
         }
 
         // Weighted average of regular + challenge
@@ -1112,128 +1134,140 @@ class SupabaseService {
       .select('id, created_at, title, goal_id, frequency, scheduled_days')
       .eq('user_id', userId);
 
-    if (actionsError || !actions || actions.length === 0) {
-      if (__DEV__) console.error('Error fetching actions or no actions found:', actionsError);
-      return { expected: 0, completed: 0, percentage: 0 };
+    if (actionsError) {
+      if (__DEV__) console.error('Error fetching actions:', actionsError);
     }
 
-    // Calculate the oldest action creation date to determine tracking period
-    const oldestActionDate = actions.reduce((oldest, action) => {
-      const actionDate = new Date(action.created_at);
-      return actionDate < oldest ? actionDate : oldest;
-    }, new Date());
-
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const daysSinceStart = Math.floor((today.getTime() - oldestActionDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-
-    // Calculate total expected based on each action's frequency
     let totalExpected = 0;
+    let totalCompleted = 0;
 
-    if (__DEV__) console.log('🔍 [DEBUG] Processing actions with frequencies:');
-    for (const action of actions) {
-      const actionCreatedAt = new Date(action.created_at);
-      actionCreatedAt.setHours(0, 0, 0, 0);
-      const daysForThisAction = Math.floor((today.getTime() - actionCreatedAt.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    // --- Challenge activity stats ---
+    const { data: participations } = await supabase
+      .from('challenge_participants')
+      .select(`
+        challenge_id,
+        selected_activity_ids,
+        personal_start_date,
+        status,
+        challenges!inner (
+          duration_days,
+          predetermined_activities
+        )
+      `)
+      .eq('user_id', userId)
+      .in('status', ['active', 'completed']);
 
-      const frequency = action.frequency || 'daily';
-      const scheduledDays = action.scheduled_days;
+    const { count: challengeCompleted } = await supabase
+      .from('challenge_completions')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId);
 
-      let expectedForAction = 0;
+    // --- Regular action stats ---
+    if (actions && actions.length > 0) {
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
 
-      switch (frequency) {
-        case 'daily':
-          expectedForAction = daysForThisAction;
-          break;
-        case 'weekly':
-          expectedForAction = Math.floor(daysForThisAction / 7);
-          break;
-        case 'weekdays':
-          // Count weekdays in the period
-          expectedForAction = this.countWeekdaysInRange(actionCreatedAt, today);
-          break;
-        case 'weekends':
-          // Count weekend days in the period
-          expectedForAction = this.countWeekendsInRange(actionCreatedAt, today);
-          break;
-        case 'every_other_day':
-          expectedForAction = Math.floor(daysForThisAction / 2);
-          break;
-        case 'three_per_week':
-          expectedForAction = Math.floor((daysForThisAction / 7) * 3);
-          break;
-        case 'custom':
-          // For custom schedules, count how many scheduled days occurred
-          if (scheduledDays && Array.isArray(scheduledDays)) {
-            expectedForAction = this.countScheduledDaysInRange(actionCreatedAt, today, scheduledDays);
-          } else {
-            expectedForAction = daysForThisAction; // Fallback to daily
-          }
-          break;
-        default:
-          expectedForAction = daysForThisAction; // Default to daily
+      for (const action of actions) {
+        const actionCreatedAt = new Date(action.created_at);
+        actionCreatedAt.setHours(0, 0, 0, 0);
+        const daysForThisAction = Math.floor((today.getTime() - actionCreatedAt.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+        const frequency = action.frequency || 'daily';
+        const scheduledDays = action.scheduled_days;
+
+        let expectedForAction = 0;
+
+        switch (frequency) {
+          case 'daily':
+            expectedForAction = daysForThisAction;
+            break;
+          case 'weekly':
+            expectedForAction = Math.floor(daysForThisAction / 7);
+            break;
+          case 'weekdays':
+            expectedForAction = this.countWeekdaysInRange(actionCreatedAt, today);
+            break;
+          case 'weekends':
+            expectedForAction = this.countWeekendsInRange(actionCreatedAt, today);
+            break;
+          case 'every_other_day':
+            expectedForAction = Math.floor(daysForThisAction / 2);
+            break;
+          case 'three_per_week':
+            expectedForAction = Math.floor((daysForThisAction / 7) * 3);
+            break;
+          case 'custom':
+            if (scheduledDays && Array.isArray(scheduledDays)) {
+              expectedForAction = this.countScheduledDaysInRange(actionCreatedAt, today, scheduledDays);
+            } else {
+              expectedForAction = daysForThisAction;
+            }
+            break;
+          default:
+            expectedForAction = daysForThisAction;
+        }
+
+        totalExpected += expectedForAction;
       }
 
-      if (__DEV__) console.log(`   - "${action.title}": frequency=${frequency}, days=${daysForThisAction}, expected=${expectedForAction}`);
-      totalExpected += expectedForAction;
+      const actionIds = actions.map(a => a.id);
+      if (actionIds.length > 0) {
+        const { count: actionCompleted, error: completionError } = await supabase
+          .from('action_completions')
+          .select('*', { count: 'exact', head: true })
+          .in('action_id', actionIds);
+
+        if (!completionError) {
+          totalCompleted += actionCompleted || 0;
+        }
+      }
     }
-    if (__DEV__) console.log(`🔍 [DEBUG] Total expected: ${totalExpected}`);
 
-    // Get actual completions from action_completions table
-    const actionIds = actions.map(a => a.id);
-    if (__DEV__) console.log(`🔍 [DEBUG] Querying action_completions for ${actionIds.length} action IDs`);
+    if (__DEV__) console.log(`📊 [CONSISTENCY] Regular actions: expected=${totalExpected}, completed=${totalCompleted}`);
 
-    const { count: totalCompleted, error: completionError } = await supabase
-      .from('action_completions')
-      .select('*', { count: 'exact', head: true })
-      .in('action_id', actionIds);
+    // --- Add challenge expected/completed ---
+    if (participations && participations.length > 0) {
+      const now = new Date();
+      const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (__DEV__) console.log(`🔍 [DEBUG] Completions query result: count=${totalCompleted}, error=${completionError ? 'YES' : 'NO'}`);
+      for (const p of participations) {
+        const selectedIds = new Set((p.selected_activity_ids || []).map(String));
+        if (selectedIds.size === 0) continue;
 
-    if (completionError) {
-      if (__DEV__) console.error('Error fetching completions:', completionError);
+        const startDate = parseLocalDateString(p.personal_start_date);
+        const durationDays = (p.challenges as any).duration_days;
+        const predActivities = (p.challenges as any).predetermined_activities || [];
+        const daysSinceStart = Math.floor(
+          (todayLocal.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        const currentDay = Math.min(Math.max(daysSinceStart + 1, 0), durationDays);
 
-      // Fallback: If action_completions fails, check how many actions have completed_at
-      // This gives us at least TODAY's completion status
-      const { data: completedActions } = await supabase
-        .from('actions')
-        .select('id')
-        .eq('user_id', userId)
-        .not('completed_at', 'is', null);
+        if (currentDay >= 1) {
+          for (let day = 1; day <= currentDay; day++) {
+            for (const act of predActivities) {
+              if (!selectedIds.has(String(act.id))) continue;
+              const actStartDay = act.start_day || 1;
+              const actEndDay = act.end_day || durationDays;
+              if (day >= actStartDay && day <= actEndDay) totalExpected++;
+            }
+          }
+        }
+      }
 
-      const fallbackCompleted = completedActions?.length || 0;
-      const fallbackPercentage = totalExpected > 0
-        ? Math.round((fallbackCompleted / totalExpected) * 100)
-        : 0;
+      totalCompleted += challengeCompleted;
 
-      if (__DEV__) console.log(`📊 Overall stats for ${userId} (using fallback):`);
-      if (__DEV__) console.log(`   - Unique actions: ${actions.length}`);
-      if (__DEV__) console.log(`   - Days tracking: ${daysSinceStart}`);
-      if (__DEV__) console.log(`   - Expected: ${totalExpected}`);
-      if (__DEV__) console.log(`   - Completed today: ${fallbackCompleted}`);
-      if (__DEV__) console.log(`   - Percentage (TODAY ONLY): ${fallbackPercentage}%`);
-
-      return {
-        expected: totalExpected,
-        completed: fallbackCompleted,
-        percentage: fallbackPercentage
-      };
+      if (__DEV__) console.log(`📊 [CONSISTENCY] + Challenge activities: total expected=${totalExpected}, total completed=${totalCompleted}`);
     }
 
     const percentage = totalExpected > 0
       ? Math.round((totalCompleted / totalExpected) * 100)
       : 0;
 
-    if (__DEV__) console.log(`📊 Overall stats for ${userId}:`);
-    if (__DEV__) console.log(`   - Unique actions: ${actions.length}`);
-    if (__DEV__) console.log(`   - Days tracking: ${daysSinceStart}`);
-    if (__DEV__) console.log(`   - Expected (based on frequencies): ${totalExpected}`);
-    if (__DEV__) console.log(`   - Completed (from action_completions): ${totalCompleted}`);
-    if (__DEV__) console.log(`   - Percentage: ${percentage}%`);
+    if (__DEV__) console.log(`📊 [CONSISTENCY] Overall: ${totalCompleted}/${totalExpected} = ${percentage}%`);
 
     return {
       expected: totalExpected,
-      completed: totalCompleted || 0,
+      completed: totalCompleted,
       percentage
     };
   }
@@ -1943,8 +1977,9 @@ class SupabaseService {
     try {
       let base64Data: string;
 
-      // Handle file:// URIs (from iOS image picker with base64: false)
+      // Handle file:// URIs (fallback — should not happen after base64 fix)
       if (imageData.startsWith('file://')) {
+        console.warn('⚠️ file:// URI hit in uploadImage — base64 path should be used instead');
         console.log('📱 Reading iOS file URI...');
         const FileSystem = require('expo-file-system').default;
 
@@ -1982,12 +2017,8 @@ class SupabaseService {
         ? base64Data.split(',')[1]
         : base64Data;
 
-      // Convert base64 to Uint8Array
-      const decoded = atob(base64);
-      const bytes = new Uint8Array(decoded.length);
-      for (let i = 0; i < decoded.length; i++) {
-        bytes[i] = decoded.charCodeAt(i);
-      }
+      // Convert base64 to ArrayBuffer (works on both web and React Native)
+      const arrayBuffer = decodeBase64(base64);
 
       // Generate unique filename
       const fileName = `${userId}/${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
@@ -1998,7 +2029,7 @@ class SupabaseService {
       const { data, error } = await this.retryWithBackoff(async () => {
         const result = await supabase.storage
           .from('post-images')
-          .upload(fileName, bytes.buffer, {
+          .upload(fileName, arrayBuffer, {
             contentType: 'image/jpeg',
             cacheControl: '3600',
             upsert: false
@@ -3588,10 +3619,10 @@ class SupabaseService {
       let checkDate = new Date(today);
       
       while (true) {
-        const dateStr = checkDate.toISOString().split('T')[0];
+        const dateStr = getLocalDateString(checkDate);
         const hasAction = actions.some(a => {
           const actionDate = new Date(a.completed_at || a.created_at);
-          return actionDate.toISOString().split('T')[0] === dateStr;
+          return getLocalDateString(actionDate) === dateStr;
         });
         
         if (hasAction) {
